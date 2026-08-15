@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Zarpa.Client.Pages.HomePage"
+             xmlns:utils="clr-namespace:Zarpa.Client.Utilities"
+             Title="{Binding [HomePage], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+             Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Spacing="20"
+                         Padding="30"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center">
+        <Label Text="Zarpa"
+               HorizontalOptions="Center"
+               FontSize="52"
+               TextColor="{StaticResource Primary}"
+               FontAttributes="Bold"/>
+        <Label Text="{Binding [Welcome], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+               HorizontalOptions="Center"
+               FontSize="20"
+               FontAttributes="Bold"/>
+        <Button Text="{Binding [Signout], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                Clicked="Signout_Clicked"
+                Margin="0,30,0,0"/>
+    </VerticalStackLayout>
+</ContentPage>

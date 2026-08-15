@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddValidMailMessage" xml:space="preserve">
+    <value>Please add a valid mail!</value>
+  </data>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Get ready for your nautical exams</value>
+  </data>
+  <data name="AppleAuthFailedError" xml:space="preserve">
+    <value>Apple sign-in failed. Please try again.</value>
+  </data>
+  <data name="BackToSignIn" xml:space="preserve">
+    <value>Back to sign in</value>
+  </data>
+  <data name="CheckSpamFolderAdvice" xml:space="preserve">
+    <value>Please wait up to 5 minutes and check your spam folder if you don't see it.</value>
+  </data>
+  <data name="CodeCannotBeEmpty" xml:space="preserve">
+    <value>Code cannot be empty.</value>
+  </data>
+  <data name="CodeMustBe6DigitsLong" xml:space="preserve">
+    <value>Code must be 6 digits long.</value>
+  </data>
+  <data name="CodeMustContainOnlyNumbers" xml:space="preserve">
+    <value>Code must contain only numbers.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="EmailAlreadyExistsError" xml:space="preserve">
+    <value>Email already exists!</value>
+  </data>
+  <data name="EmailHasBeenSent" xml:space="preserve">
+    <value>An email has been sent.</value>
+  </data>
+  <data name="EmailNotFoundError" xml:space="preserve">
+    <value>Email not found</value>
+  </data>
+  <data name="EnterEmailForgotPasswordMessage" xml:space="preserve">
+    <value>Enter your email address below and a link to reset your password will be sent to you.</value>
+  </data>
+  <data name="ExistingUserSignIn" xml:space="preserve">
+    <value>Existing user? Sign in</value>
+  </data>
+  <data name="FacebookAuthFailedError" xml:space="preserve">
+    <value>Facebook sign-in failed. Please try again.</value>
+  </data>
+  <data name="FacebookNoEmailError" xml:space="preserve">
+    <value>Your Facebook account has no email address we can use. Please sign up with your email instead.</value>
+  </data>
+  <data name="FieldNameNotValidMessage" xml:space="preserve">
+    <value>Field Name is not valid!</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="ForgotPasswordPage" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="GoogleAuthFailedError" xml:space="preserve">
+    <value>Google sign-in failed. Please try again.</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="IncorrectPasswordError" xml:space="preserve">
+    <value>Incorrect password!</value>
+  </data>
+  <data name="InvalidEmailAddress" xml:space="preserve">
+    <value>Invalid email address</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewUserSignUp" xml:space="preserve">
+    <value>New user? Sign up</value>
+  </data>
+  <data name="OrContinueWith" xml:space="preserve">
+    <value>Or continue with</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordContainsSpaces" xml:space="preserve">
+    <value>Password must not contain spaces</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>Password is too short</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="SigninUnknownError" xml:space="preserve">
+    <value>Unknown error during sign-in.</value>
+  </data>
+  <data name="SignupUnknownError" xml:space="preserve">
+    <value>Unknown error occurred during sign-up.</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="TermsAndConditionsAgreement" xml:space="preserve">
+    <value>I accept the Terms &amp; Conditions</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>An unknown error has occurred. Please try again.</value>
+  </data>
+  <data name="UseSocialSigninError" xml:space="preserve">
+    <value>This account was created with Google, Apple or Facebook. Please use the matching button below to sign in.</value>
+  </data>
+  <data name="UserBlocked" xml:space="preserve">
+    <value>Your account has been blocked by an administrator.</value>
+  </data>
+  <data name="UserDoesNotExistError" xml:space="preserve">
+    <value>User does not exist!</value>
+  </data>
+  <data name="ValidateYourEmail" xml:space="preserve">
+    <value>Validate your email</value>
+  </data>
+  <data name="ValidationCode" xml:space="preserve">
+    <value>Validation code</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+</root>

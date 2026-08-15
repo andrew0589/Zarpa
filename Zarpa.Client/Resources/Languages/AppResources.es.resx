@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddValidMailMessage" xml:space="preserve">
+    <value>¡Por favor, agrega un correo electrónico válido!</value>
+  </data>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Prepárate para tus titulaciones náuticas</value>
+  </data>
+  <data name="AppleAuthFailedError" xml:space="preserve">
+    <value>Error al iniciar sesión con Apple. Inténtalo de nuevo.</value>
+  </data>
+  <data name="BackToSignIn" xml:space="preserve">
+    <value>Volver a iniciar sesión</value>
+  </data>
+  <data name="CheckSpamFolderAdvice" xml:space="preserve">
+    <value>Por favor, espera hasta 5 minutos y revisa tu carpeta de spam si no lo ves.</value>
+  </data>
+  <data name="CodeCannotBeEmpty" xml:space="preserve">
+    <value>El código no puede estar vacío.</value>
+  </data>
+  <data name="CodeMustBe6DigitsLong" xml:space="preserve">
+    <value>El código debe tener 6 dígitos.</value>
+  </data>
+  <data name="CodeMustContainOnlyNumbers" xml:space="preserve">
+    <value>El código debe contener solo números.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="EmailAlreadyExistsError" xml:space="preserve">
+    <value>¡El correo electrónico ya existe!</value>
+  </data>
+  <data name="EmailHasBeenSent" xml:space="preserve">
+    <value>Se ha enviado un correo electrónico.</value>
+  </data>
+  <data name="EmailNotFoundError" xml:space="preserve">
+    <value>¡Correo electrónico no encontrado!</value>
+  </data>
+  <data name="EnterEmailForgotPasswordMessage" xml:space="preserve">
+    <value>Ingresa tu dirección de correo electrónico a continuación y se te enviará un enlace para restablecer tu contraseña.</value>
+  </data>
+  <data name="ExistingUserSignIn" xml:space="preserve">
+    <value>¿Usuario existente? Inicia sesión</value>
+  </data>
+  <data name="FacebookAuthFailedError" xml:space="preserve">
+    <value>Error al iniciar sesión con Facebook. Inténtalo de nuevo.</value>
+  </data>
+  <data name="FacebookNoEmailError" xml:space="preserve">
+    <value>Tu cuenta de Facebook no tiene una dirección de correo que podamos usar. Regístrate con tu correo electrónico.</value>
+  </data>
+  <data name="FieldNameNotValidMessage" xml:space="preserve">
+    <value>El campo Nombre no es válido.</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>¿Olvidaste tu contraseña?</value>
+  </data>
+  <data name="ForgotPasswordPage" xml:space="preserve">
+    <value>Restablecer contraseña</value>
+  </data>
+  <data name="GoogleAuthFailedError" xml:space="preserve">
+    <value>Error al iniciar sesión con Google. Inténtalo de nuevo.</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="IncorrectPasswordError" xml:space="preserve">
+    <value>¡Contraseña incorrecta!</value>
+  </data>
+  <data name="InvalidEmailAddress" xml:space="preserve">
+    <value>Dirección de correo electrónico no válida</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NewUserSignUp" xml:space="preserve">
+    <value>¿Nuevo usuario? Regístrate</value>
+  </data>
+  <data name="OrContinueWith" xml:space="preserve">
+    <value>O continúa con</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="PasswordContainsSpaces" xml:space="preserve">
+    <value>La contraseña no debe contener espacios</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>La contraseña es demasiado corta</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
+  <data name="SigninUnknownError" xml:space="preserve">
+    <value>Error desconocido durante el inicio de sesión.</value>
+  </data>
+  <data name="SignupUnknownError" xml:space="preserve">
+    <value>Error desconocido durante el registro.</value>
+  </data>
+  <data name="Signout" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="TermsAndConditionsAgreement" xml:space="preserve">
+    <value>Acepto los Términos y Condiciones</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</value>
+  </data>
+  <data name="UseSocialSigninError" xml:space="preserve">
+    <value>Esta cuenta se creó con Google, Apple o Facebook. Usa el botón correspondiente para iniciar sesión.</value>
+  </data>
+  <data name="UserBlocked" xml:space="preserve">
+    <value>Tu cuenta ha sido bloqueada por un administrador.</value>
+  </data>
+  <data name="UserDoesNotExistError" xml:space="preserve">
+    <value>¡El usuario no existe!</value>
+  </data>
+  <data name="ValidateYourEmail" xml:space="preserve">
+    <value>Valida tu correo electrónico</value>
+  </data>
+  <data name="ValidationCode" xml:space="preserve">
+    <value>Código de validación</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Código de verificación</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Bienvenido</value>
+  </data>
+</root>

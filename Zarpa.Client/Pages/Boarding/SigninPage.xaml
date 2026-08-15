@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Zarpa.Client.ViewModels"
+             xmlns:utils="clr-namespace:Zarpa.Client.Utilities"
+             x:Class="Zarpa.Client.Pages.SigninPage"
+             xmlns:material="clr-namespace:UraniumUI.Material.Controls;assembly=UraniumUI.Material"
+             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+             xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+             Title="{Binding [SignIn], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+             Shell.FlyoutBehavior="Disabled"
+             x:DataType="vm:AuthViewModel"
+             BackgroundColor="White">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="material:TextField">
+                <Setter Property="BorderColor" Value="Black" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="AccentColor" Value="{StaticResource Accent}" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="AllowClear" Value="True" />
+                <Setter Property="MaxLength" Value="35" />
+            </Style>
+            <Style x:Key="SocialButton" TargetType="ImageButton">
+                <Setter Property="HeightRequest" Value="52" />
+                <Setter Property="WidthRequest" Value="52" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="CornerRadius" Value="26" />
+                <Setter Property="BorderColor" Value="#DDDDDD" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout VerticalOptions="Center">
+            <Grid>
+                <input:FormView x:Name="SigninForm" SubmitCommand="{Binding SigninCommand}" >
+                    <VerticalStackLayout VerticalOptions="Center"
+                                 Padding="20"
+                                 Spacing="10">
+                        <Label Text="Zarpa"
+                               HorizontalOptions="Center"
+                               FontSize="40"
+                               TextColor="{StaticResource Primary}"
+                               FontAttributes="Bold"
+                               Margin="0,0,0,10"/>
+                        <material:TextField Title="{Binding [Email], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                                        Text="{Binding Email}" />
+                        <Label Text="{Binding EmailErrorMessage}"
+                               TextColor="Red"
+                               FontSize="12"
+                               IsVisible="{Binding ShowEmailError}"
+                               Margin="20,0,20,0" />
+                        <material:TextField Title="{Binding [Password], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                                        Text="{Binding Password}"
+                                        IsPassword="True">
+                            <material:TextField.Attachments>
+                                <material:TextFieldPasswordShowHideAttachment />
+                            </material:TextField.Attachments>
+                        </material:TextField>
+                        <Label Text="{Binding PasswordErrorMessage}"
+                               TextColor="Red"
+                               FontSize="12"
+                               IsVisible="{Binding ShowPasswordError}"
+                               Margin="20,0,20,0" />
+                        <Label Text="{Binding [ForgotPassword], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                               FontSize="14"
+                               TextColor="{StaticResource Accent}"
+                               HorizontalOptions="End"
+                               Margin="0,5,20,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <Label Text="{Binding [NewUserSignUp], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                               FontSize="15"
+                               Margin="15"
+                               FontAttributes="Bold">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="SignupLabel_Tapped"></TapGestureRecognizer>
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <Button Text="{Binding [SignIn], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                            input:FormView.IsSubmitButton="True"
+                            Margin="10, 40, 10, 10"></Button>
+
+                        <!-- Social login: WebAuthenticator has no Windows implementation, so the block is hidden there. -->
+                        <VerticalStackLayout Spacing="15" Margin="10,15,10,0">
+                            <VerticalStackLayout.IsVisible>
+                                <OnPlatform x:TypeArguments="x:Boolean" Default="True">
+                                    <On Platform="WinUI" Value="False" />
+                                </OnPlatform>
+                            </VerticalStackLayout.IsVisible>
+                            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="10">
+                                <BoxView Grid.Column="0" HeightRequest="1" Color="#DDDDDD" VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding [OrContinueWith], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                                       TextColor="Gray"
+                                       FontSize="13" />
+                                <BoxView Grid.Column="2" HeightRequest="1" Color="#DDDDDD" VerticalOptions="Center" />
+                            </Grid>
+                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="25">
+                                <ImageButton Source="google_logo.png"
+                                             Command="{Binding GoogleSigninCommand}"
+                                             Style="{StaticResource SocialButton}" />
+                                <ImageButton Source="apple_logo.png"
+                                             Command="{Binding AppleSigninCommand}"
+                                             Style="{StaticResource SocialButton}" />
+                                <ImageButton Source="facebook_logo.png"
+                                             Command="{Binding FacebookSigninCommand}"
+                                             Style="{StaticResource SocialButton}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </input:FormView>
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   Color="{StaticResource Accent}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

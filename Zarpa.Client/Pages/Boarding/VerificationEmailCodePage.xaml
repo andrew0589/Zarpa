@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Zarpa.Client.Pages.Boarding.VerificationEmailCodePage"
+             xmlns:utils="clr-namespace:Zarpa.Client.Utilities"
+             xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+             Title="{Binding [VerificationCode], Source={x:Static utils:LocalizationResourceManager.Instance}}">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="False" IsVisible="False" />
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Border instead of the source's Frame: Frame is deprecated and clips
+                 rounded corners incorrectly on iOS. -->
+            <Style TargetType="Border">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+                <Setter Property="Stroke" Value="Black" />
+                <Setter Property="StrokeThickness" Value="1" />
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="Keyboard" Value="Numeric" />
+                <Setter Property="MaxLength" Value="1" />
+                <Setter Property="WidthRequest" Value="45" />
+                <Setter Property="HeightRequest" Value="65" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="25" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout VerticalOptions="Center">
+            <Grid>
+                <input:FormView x:Name="VerificationForm" SubmitCommand="{Binding ValidateCommand}" >
+                    <VerticalStackLayout VerticalOptions="Center"
+                                         Padding="20"
+                                         Spacing="10">
+                        <Label Text="Zarpa"
+                               HorizontalOptions="Center"
+                               FontSize="40"
+                               TextColor="{StaticResource Primary}"
+                               FontAttributes="Bold"
+                               Margin="0,0,0,10"/>
+                        <Label Text="{Binding [ValidationCode], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                               FontSize="14"
+                               Margin="0,10,0,0" />
+
+                        <HorizontalStackLayout HorizontalOptions="Center"
+                                               Spacing="8"
+                                               Margin="0,10,0,0">
+                            <Border>
+                                <Entry x:Name="Code1Field"
+                                       Text="{Binding Code1}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                            <Border>
+                                <Entry x:Name="Code2Field"
+                                       Text="{Binding Code2}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                            <Border>
+                                <Entry x:Name="Code3Field"
+                                       Text="{Binding Code3}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                            <Border>
+                                <Entry x:Name="Code4Field"
+                                       Text="{Binding Code4}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                            <Border>
+                                <Entry x:Name="Code5Field"
+                                       Text="{Binding Code5}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                            <Border>
+                                <Entry x:Name="Code6Field"
+                                       Text="{Binding Code6}"
+                                       TextChanged="CodeField_TextChanged" />
+                            </Border>
+                        </HorizontalStackLayout >
+                        <Label Text="{Binding ValidationCodeErrorMessage}"
+                               TextColor="Red"
+                               FontSize="12"
+                               IsVisible="{Binding ShowCodeError}"
+                               Margin="20,0,20,0" />
+                        <Button Text="{Binding [SignIn], Source={x:Static utils:LocalizationResourceManager.Instance}}"
+                                input:FormView.IsSubmitButton="True"
+                                Margin="10, 40, 10, 10"></Button>
+                    </VerticalStackLayout>
+                </input:FormView>
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   Color="{StaticResource Accent}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

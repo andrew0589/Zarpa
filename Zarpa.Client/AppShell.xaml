@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Zarpa.Client.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Zarpa.Client"
+    xmlns:pages="clr-namespace:Zarpa.Client.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Zarpa">
+
+    <ShellContent ContentTemplate="{DataTemplate pages:OnboardingPage}"
+                  Shell.FlyoutItemIsVisible="False"
+                  Route="OnboardingPage" />
+
+    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"
+                  Shell.FlyoutItemIsVisible="False"
+                  Route="HomePage" />
+
+</Shell>
