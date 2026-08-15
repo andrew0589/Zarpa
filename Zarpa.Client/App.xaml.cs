@@ -22,6 +22,17 @@ public partial class App : Application
         {
             handler.PlatformView.BackgroundTintList =
                 Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+            // The theme's caret can render invisible (and freezes when its shared drawable
+            // is re-tinted), so replace it with a fresh 2dp brand-navy bar (API 29+).
+            if (OperatingSystem.IsAndroidVersionAtLeast(29))
+            {
+                var density = handler.PlatformView.Resources?.DisplayMetrics?.Density ?? 2f;
+                var caret = new Android.Graphics.Drawables.GradientDrawable();
+                caret.SetColor(Android.Graphics.Color.ParseColor("#0B3D5C"));
+                caret.SetSize((int)(2 * density), 0);
+                handler.PlatformView.TextCursorDrawable = caret;
+            }
         });
 #elif IOS
         // Removes the native iOS text field chrome so only the wrapping Border shows.

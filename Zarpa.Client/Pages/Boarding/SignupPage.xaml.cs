@@ -12,6 +12,14 @@ public partial class SignupPage : ContentPage
 
     private async void SigninLabel_Tapped(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(SigninPage));
+        await Shell.Current.GoToAsync($"//{nameof(SigninPage)}");
+    }
+
+    private void TogglePasswordVisibility_Tapped(object sender, EventArgs e)
+    {
+        PasswordEntry.IsPassword = !PasswordEntry.IsPassword;
+        PasswordEyeIcon.Text = PasswordEntry.IsPassword
+            ? UraniumUI.Icons.FontAwesome.Solid.Eye
+            : UraniumUI.Icons.FontAwesome.Solid.EyeSlash;
     }
 }

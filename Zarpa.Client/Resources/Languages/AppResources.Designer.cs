@@ -72,6 +72,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string AlreadyHaveAccountQuestion {
+            get {
+                return ResourceManager.GetString("AlreadyHaveAccountQuestion", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string AppTagline {
             get {
                 return ResourceManager.GetString("AppTagline", resourceCulture);
@@ -108,6 +117,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string ChooseTopicAction {
+            get {
+                return ResourceManager.GetString("ChooseTopicAction", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string CodeCannotBeEmpty {
             get {
                 return ResourceManager.GetString("CodeCannotBeEmpty", resourceCulture);
@@ -132,6 +150,42 @@ namespace Zarpa.Client.Resources.Languages {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ComingSoon {
+            get {
+                return ResourceManager.GetString("ComingSoon", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string CompletedSuffix {
+            get {
+                return ResourceManager.GetString("CompletedSuffix", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ConfirmPassword {
+            get {
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string CreateNewAccount {
+            get {
+                return ResourceManager.GetString("CreateNewAccount", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -171,6 +225,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string EmailPlaceholder {
+            get {
+                return ResourceManager.GetString("EmailPlaceholder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string EnterEmailForgotPasswordMessage {
             get {
                 return ResourceManager.GetString("EnterEmailForgotPasswordMessage", resourceCulture);
@@ -180,12 +243,30 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string ExistingUserSignIn {
+        internal static string SignInLink {
             get {
-                return ResourceManager.GetString("ExistingUserSignIn", resourceCulture);
+                return ResourceManager.GetString("SignInLink", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamSimulationDescription {
+            get {
+                return ResourceManager.GetString("ExamSimulationDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamSimulationTitle {
+            get {
+                return ResourceManager.GetString("ExamSimulationTitle", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -234,6 +315,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string GlobalProgressLabel {
+            get {
+                return ResourceManager.GetString("GlobalProgressLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string GoogleAuthFailedError {
             get {
                 return ResourceManager.GetString("GoogleAuthFailedError", resourceCulture);
@@ -270,6 +360,33 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string LearningModeDescription {
+            get {
+                return ResourceManager.GetString("LearningModeDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string LearningModeSubtitle {
+            get {
+                return ResourceManager.GetString("LearningModeSubtitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string LearningModeTitle {
+            get {
+                return ResourceManager.GetString("LearningModeTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
@@ -279,9 +396,18 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string NewUserSignUp {
+        internal static string NamePlaceholder {
             get {
-                return ResourceManager.GetString("NewUserSignUp", resourceCulture);
+                return ResourceManager.GetString("NamePlaceholder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoAccountQuestion {
+            get {
+                return ResourceManager.GetString("NoAccountQuestion", resourceCulture);
             }
         }
         
@@ -315,6 +441,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string PasswordPlaceholder {
+            get {
+                return ResourceManager.GetString("PasswordPlaceholder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string PasswordTooShort {
             get {
                 return ResourceManager.GetString("PasswordTooShort", resourceCulture);
@@ -324,12 +459,75 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string PasswordsDoNotMatch {
+            get {
+                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PracticeByTopicDescription {
+            get {
+                return ResourceManager.GetString("PracticeByTopicDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PracticeByTopicTitle {
+            get {
+                return ResourceManager.GetString("PracticeByTopicTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PracticeLikeExamDescription {
+            get {
+                return ResourceManager.GetString("PracticeLikeExamDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PracticeLikeExamTitle {
+            get {
+                return ResourceManager.GetString("PracticeLikeExamTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string QuestionsCountFormat {
+            get {
+                return ResourceManager.GetString("QuestionsCountFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string SignIn {
             get {
                 return ResourceManager.GetString("SignIn", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SignInButton {
+            get {
+                return ResourceManager.GetString("SignInButton", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -351,6 +549,24 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string SignupHeading {
+            get {
+                return ResourceManager.GetString("SignupHeading", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SignupSubtitle {
+            get {
+                return ResourceManager.GetString("SignupSubtitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string SignupUnknownError {
             get {
                 return ResourceManager.GetString("SignupUnknownError", resourceCulture);
@@ -369,6 +585,24 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string StartPractice {
+            get {
+                return ResourceManager.GetString("StartPractice", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StartSimulation {
+            get {
+                return ResourceManager.GetString("StartSimulation", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string Submit {
             get {
                 return ResourceManager.GetString("Submit", resourceCulture);
@@ -378,12 +612,84 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string TabProfile {
+            get {
+                return ResourceManager.GetString("TabProfile", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TabStudy {
+            get {
+                return ResourceManager.GetString("TabStudy", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TabTests {
+            get {
+                return ResourceManager.GetString("TabTests", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string TermsAndConditionsAgreement {
             get {
                 return ResourceManager.GetString("TermsAndConditionsAgreement", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TestsSectionSubtitle {
+            get {
+                return ResourceManager.GetString("TestsSectionSubtitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TestsSectionTitle {
+            get {
+                return ResourceManager.GetString("TestsSectionTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicSelectionDescription {
+            get {
+                return ResourceManager.GetString("TopicSelectionDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicSelectionOverline {
+            get {
+                return ResourceManager.GetString("TopicSelectionOverline", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicSelectionTitle {
+            get {
+                return ResourceManager.GetString("TopicSelectionTitle", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>

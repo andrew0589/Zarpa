@@ -8,7 +8,7 @@ namespace Zarpa.Client.Services
     /// Attaches the signed-in user's JWT to every API call. Without it the API
     /// (which requires authentication on all but the auth endpoints) answers 401.
     /// A 401 means the token is missing or expired, so the session is cleared and the
-    /// user is sent back to onboarding instead of seeing cryptic failures everywhere.
+    /// user is sent back to sign-in instead of seeing cryptic failures everywhere.
     /// </summary>
     public class AuthHeaderHandler : DelegatingHandler
     {
@@ -33,7 +33,7 @@ namespace Zarpa.Client.Services
         private static Task HandleExpiredSessionAsync(AuthService authService)
         {
             // The callers of every in-flight request are about to hit their catch blocks
-            // with this same 401 — keep their error snackbars off the onboarding page.
+            // with this same 401 — keep their error snackbars off the sign-in page.
             UserMessageHelper.SuppressErrors(TimeSpan.FromSeconds(5));
 
             authService.Signout();
@@ -43,7 +43,7 @@ namespace Zarpa.Client.Services
             {
                 try
                 {
-                    await Shell.Current.GoToAsync("//OnboardingPage");
+                    await Shell.Current.GoToAsync("//SigninPage");
                 }
                 catch
                 {

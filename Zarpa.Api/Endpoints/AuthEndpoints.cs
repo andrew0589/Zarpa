@@ -4,9 +4,9 @@ using Zarpa.Shared.Dtos;
 
 namespace Zarpa.Api.Endpoints
 {
-    public static class Endpoints
+    public static class AuthEndpoints
     {
-        public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder app)
+        public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
             // Authentication endpoints are the only ones reachable without a token —
             // everything else is covered by the fallback authorization policy.

@@ -13,10 +13,12 @@ public partial class AppShell : Shell
 
     private static readonly Type[] _routablePageTypes =
         [
-            typeof(SigninPage),
             typeof(SignupPage),
             typeof(ForgotPasswordPage),
             typeof(VerificationEmailCodePage),
+            typeof(LearningModePage),
+            typeof(TopicPracticePage),
+            typeof(ExamPracticePage),
         ];
 
     private static void RegisterRoutes()

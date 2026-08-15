@@ -5,15 +5,48 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Zarpa.Client"
     xmlns:pages="clr-namespace:Zarpa.Client.Pages"
+    xmlns:lang="clr-namespace:Zarpa.Client.Resources.Languages"
+    xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
     Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="White"
+    Shell.TabBarTitleColor="{StaticResource Primary}"
+    Shell.TabBarUnselectedColor="{StaticResource Gray400}"
     Title="Zarpa">
 
-    <ShellContent ContentTemplate="{DataTemplate pages:OnboardingPage}"
+    <ShellContent ContentTemplate="{DataTemplate pages:SigninPage}"
                   Shell.FlyoutItemIsVisible="False"
-                  Route="OnboardingPage" />
+                  Route="SigninPage" />
 
-    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"
-                  Shell.FlyoutItemIsVisible="False"
-                  Route="HomePage" />
+    <!-- Main app area, shown after sign-in -->
+    <TabBar>
+        <Tab Title="{x:Static lang:AppResources.HomePage}">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.House}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"
+                          Route="HomePage" />
+        </Tab>
+        <Tab Title="{x:Static lang:AppResources.TabTests}">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.ClipboardQuestion}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate pages:TestsPage}"
+                          Route="TestsPage" />
+        </Tab>
+        <Tab Title="{x:Static lang:AppResources.TabStudy}">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.BookOpen}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate pages:StudyPage}"
+                          Route="StudyPage" />
+        </Tab>
+        <Tab Title="{x:Static lang:AppResources.TabProfile}">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.User}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}"
+                          Route="ProfilePage" />
+        </Tab>
+    </TabBar>
 
 </Shell>

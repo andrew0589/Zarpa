@@ -30,6 +30,8 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                // Field icons on the sign-in card (envelope, lock, eye).
+                fonts.AddFontAwesomeIconFonts();
             })
             .UseMauiCommunityToolkit()
             .UseUraniumUI()
@@ -46,18 +48,24 @@ public static class MauiProgram
         builder.Services.AddTransient<AuthViewModel>();
         builder.Services.AddTransient<ForgotPasswordViewModel>();
         builder.Services.AddTransient<VerificationEmailCodeViewModel>();
+        builder.Services.AddTransient<TopicPracticeViewModel>();
 
         // Register Services
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<UserSessionService>();
 
         // Register Pages
-        builder.Services.AddTransient<OnboardingPage>();
         builder.Services.AddTransient<SigninPage>();
         builder.Services.AddTransient<SignupPage>();
         builder.Services.AddTransient<ForgotPasswordPage>();
         builder.Services.AddTransient<VerificationEmailCodePage>();
         builder.Services.AddTransient<HomePage>();
+        builder.Services.AddTransient<TestsPage>();
+        builder.Services.AddTransient<StudyPage>();
+        builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<LearningModePage>();
+        builder.Services.AddTransient<TopicPracticePage>();
+        builder.Services.AddTransient<ExamPracticePage>();
 
         ConfigureRefit(builder.Services);
 
@@ -118,7 +126,9 @@ public static class MauiProgram
             }
         };
 
-        services.AddRefitClient<IAuthApi>(refitSettings)
+        // The source-generated client: Refit 15 split the runtime reflection builder into
+        // a separate Refit.Reflection package, so plain AddRefitClient throws at runtime.
+        services.AddRefitGeneratedClient<IAuthApi>(refitSettings)
             .ConfigureHttpClient(SetHttpClient);
 
         void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(envService.ApiBaseUrl);

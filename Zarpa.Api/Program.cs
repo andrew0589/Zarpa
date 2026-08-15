@@ -96,7 +96,7 @@ app.UseAuthorization();
 
 app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
 
-app.MapEndpoints();
+app.MapAuthEndpoints();
 app.MapLegalEndpoints();
 
 app.Run();

@@ -89,7 +89,7 @@ namespace Zarpa.Client.ViewModels
         [RelayCommand]
         private async Task GoToSigninAsync()
         {
-            await Shell.Current.GoToAsync(nameof(SigninPage));
+            await Shell.Current.GoToAsync($"//{nameof(SigninPage)}");
         }
     }
 }

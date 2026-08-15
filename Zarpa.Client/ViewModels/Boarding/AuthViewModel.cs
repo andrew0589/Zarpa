@@ -21,6 +21,7 @@ namespace Zarpa.Client.ViewModels
         [ObservableProperty] private string? _name;
         [ObservableProperty] private string? _email;
         [ObservableProperty] private string? _password;
+        [ObservableProperty] private string? _confirmPassword;
         [ObservableProperty] private bool _isTermsAndConditionsAccepted;
         [ObservableProperty] private string? _nameErrorMessage;
         [ObservableProperty] private bool _showNameError;
@@ -28,6 +29,8 @@ namespace Zarpa.Client.ViewModels
         [ObservableProperty] private bool _showEmailError;
         [ObservableProperty] private string? _passwordErrorMessage;
         [ObservableProperty] private bool _showPasswordError;
+        [ObservableProperty] private string? _confirmPasswordErrorMessage;
+        [ObservableProperty] private bool _showConfirmPasswordError;
         [ObservableProperty] private string? _termsErrorMessage;
         [ObservableProperty] private bool _showTermsError;
 
@@ -219,6 +222,7 @@ namespace Zarpa.Client.ViewModels
             ShowNameError = false;
             ShowEmailError = false;
             ShowPasswordError = false;
+            ShowConfirmPasswordError = false;
             ShowTermsError = false;
 
             bool hasErrors = false;
@@ -256,6 +260,14 @@ namespace Zarpa.Client.ViewModels
             {
                 PasswordErrorMessage = AppResources.PasswordContainsSpaces;
                 ShowPasswordError = true;
+                hasErrors = true;
+            }
+
+            // Validate password confirmation
+            if (Password != ConfirmPassword)
+            {
+                ConfirmPasswordErrorMessage = AppResources.PasswordsDoNotMatch;
+                ShowConfirmPasswordError = true;
                 hasErrors = true;
             }
 

@@ -21,6 +21,6 @@ public partial class HomePage : ContentPage
         _authService.Signout();
         _session.Clear();
 
-        await Shell.Current.GoToAsync($"//{nameof(OnboardingPage)}");
+        await Shell.Current.GoToAsync($"//{nameof(SigninPage)}");
     }
 }

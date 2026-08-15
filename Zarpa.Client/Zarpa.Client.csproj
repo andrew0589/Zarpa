@@ -16,11 +16,8 @@
 		<!-- Fix for Refit NullabilityInfoContext error -->
 		<NullabilityInfoContextSupport>true</NullabilityInfoContextSupport>
 
-		<!-- XAML source generation (SourceGen inflator) is intentionally disabled: the auth pages
-		     bind localized strings via LocalizationResourceManager's string indexer with a Source
-		     override, which the source generator rejects (MAUIG2043). Default inflator behavior
-		     (Runtime for Debug, XamlC for Release) handles them as runtime bindings, like the
-		     original app. -->
+		<!-- The app is Spanish-only: the neutral (default) resources are the Spanish strings. -->
+		<NeutralLanguage>es</NeutralLanguage>
 
 		<!-- Display name -->
 		<ApplicationTitle>Zarpa</ApplicationTitle>

@@ -13,135 +13,237 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddValidMailMessage" xml:space="preserve">
-    <value>Please add a valid mail!</value>
+    <value>¡Por favor, agrega un correo electrónico válido!</value>
   </data>
   <data name="AppTagline" xml:space="preserve">
-    <value>Get ready for your nautical exams</value>
+    <value>Prepárate para tus titulaciones náuticas</value>
   </data>
   <data name="AppleAuthFailedError" xml:space="preserve">
-    <value>Apple sign-in failed. Please try again.</value>
+    <value>Error al iniciar sesión con Apple. Inténtalo de nuevo.</value>
   </data>
   <data name="BackToSignIn" xml:space="preserve">
-    <value>Back to sign in</value>
+    <value>Volver a iniciar sesión</value>
   </data>
   <data name="CheckSpamFolderAdvice" xml:space="preserve">
-    <value>Please wait up to 5 minutes and check your spam folder if you don't see it.</value>
+    <value>Por favor, espera hasta 5 minutos y revisa tu carpeta de spam si no lo ves.</value>
+  </data>
+  <data name="ChooseTopicAction" xml:space="preserve">
+    <value>Elegir tema</value>
+  </data>
+  <data name="CompletedSuffix" xml:space="preserve">
+    <value>completado</value>
   </data>
   <data name="CodeCannotBeEmpty" xml:space="preserve">
-    <value>Code cannot be empty.</value>
+    <value>El código no puede estar vacío.</value>
   </data>
   <data name="CodeMustBe6DigitsLong" xml:space="preserve">
-    <value>Code must be 6 digits long.</value>
+    <value>El código debe tener 6 dígitos.</value>
   </data>
   <data name="CodeMustContainOnlyNumbers" xml:space="preserve">
-    <value>Code must contain only numbers.</value>
+    <value>El código debe contener solo números.</value>
+  </data>
+  <data name="ComingSoon" xml:space="preserve">
+    <value>Próximamente…</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirmar contraseña</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Email</value>
+    <value>Correo electrónico</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>nombre@dominio.com</value>
   </data>
   <data name="EmailAlreadyExistsError" xml:space="preserve">
-    <value>Email already exists!</value>
+    <value>¡El correo electrónico ya existe!</value>
   </data>
   <data name="EmailHasBeenSent" xml:space="preserve">
-    <value>An email has been sent.</value>
+    <value>Se ha enviado un correo electrónico.</value>
   </data>
   <data name="EmailNotFoundError" xml:space="preserve">
-    <value>Email not found</value>
+    <value>¡Correo electrónico no encontrado!</value>
   </data>
   <data name="EnterEmailForgotPasswordMessage" xml:space="preserve">
-    <value>Enter your email address below and a link to reset your password will be sent to you.</value>
+    <value>Ingresa tu dirección de correo electrónico a continuación y se te enviará un enlace para restablecer tu contraseña.</value>
   </data>
-  <data name="ExistingUserSignIn" xml:space="preserve">
-    <value>Existing user? Sign in</value>
+  <data name="AlreadyHaveAccountQuestion" xml:space="preserve">
+    <value>¿Ya tienes una cuenta?</value>
+  </data>
+  <data name="SignInLink" xml:space="preserve">
+    <value>Inicia sesión</value>
+  </data>
+  <data name="ExamSimulationDescription" xml:space="preserve">
+    <value>Entorno con límite de tiempo, similar a las condiciones reales del examen. Ideal para evaluar tu preparación final.</value>
+  </data>
+  <data name="ExamSimulationTitle" xml:space="preserve">
+    <value>Simulación de Examen</value>
   </data>
   <data name="FacebookAuthFailedError" xml:space="preserve">
-    <value>Facebook sign-in failed. Please try again.</value>
+    <value>Error al iniciar sesión con Facebook. Inténtalo de nuevo.</value>
   </data>
   <data name="FacebookNoEmailError" xml:space="preserve">
-    <value>Your Facebook account has no email address we can use. Please sign up with your email instead.</value>
+    <value>Tu cuenta de Facebook no tiene una dirección de correo que podamos usar. Regístrate con tu correo electrónico.</value>
   </data>
   <data name="FieldNameNotValidMessage" xml:space="preserve">
-    <value>Field Name is not valid!</value>
+    <value>El campo Nombre no es válido.</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
-    <value>Forgot your password?</value>
+    <value>¿Has olvidado tu contraseña?</value>
   </data>
   <data name="ForgotPasswordPage" xml:space="preserve">
-    <value>Reset password</value>
+    <value>Restablecer contraseña</value>
+  </data>
+  <data name="GlobalProgressLabel" xml:space="preserve">
+    <value>Progreso global de aprendizaje</value>
   </data>
   <data name="GoogleAuthFailedError" xml:space="preserve">
-    <value>Google sign-in failed. Please try again.</value>
+    <value>Error al iniciar sesión con Google. Inténtalo de nuevo.</value>
   </data>
   <data name="HomePage" xml:space="preserve">
-    <value>Home</value>
+    <value>Inicio</value>
   </data>
   <data name="IncorrectPasswordError" xml:space="preserve">
-    <value>Incorrect password!</value>
+    <value>¡Contraseña incorrecta!</value>
   </data>
   <data name="InvalidEmailAddress" xml:space="preserve">
-    <value>Invalid email address</value>
+    <value>Dirección de correo electrónico no válida</value>
+  </data>
+  <data name="LearningModeDescription" xml:space="preserve">
+    <value>Práctica sin tiempo límite. Recibe retroalimentación inmediata y explicaciones detalladas para cada respuesta.</value>
+  </data>
+  <data name="LearningModeSubtitle" xml:space="preserve">
+    <value>Elige cómo quieres practicar.</value>
+  </data>
+  <data name="LearningModeTitle" xml:space="preserve">
+    <value>Modo de Aprendizaje</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>Nombre completo</value>
   </data>
-  <data name="NewUserSignUp" xml:space="preserve">
-    <value>New user? Sign up</value>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Tu nombre</value>
+  </data>
+  <data name="NoAccountQuestion" xml:space="preserve">
+    <value>¿No tienes cuenta?</value>
+  </data>
+  <data name="CreateNewAccount" xml:space="preserve">
+    <value>Crea una cuenta nueva</value>
   </data>
   <data name="OrContinueWith" xml:space="preserve">
-    <value>Or continue with</value>
+    <value>O continúa con</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Contraseña</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>••••••••</value>
   </data>
   <data name="PasswordContainsSpaces" xml:space="preserve">
-    <value>Password must not contain spaces</value>
+    <value>La contraseña no debe contener espacios</value>
   </data>
   <data name="PasswordTooShort" xml:space="preserve">
-    <value>Password is too short</value>
+    <value>La contraseña es demasiado corta</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Las contraseñas no coinciden</value>
+  </data>
+  <data name="PracticeByTopicDescription" xml:space="preserve">
+    <value>Elige un tema concreto y practica solo sus preguntas. Ideal para reforzar los temas que más te cuestan.</value>
+  </data>
+  <data name="PracticeByTopicTitle" xml:space="preserve">
+    <value>Práctica por tema</value>
+  </data>
+  <data name="PracticeLikeExamDescription" xml:space="preserve">
+    <value>Las preguntas se reparten por temas igual que en el examen oficial, sin límite de tiempo y con explicaciones.</value>
+  </data>
+  <data name="PracticeLikeExamTitle" xml:space="preserve">
+    <value>Práctica como el examen</value>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} preguntas</value>
   </data>
   <data name="SignIn" xml:space="preserve">
-    <value>Sign in</value>
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Entrar  →</value>
   </data>
   <data name="SignUp" xml:space="preserve">
-    <value>Sign up</value>
+    <value>Registrarse</value>
   </data>
   <data name="SigninUnknownError" xml:space="preserve">
-    <value>Unknown error during sign-in.</value>
+    <value>Error desconocido durante el inicio de sesión.</value>
+  </data>
+  <data name="SignupHeading" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="SignupSubtitle" xml:space="preserve">
+    <value>Crea una cuenta para empezar tu preparación.</value>
   </data>
   <data name="SignupUnknownError" xml:space="preserve">
-    <value>Unknown error occurred during sign-up.</value>
+    <value>Error desconocido durante el registro.</value>
   </data>
   <data name="Signout" xml:space="preserve">
-    <value>Sign out</value>
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="StartPractice" xml:space="preserve">
+    <value>Iniciar Práctica</value>
+  </data>
+  <data name="StartSimulation" xml:space="preserve">
+    <value>Comenzar Simulación</value>
   </data>
   <data name="Submit" xml:space="preserve">
-    <value>Submit</value>
+    <value>Enviar</value>
+  </data>
+  <data name="TabProfile" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
+  <data name="TabStudy" xml:space="preserve">
+    <value>Estudiar</value>
+  </data>
+  <data name="TabTests" xml:space="preserve">
+    <value>Tests</value>
   </data>
   <data name="TermsAndConditionsAgreement" xml:space="preserve">
-    <value>I accept the Terms &amp; Conditions</value>
+    <value>Acepto los Términos y Condiciones</value>
+  </data>
+  <data name="TestsSectionSubtitle" xml:space="preserve">
+    <value>Selecciona un modo para comenzar tu preparación.</value>
+  </data>
+  <data name="TestsSectionTitle" xml:space="preserve">
+    <value>Sección de Tests</value>
+  </data>
+  <data name="TopicSelectionDescription" xml:space="preserve">
+    <value>Estudia a tu propio ritmo. Repasa preguntas específicas por categoría, revisa las respuestas y consolida tus conocimientos náuticos antes del examen final.</value>
+  </data>
+  <data name="TopicSelectionOverline" xml:space="preserve">
+    <value>Selección de temas</value>
+  </data>
+  <data name="TopicSelectionTitle" xml:space="preserve">
+    <value>Selecciona un Tema</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>An unknown error has occurred. Please try again.</value>
+    <value>Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</value>
   </data>
   <data name="UseSocialSigninError" xml:space="preserve">
-    <value>This account was created with Google, Apple or Facebook. Please use the matching button below to sign in.</value>
+    <value>Esta cuenta se creó con Google, Apple o Facebook. Usa el botón correspondiente para iniciar sesión.</value>
   </data>
   <data name="UserBlocked" xml:space="preserve">
-    <value>Your account has been blocked by an administrator.</value>
+    <value>Tu cuenta ha sido bloqueada por un administrador.</value>
   </data>
   <data name="UserDoesNotExistError" xml:space="preserve">
-    <value>User does not exist!</value>
+    <value>¡El usuario no existe!</value>
   </data>
   <data name="ValidateYourEmail" xml:space="preserve">
-    <value>Validate your email</value>
+    <value>Valida tu correo electrónico</value>
   </data>
   <data name="ValidationCode" xml:space="preserve">
-    <value>Validation code</value>
+    <value>Código de validación</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
-    <value>Verification code</value>
+    <value>Código de verificación</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome</value>
+    <value>Bienvenido</value>
   </data>
 </root>
