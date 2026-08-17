@@ -50,7 +50,7 @@ namespace Zarpa.Api.Migrations
                         .IsUnique()
                         .HasFilter("[IsCorrect] = 1");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.LicenseEntity", b =>
@@ -79,7 +79,7 @@ namespace Zarpa.Api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Licenses");
+                    b.ToTable("Licenses", (string)null);
 
                     b.HasData(
                         new
@@ -87,6 +87,7 @@ namespace Zarpa.Api.Migrations
                             ID = 1L,
                             Code = "PNB",
                             ExamMinutes = 45,
+                            MaxTotalErrors = 10,
                             Name = "Patrón para Navegación Básica"
                         },
                         new
@@ -101,6 +102,7 @@ namespace Zarpa.Api.Migrations
                         {
                             ID = 3L,
                             Code = "PY",
+                            ExamMinutes = 120,
                             Name = "Patrón de Yate"
                         },
                         new
@@ -129,9 +131,45 @@ namespace Zarpa.Api.Migrations
 
                     b.HasIndex("TopicID");
 
-                    b.ToTable("LicenseTopics");
+                    b.ToTable("LicenseTopics", (string)null);
 
                     b.HasData(
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 1L,
+                            QuestionsInExam = 4
+                        },
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 2L,
+                            QuestionsInExam = 2
+                        },
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 3L,
+                            QuestionsInExam = 4
+                        },
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 4L,
+                            QuestionsInExam = 2
+                        },
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 5L,
+                            QuestionsInExam = 5
+                        },
+                        new
+                        {
+                            LicenseID = 1L,
+                            TopicID = 6L,
+                            QuestionsInExam = 10
+                        },
                         new
                         {
                             LicenseID = 2L,
@@ -231,7 +269,7 @@ namespace Zarpa.Api.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("PasswordResetTokens");
+                    b.ToTable("PasswordResetTokens", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.QuestionEntity", b =>
@@ -242,13 +280,18 @@ namespace Zarpa.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ExplanationImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -256,8 +299,8 @@ namespace Zarpa.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SourceExam")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -268,9 +311,12 @@ namespace Zarpa.Api.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ContentHash")
+                        .IsUnique();
+
                     b.HasIndex("TopicID");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.SessionAnswerEntity", b =>
@@ -302,7 +348,31 @@ namespace Zarpa.Api.Migrations
                     b.HasIndex("SessionID", "QuestionID")
                         .IsUnique();
 
-                    b.ToTable("SessionAnswers");
+                    b.ToTable("SessionAnswers", (string)null);
+                });
+
+            modelBuilder.Entity("Zarpa.Api.Data.Entities.SessionQuestionEntity", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("QuestionID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SessionID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("QuestionID");
+
+                    b.HasIndex("SessionID", "QuestionID")
+                        .IsUnique();
+
+                    b.ToTable("SessionQuestions", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.TestSessionEntity", b =>
@@ -342,7 +412,7 @@ namespace Zarpa.Api.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("TestSessions");
+                    b.ToTable("TestSessions", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.TopicEntity", b =>
@@ -366,7 +436,7 @@ namespace Zarpa.Api.Migrations
                     b.HasIndex("Number")
                         .IsUnique();
 
-                    b.ToTable("Topics");
+                    b.ToTable("Topics", (string)null);
 
                     b.HasData(
                         new
@@ -478,12 +548,17 @@ namespace Zarpa.Api.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<long?>("SelectedLicenseID")
+                        .HasColumnType("bigint");
+
                     b.HasKey("ID");
 
                     b.HasIndex("NormalizedEmail")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.HasIndex("SelectedLicenseID");
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.UserLoginEntity", b =>
@@ -521,7 +596,7 @@ namespace Zarpa.Api.Migrations
                     b.HasIndex("Provider", "ProviderKey")
                         .IsUnique();
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.AnswerEntity", b =>
@@ -602,6 +677,25 @@ namespace Zarpa.Api.Migrations
                     b.Navigation("Session");
                 });
 
+            modelBuilder.Entity("Zarpa.Api.Data.Entities.SessionQuestionEntity", b =>
+                {
+                    b.HasOne("Zarpa.Api.Data.Entities.QuestionEntity", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Zarpa.Api.Data.Entities.TestSessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("Zarpa.Api.Data.Entities.TestSessionEntity", b =>
                 {
                     b.HasOne("Zarpa.Api.Data.Entities.LicenseEntity", "License")
@@ -626,6 +720,14 @@ namespace Zarpa.Api.Migrations
                     b.Navigation("Topic");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zarpa.Api.Data.Entities.UserEntity", b =>
+                {
+                    b.HasOne("Zarpa.Api.Data.Entities.LicenseEntity", null)
+                        .WithMany()
+                        .HasForeignKey("SelectedLicenseID")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Zarpa.Api.Data.Entities.UserLoginEntity", b =>

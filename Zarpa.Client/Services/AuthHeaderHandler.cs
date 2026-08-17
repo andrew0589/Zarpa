@@ -38,6 +38,7 @@ namespace Zarpa.Client.Services
 
             authService.Signout();
             ServiceHelper.GetService<UserSessionService>()?.Clear();
+            ServiceHelper.GetService<SelectedLicenseService>()?.Clear();
 
             MainThread.BeginInvokeOnMainThread(async () =>
             {

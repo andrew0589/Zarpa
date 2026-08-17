@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Zarpa.Api.Data;
+using Zarpa.Api.Data.Repositories;
 using Zarpa.Api.Endpoints;
 using Zarpa.Api.Services;
 using Zarpa.Api.Utilities.Email;
@@ -34,6 +36,18 @@ builder.Services.AddDbContext<ZarpaDbContext>(options =>
 builder.Services.AddTransient<TokenService>();
 builder.Services.AddTransient<PasswordService>();
 builder.Services.AddTransient<AuthService>();
+builder.Services.AddTransient<TopicService>();
+builder.Services.AddTransient<LicenseService>();
+builder.Services.AddTransient<PracticeSessionService>();
+builder.Services.AddTransient<QuestionImportService>();
+
+// Repositories: all data access (the LINQ queries) lives here; services hold the
+// business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
+builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<ILicenseRepository, LicenseRepository>();
+builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Memory cache holds the short-lived OAuth "state" values between /start and /callback.
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<GoogleAuthService>();
@@ -73,10 +87,18 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi().AllowAnonymous();
+    // Interactive API UI at /scalar/v1 — the manual way to call the import endpoint.
+    app.MapScalarApiReference().AllowAnonymous();
+    // Content management (question import) exists only on the developer machine.
+    app.MapAdminEndpoints();
 }
 
 // Use forwarded headers before other middleware
 app.UseForwardedHeaders();
+
+// Question/explanation images live in wwwroot/images and are served publicly —
+// static files bypass the endpoint auth policy by design.
+app.UseStaticFiles();
 
 // Trust the proxy headers
 app.Use((context, next) =>
@@ -98,5 +120,8 @@ app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
 
 app.MapAuthEndpoints();
 app.MapLegalEndpoints();
+app.MapTopicEndpoints();
+app.MapLicenseEndpoints();
+app.MapSessionEndpoints();
 
 app.Run();

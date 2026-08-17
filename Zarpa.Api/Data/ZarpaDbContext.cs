@@ -18,6 +18,7 @@ namespace Zarpa.Api.Data
         public DbSet<QuestionEntity> Questions { get; set; }
         public DbSet<AnswerEntity> Answers { get; set; }
         public DbSet<TestSessionEntity> TestSessions { get; set; }
+        public DbSet<SessionQuestionEntity> SessionQuestions { get; set; }
         public DbSet<SessionAnswerEntity> SessionAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +28,12 @@ namespace Zarpa.Api.Data
             modelBuilder.Entity<UserEntity>()
                 .HasIndex(u => u.NormalizedEmail)
                 .IsUnique();
+
+            modelBuilder.Entity<UserEntity>()
+                .HasOne<LicenseEntity>()
+                .WithMany()
+                .HasForeignKey(u => u.SelectedLicenseID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserLoginEntity>(ul =>
             {
@@ -67,6 +74,10 @@ namespace Zarpa.Api.Data
                  .OnDelete(DeleteBehavior.Restrict);
 
                 q.HasIndex(x => x.TopicID);
+
+                // The duplicate guard: same normalized statement cannot enter twice.
+                q.HasIndex(x => x.ContentHash)
+                 .IsUnique();
             });
 
             modelBuilder.Entity<AnswerEntity>(a =>
@@ -102,6 +113,22 @@ namespace Zarpa.Api.Data
                 s.HasIndex(x => x.UserID);
             });
 
+            modelBuilder.Entity<SessionQuestionEntity>(sq =>
+            {
+                sq.HasOne(x => x.Session)
+                  .WithMany()
+                  .HasForeignKey(x => x.SessionID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+                sq.HasOne(x => x.Question)
+                  .WithMany()
+                  .HasForeignKey(x => x.QuestionID)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+                sq.HasIndex(x => new { x.SessionID, x.QuestionID })
+                  .IsUnique();
+            });
+
             modelBuilder.Entity<SessionAnswerEntity>(sa =>
             {
                 sa.HasOne(x => x.Session)
@@ -133,11 +160,12 @@ namespace Zarpa.Api.Data
         private static void SeedReferenceData(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LicenseEntity>().HasData(
-                new LicenseEntity { ID = 1, Code = "PNB", Name = "Patrón para Navegación Básica", ExamMinutes = 45 },
+                // PNB: 27 questions in 45 minutes, at least 17 correct → at most 10 errors.
+                new LicenseEntity { ID = 1, Code = "PNB", Name = "Patrón para Navegación Básica", ExamMinutes = 45, MaxTotalErrors = 10 },
                 new LicenseEntity { ID = 2, Code = "PER", Name = "Patrón de Embarcaciones de Recreo", ExamMinutes = 90, MaxTotalErrors = 13 },
-                // TODO: fill in the exam rules (minutes, errors, blueprint) for PY and CY,
-                // and the PNB blueprint, once their official structures are added.
-                new LicenseEntity { ID = 3, Code = "PY", Name = "Patrón de Yate" },
+                // PY: 40 questions in 2 hours. Its topics go deeper than the shared ones, so
+                // PY (and CY) get their own topic rows and blueprint later — not configured yet.
+                new LicenseEntity { ID = 3, Code = "PY", Name = "Patrón de Yate", ExamMinutes = 120 },
                 new LicenseEntity { ID = 4, Code = "CY", Name = "Capitán de Yate" });
 
             modelBuilder.Entity<TopicEntity>().HasData(
@@ -152,6 +180,15 @@ namespace Zarpa.Api.Data
                 new TopicEntity { ID = 9, Number = 9, Name = "Meteorología" },
                 new TopicEntity { ID = 10, Number = 10, Name = "Teoría de la navegación" },
                 new TopicEntity { ID = 11, Number = 11, Name = "Carta de navegación" });
+
+            // PNB: 27 questions across the first six topics, no per-topic error limits.
+            modelBuilder.Entity<LicenseTopicEntity>().HasData(
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 1, QuestionsInExam = 4 },
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 2, QuestionsInExam = 2 },
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 3, QuestionsInExam = 4 },
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 4, QuestionsInExam = 2 },
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 5, QuestionsInExam = 5 },
+                new LicenseTopicEntity { LicenseID = 1, TopicID = 6, QuestionsInExam = 10 });
 
             // PER: 45 questions, max 13 total errors; Balizamiento, RIPA and Carta de
             // navegación additionally have their own per-topic error limits.

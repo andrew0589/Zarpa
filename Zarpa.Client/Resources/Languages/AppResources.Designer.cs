@@ -63,6 +63,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string AciertosFormat {
+            get {
+                return ResourceManager.GetString("AciertosFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string AddValidMailMessage {
             get {
                 return ResourceManager.GetString("AddValidMailMessage", resourceCulture);
@@ -108,21 +117,21 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string BackToTopics {
+            get {
+                return ResourceManager.GetString("BackToTopics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string CheckSpamFolderAdvice {
             get {
                 return ResourceManager.GetString("CheckSpamFolderAdvice", resourceCulture);
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
-        internal static string ChooseTopicAction {
-            get {
-                return ResourceManager.GetString("ChooseTopicAction", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -174,6 +183,15 @@ namespace Zarpa.Client.Resources.Languages {
         internal static string ConfirmPassword {
             get {
                 return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string CorrectFeedback {
+            get {
+                return ResourceManager.GetString("CorrectFeedback", resourceCulture);
             }
         }
 
@@ -270,6 +288,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string ExplanationLabel {
+            get {
+                return ResourceManager.GetString("ExplanationLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string FacebookAuthFailedError {
             get {
                 return ResourceManager.GetString("FacebookAuthFailedError", resourceCulture);
@@ -294,6 +321,15 @@ namespace Zarpa.Client.Resources.Languages {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FallosFormat {
+            get {
+                return ResourceManager.GetString("FallosFormat", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -342,6 +378,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string IncorrectFeedback {
+            get {
+                return ResourceManager.GetString("IncorrectFeedback", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string IncorrectPasswordError {
             get {
                 return ResourceManager.GetString("IncorrectPasswordError", resourceCulture);
@@ -363,15 +408,6 @@ namespace Zarpa.Client.Resources.Languages {
         internal static string LearningModeDescription {
             get {
                 return ResourceManager.GetString("LearningModeDescription", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
-        internal static string LearningModeSubtitle {
-            get {
-                return ResourceManager.GetString("LearningModeSubtitle", resourceCulture);
             }
         }
 
@@ -405,12 +441,30 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string NextQuestion {
+            get {
+                return ResourceManager.GetString("NextQuestion", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string NoAccountQuestion {
             get {
                 return ResourceManager.GetString("NoAccountQuestion", resourceCulture);
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoQuestionsInTopic {
+            get {
+                return ResourceManager.GetString("NoQuestionsInTopic", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -468,27 +522,9 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string PracticeByTopicDescription {
-            get {
-                return ResourceManager.GetString("PracticeByTopicDescription", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
         internal static string PracticeByTopicTitle {
             get {
                 return ResourceManager.GetString("PracticeByTopicTitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
-        internal static string PracticeLikeExamDescription {
-            get {
-                return ResourceManager.GetString("PracticeLikeExamDescription", resourceCulture);
             }
         }
 
@@ -504,9 +540,27 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string QuestionProgressFormat {
+            get {
+                return ResourceManager.GetString("QuestionProgressFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string QuestionsCountFormat {
             get {
                 return ResourceManager.GetString("QuestionsCountFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SelectLicenseFirst {
+            get {
+                return ResourceManager.GetString("SelectLicenseFirst", resourceCulture);
             }
         }
 
@@ -585,15 +639,6 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string StartPractice {
-            get {
-                return ResourceManager.GetString("StartPractice", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
         internal static string StartSimulation {
             get {
                 return ResourceManager.GetString("StartSimulation", resourceCulture);
@@ -648,18 +693,9 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string TestsSectionSubtitle {
+        internal static string TopicCompleted {
             get {
-                return ResourceManager.GetString("TestsSectionSubtitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string.
-        /// </summary>
-        internal static string TestsSectionTitle {
-            get {
-                return ResourceManager.GetString("TestsSectionTitle", resourceCulture);
+                return ResourceManager.GetString("TopicCompleted", resourceCulture);
             }
         }
 
@@ -759,6 +795,15 @@ namespace Zarpa.Client.Resources.Languages {
         internal static string Welcome {
             get {
                 return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string YourLicenseLabel {
+            get {
+                return ResourceManager.GetString("YourLicenseLabel", resourceCulture);
             }
         }
     }

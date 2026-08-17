@@ -33,5 +33,9 @@ namespace Zarpa.Api.Data.Entities
         public DateTime? EmailVerificationExpiry { get; set; }
 
         public bool IsEmailVerified { get; set; } = false;
+
+        // The qualification (PNB/PER/PY/CY) the user prepares for, chosen on the Tests
+        // tab. Stored per account so it follows the user across devices and reinstalls.
+        public long? SelectedLicenseID { get; set; }
     }
 }

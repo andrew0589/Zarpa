@@ -49,10 +49,13 @@ public static class MauiProgram
         builder.Services.AddTransient<ForgotPasswordViewModel>();
         builder.Services.AddTransient<VerificationEmailCodeViewModel>();
         builder.Services.AddTransient<TopicPracticeViewModel>();
+        builder.Services.AddTransient<TestsViewModel>();
+        builder.Services.AddTransient<TopicSessionViewModel>();
 
         // Register Services
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<UserSessionService>();
+        builder.Services.AddSingleton<SelectedLicenseService>();
 
         // Register Pages
         builder.Services.AddTransient<SigninPage>();
@@ -63,8 +66,8 @@ public static class MauiProgram
         builder.Services.AddTransient<TestsPage>();
         builder.Services.AddTransient<StudyPage>();
         builder.Services.AddTransient<ProfilePage>();
-        builder.Services.AddTransient<LearningModePage>();
         builder.Services.AddTransient<TopicPracticePage>();
+        builder.Services.AddTransient<TopicSessionPage>();
         builder.Services.AddTransient<ExamPracticePage>();
 
         ConfigureRefit(builder.Services);
@@ -129,6 +132,15 @@ public static class MauiProgram
         // The source-generated client: Refit 15 split the runtime reflection builder into
         // a separate Refit.Reflection package, so plain AddRefitClient throws at runtime.
         services.AddRefitGeneratedClient<IAuthApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        services.AddRefitGeneratedClient<ITopicsApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        services.AddRefitGeneratedClient<ILicensesApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        services.AddRefitGeneratedClient<ISessionsApi>(refitSettings)
             .ConfigureHttpClient(SetHttpClient);
 
         void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(envService.ApiBaseUrl);

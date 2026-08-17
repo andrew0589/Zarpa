@@ -12,6 +12,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AciertosFormat" xml:space="preserve">
+    <value>{0} aciertos</value>
+  </data>
   <data name="AddValidMailMessage" xml:space="preserve">
     <value>¡Por favor, agrega un correo electrónico válido!</value>
   </data>
@@ -24,11 +27,11 @@
   <data name="BackToSignIn" xml:space="preserve">
     <value>Volver a iniciar sesión</value>
   </data>
+  <data name="BackToTopics" xml:space="preserve">
+    <value>Volver a los temas</value>
+  </data>
   <data name="CheckSpamFolderAdvice" xml:space="preserve">
     <value>Por favor, espera hasta 5 minutos y revisa tu carpeta de spam si no lo ves.</value>
-  </data>
-  <data name="ChooseTopicAction" xml:space="preserve">
-    <value>Elegir tema</value>
   </data>
   <data name="CompletedSuffix" xml:space="preserve">
     <value>completado</value>
@@ -47,6 +50,9 @@
   </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Confirmar contraseña</value>
+  </data>
+  <data name="CorrectFeedback" xml:space="preserve">
+    <value>¡Correcto!</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>Correo electrónico</value>
@@ -78,6 +84,9 @@
   <data name="ExamSimulationTitle" xml:space="preserve">
     <value>Simulación de Examen</value>
   </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Explicación</value>
+  </data>
   <data name="FacebookAuthFailedError" xml:space="preserve">
     <value>Error al iniciar sesión con Facebook. Inténtalo de nuevo.</value>
   </data>
@@ -86,6 +95,9 @@
   </data>
   <data name="FieldNameNotValidMessage" xml:space="preserve">
     <value>El campo Nombre no es válido.</value>
+  </data>
+  <data name="FallosFormat" xml:space="preserve">
+    <value>{0} fallos</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>¿Has olvidado tu contraseña?</value>
@@ -102,6 +114,9 @@
   <data name="HomePage" xml:space="preserve">
     <value>Inicio</value>
   </data>
+  <data name="IncorrectFeedback" xml:space="preserve">
+    <value>Incorrecto</value>
+  </data>
   <data name="IncorrectPasswordError" xml:space="preserve">
     <value>¡Contraseña incorrecta!</value>
   </data>
@@ -110,9 +125,6 @@
   </data>
   <data name="LearningModeDescription" xml:space="preserve">
     <value>Práctica sin tiempo límite. Recibe retroalimentación inmediata y explicaciones detalladas para cada respuesta.</value>
-  </data>
-  <data name="LearningModeSubtitle" xml:space="preserve">
-    <value>Elige cómo quieres practicar.</value>
   </data>
   <data name="LearningModeTitle" xml:space="preserve">
     <value>Modo de Aprendizaje</value>
@@ -123,8 +135,14 @@
   <data name="NamePlaceholder" xml:space="preserve">
     <value>Tu nombre</value>
   </data>
+  <data name="NextQuestion" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
   <data name="NoAccountQuestion" xml:space="preserve">
     <value>¿No tienes cuenta?</value>
+  </data>
+  <data name="NoQuestionsInTopic" xml:space="preserve">
+    <value>Este tema todavía no tiene preguntas.</value>
   </data>
   <data name="CreateNewAccount" xml:space="preserve">
     <value>Crea una cuenta nueva</value>
@@ -147,20 +165,20 @@
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Las contraseñas no coinciden</value>
   </data>
-  <data name="PracticeByTopicDescription" xml:space="preserve">
-    <value>Elige un tema concreto y practica solo sus preguntas. Ideal para reforzar los temas que más te cuestan.</value>
-  </data>
   <data name="PracticeByTopicTitle" xml:space="preserve">
     <value>Práctica por tema</value>
-  </data>
-  <data name="PracticeLikeExamDescription" xml:space="preserve">
-    <value>Las preguntas se reparten por temas igual que en el examen oficial, sin límite de tiempo y con explicaciones.</value>
   </data>
   <data name="PracticeLikeExamTitle" xml:space="preserve">
     <value>Práctica como el examen</value>
   </data>
+  <data name="QuestionProgressFormat" xml:space="preserve">
+    <value>Pregunta {0} de {1}</value>
+  </data>
   <data name="QuestionsCountFormat" xml:space="preserve">
     <value>{0} preguntas</value>
+  </data>
+  <data name="SelectLicenseFirst" xml:space="preserve">
+    <value>Selecciona primero tu titulación.</value>
   </data>
   <data name="SignIn" xml:space="preserve">
     <value>Iniciar sesión</value>
@@ -186,9 +204,6 @@
   <data name="Signout" xml:space="preserve">
     <value>Cerrar sesión</value>
   </data>
-  <data name="StartPractice" xml:space="preserve">
-    <value>Iniciar Práctica</value>
-  </data>
   <data name="StartSimulation" xml:space="preserve">
     <value>Comenzar Simulación</value>
   </data>
@@ -207,11 +222,8 @@
   <data name="TermsAndConditionsAgreement" xml:space="preserve">
     <value>Acepto los Términos y Condiciones</value>
   </data>
-  <data name="TestsSectionSubtitle" xml:space="preserve">
-    <value>Selecciona un modo para comenzar tu preparación.</value>
-  </data>
-  <data name="TestsSectionTitle" xml:space="preserve">
-    <value>Sección de Tests</value>
+  <data name="TopicCompleted" xml:space="preserve">
+    <value>¡Has completado todas las preguntas de este tema!</value>
   </data>
   <data name="TopicSelectionDescription" xml:space="preserve">
     <value>Estudia a tu propio ritmo. Repasa preguntas específicas por categoría, revisa las respuestas y consolida tus conocimientos náuticos antes del examen final.</value>
@@ -245,5 +257,8 @@
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Bienvenido</value>
+  </data>
+  <data name="YourLicenseLabel" xml:space="preserve">
+    <value>Tu titulación</value>
   </data>
 </root>
