@@ -80,6 +80,17 @@ namespace Zarpa.Api.Data.Repositories
             return await _context.SessionAnswers.CountAsync(sa => sa.SessionID == sessionId);
         }
 
+        public async Task DeleteTopicSessionsAsync(long userId, long topicId)
+        {
+            // SessionQuestions and SessionAnswers cascade from their session, and the
+            // planning query is license-agnostic, so all licenses' sessions must go.
+            await _context.TestSessions
+                .Where(s => s.UserID == userId
+                    && s.Mode == TestMode.TopicPractice
+                    && s.TopicID == topicId)
+                .ExecuteDeleteAsync();
+        }
+
         public void AddSession(TestSessionEntity session)
         {
             _context.TestSessions.Add(session);

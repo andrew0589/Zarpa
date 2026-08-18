@@ -2,6 +2,8 @@ namespace Zarpa.Shared.Dtos
 {
     public record StartTopicPracticeRequestDto(int TopicNumber, long LicenseId);
 
+    public record ResetTopicPracticeRequestDto(int TopicNumber, long LicenseId);
+
     // An answer option as shown to the user — deliberately without the correct flag;
     // correctness comes back only after answering, from the submit endpoint.
     public record SessionAnswerOptionDto(long Id, string Text);

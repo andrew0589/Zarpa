@@ -16,6 +16,12 @@ namespace Zarpa.Api.Endpoints
                         ? Results.Ok(session)
                         : Results.BadRequest());
 
+            app.MapPost("/api/sessions/topic/reset",
+                async (ResetTopicPracticeRequestDto request, ClaimsPrincipal user, PracticeSessionService sessionService) =>
+                    await sessionService.ResetTopicPracticeAsync(user.GetUserId(), request)
+                        ? Results.Ok()
+                        : Results.BadRequest());
+
             app.MapPost("/api/sessions/{sessionId:long}/answers",
                 async (long sessionId, SubmitAnswerRequestDto request, ClaimsPrincipal user, PracticeSessionService sessionService) =>
                     await sessionService.SubmitAnswerAsync(user.GetUserId(), sessionId, request) is { } result

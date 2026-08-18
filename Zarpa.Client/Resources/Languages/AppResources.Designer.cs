@@ -126,6 +126,15 @@ namespace Zarpa.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string CheckSpamFolderAdvice {
             get {
                 return ResourceManager.GetString("CheckSpamFolderAdvice", resourceCulture);
@@ -552,6 +561,33 @@ namespace Zarpa.Client.Resources.Languages {
         internal static string QuestionsCountFormat {
             get {
                 return ResourceManager.GetString("QuestionsCountFormat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Restart {
+            get {
+                return ResourceManager.GetString("Restart", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string RestartTopic {
+            get {
+                return ResourceManager.GetString("RestartTopic", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string RestartTopicConfirmMessage {
+            get {
+                return ResourceManager.GetString("RestartTopicConfirmMessage", resourceCulture);
             }
         }
 

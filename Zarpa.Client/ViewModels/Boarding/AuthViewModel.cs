@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Zarpa.ApiClient;
 using Zarpa.Client.Pages;
 using Zarpa.Client.Pages.Boarding;
 using Zarpa.Client.Resources.Languages;

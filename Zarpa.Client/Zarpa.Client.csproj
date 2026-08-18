@@ -86,6 +86,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Zarpa.ApiClient\Zarpa.ApiClient.csproj" />
 		<ProjectReference Include="..\Zarpa.Shared\Zarpa.Shared.csproj" />
 	</ItemGroup>
 

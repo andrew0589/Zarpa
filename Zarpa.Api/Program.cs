@@ -55,6 +55,18 @@ builder.Services.AddHttpClient<AppleAuthService>();
 builder.Services.AddHttpClient<FacebookAuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// CORS: only the browser-based client (Zarpa.Web) needs it — native apps are exempt
+// from the same-origin policy. Origins come from config so production can add the
+// real domain later without a code change; no origins configured = no CORS at all.
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+if (corsOrigins.Length > 0)
+{
+    builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
+}
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -111,6 +123,11 @@ app.Use((context, next) =>
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+}
+
+if (corsOrigins.Length > 0)
+{
+    app.UseCors();
 }
 
 app.UseAuthentication();

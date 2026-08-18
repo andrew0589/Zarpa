@@ -1,7 +1,7 @@
 using Refit;
 using Zarpa.Shared.Dtos;
 
-namespace Zarpa.Client.Services
+namespace Zarpa.ApiClient
 {
     public interface IAuthApi
     {

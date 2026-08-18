@@ -18,6 +18,7 @@ public partial class AppShell : Shell
             typeof(VerificationEmailCodePage),
             typeof(TopicPracticePage),
             typeof(TopicSessionPage),
+            typeof(ExplanationPage),
             typeof(ExamPracticePage),
         ];
 

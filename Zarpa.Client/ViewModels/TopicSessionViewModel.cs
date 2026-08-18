@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Zarpa.ApiClient;
 using Zarpa.Client.Resources.Languages;
 using Zarpa.Client.Services;
 using Zarpa.Client.Services.Environment;
@@ -36,7 +37,6 @@ namespace Zarpa.Client.ViewModels
         [ObservableProperty] private bool _hasExplanationImage;
         // Either text or figure — controls the "Explicación" button.
         [ObservableProperty] private bool _hasExplanation;
-        [ObservableProperty] private bool _showExplanationPopup;
         [ObservableProperty] private bool _isCompleted;
 
         public ObservableCollection<AnswerOptionItem> AnswerOptions { get; } = [];
@@ -93,7 +93,6 @@ namespace Zarpa.Client.ViewModels
             HasExplanationText = false;
             HasExplanationImage = false;
             HasExplanation = false;
-            ShowExplanationPopup = false;
             _answerLocked = false;
 
             Progress = _total == 0 ? 0 : (double)_answered / _total;
@@ -170,13 +169,56 @@ namespace Zarpa.Client.ViewModels
         }
 
         [RelayCommand]
-        private void ShowExplanation() => ShowExplanationPopup = true;
+        private async Task ShowExplanationAsync()
+        {
+            var parameters = new Dictionary<string, object>();
+            if (Explanation is not null)
+                parameters["explanationText"] = Explanation;
+            if (ExplanationImageUrl is not null)
+                parameters["imageUrl"] = ExplanationImageUrl;
 
-        [RelayCommand]
-        private void CloseExplanation() => ShowExplanationPopup = false;
+            await Shell.Current.GoToAsync(nameof(Pages.ExplanationPage), parameters);
+        }
 
         [RelayCommand]
         private void NextQuestion() => ShowNextQuestion();
+
+        // Deletes the user's whole history for this topic on the server, then starts
+        // the topic again from question 1 with the full question set.
+        [RelayCommand]
+        private async Task RestartTopicAsync()
+        {
+            if (_selectedLicense.SelectedLicenseId is not long licenseId) return;
+
+            var confirmed = await Shell.Current.DisplayAlertAsync(
+                AppResources.RestartTopic,
+                AppResources.RestartTopicConfirmMessage,
+                AppResources.Restart,
+                AppResources.Cancel);
+            if (!confirmed) return;
+
+            IsBusy = true;
+            try
+            {
+                await _sessionsApi.ResetTopicPracticeAsync(new ResetTopicPracticeRequestDto(TopicNumber, licenseId));
+
+                _remaining.Clear();
+                _answered = 0;
+                _total = 0;
+                _started = false;
+                IsCompleted = false;
+
+                await StartAsync();
+            }
+            catch (Exception)
+            {
+                await UserMessageHelper.ShowErrorAsync(AppResources.UnknownError);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         [RelayCommand]
         private async Task BackToTopicsAsync() => await Shell.Current.GoToAsync("..");

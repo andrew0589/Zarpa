@@ -86,6 +86,22 @@ namespace Zarpa.Api.Services
             return new PracticeSessionDto(session.ID, plannedIds.Count, answeredIds.Count, remaining);
         }
 
+        // Deletes the user's whole TopicPractice history for the topic, so the next
+        // start plans the full question set again instead of the retry subset.
+        public async Task<bool> ResetTopicPracticeAsync(long userId, ResetTopicPracticeRequestDto request)
+        {
+            var topics = await _topicRepository.GetByNumberAsync();
+            if (!topics.TryGetValue(request.TopicNumber, out var topic))
+                return false;
+
+            // Same guard as starting: the topic must be part of the chosen license.
+            if (!await _licenseRepository.IncludesTopicAsync(request.LicenseId, topic.ID))
+                return false;
+
+            await _sessionRepository.DeleteTopicSessionsAsync(userId, topic.ID);
+            return true;
+        }
+
         public async Task<SubmitAnswerResultDto?> SubmitAnswerAsync(long userId, long sessionId, SubmitAnswerRequestDto request)
         {
             var session = await _sessionRepository.FindByIdAsync(sessionId, userId);

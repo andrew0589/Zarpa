@@ -1,7 +1,9 @@
 <Solution>
   <Project Path="Zarpa.Api/Zarpa.Api.csproj" />
+  <Project Path="Zarpa.ApiClient/Zarpa.ApiClient.csproj" />
   <Project Path="Zarpa.Client/Zarpa.Client.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
   <Project Path="Zarpa.Shared/Zarpa.Shared.csproj" />
+  <Project Path="Zarpa.Web/Zarpa.Web.csproj" />
 </Solution>

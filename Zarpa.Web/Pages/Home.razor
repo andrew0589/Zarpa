@@ -1,0 +1,50 @@
+@page "/"
+@attribute [Authorize]
+@inject ILicensesApi LicensesApi
+@inject WebAuthStateProvider Auth
+
+<PageTitle>Zarpa</PageTitle>
+
+<h1>Hola, @Auth.User?.Name</h1>
+
+@if (!_loaded)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else if (_selected is null)
+{
+    @* First run (or the account lost its selection): choose before anything else. *@
+    <p class="tagline">Elige tu titulación para empezar a practicar.</p>
+    <LicenseSelector OnSelected="OnLicenseChosen" />
+}
+else
+{
+    @* Free for now — content comes later; navigation lives in the top bar. *@
+    <p class="tagline">Prepárate para tus titulaciones náuticas</p>
+}
+
+@code {
+    private LicenseDto? _selected;
+    private bool _loaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var licenses = await LicensesApi.GetLicensesAsync();
+            var selection = await LicensesApi.GetSelectedLicenseAsync();
+            _selected = licenses.FirstOrDefault(l => l.Id == selection.LicenseId);
+        }
+        catch (Exception)
+        {
+            // A 401 already redirected to /signin; on any other failure fall through
+            // to the selector, which shows its own error state.
+        }
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    private void OnLicenseChosen(LicenseDto license) => _selected = license;
+}

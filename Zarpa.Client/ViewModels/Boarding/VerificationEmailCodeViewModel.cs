@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Text.RegularExpressions;
+using Zarpa.ApiClient;
 using Zarpa.Client.Pages;
 using Zarpa.Client.Resources.Languages;
 using Zarpa.Client.Services;

@@ -1,0 +1,38 @@
+@inherits LayoutComponentBase
+@inject WebAuthStateProvider Auth
+@inject NavigationManager Navigation
+
+<div class="page">
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="/">Zarpa</a>
+            <AuthorizeView>
+                <Authorized>
+                    <nav class="topbar-nav">
+                        <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
+                        <NavLink href="temas">Temas</NavLink>
+                        <NavLink href="examen">Examen</NavLink>
+                        <NavLink href="estudiar">Estudiar</NavLink>
+                        <NavLink href="perfil">Perfil</NavLink>
+                    </nav>
+                    <div class="topbar-user">
+                        <span class="user-name">@context.User.Identity?.Name</span>
+                        <button class="btn-outline" @onclick="SignoutAsync">Cerrar sesión</button>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </header>
+
+    <main class="content">
+        @Body
+    </main>
+</div>
+
+@code {
+    private async Task SignoutAsync()
+    {
+        await Auth.SignoutAsync();
+        Navigation.NavigateTo("signin");
+    }
+}

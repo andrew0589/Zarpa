@@ -25,6 +25,10 @@ namespace Zarpa.Api.Data.Repositories
 
         Task<int> CountAnswersAsync(long sessionId);
 
+        // Wipes the user's TopicPractice history for the topic (planned questions and
+        // answers go with their sessions). Executes immediately, outside SaveChanges.
+        Task DeleteTopicSessionsAsync(long userId, long topicId);
+
         void AddSession(TestSessionEntity session);
 
         void AddAnswer(SessionAnswerEntity answer);

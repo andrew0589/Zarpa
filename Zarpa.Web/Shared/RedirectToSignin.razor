@@ -1,0 +1,7 @@
+@inject NavigationManager Navigation
+
+@* Lands here whenever an [Authorize] page is opened without a session. *@
+
+@code {
+    protected override void OnInitialized() => Navigation.NavigateTo("signin");
+}

@@ -2,6 +2,7 @@ using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Refit;
 using UraniumUI;
+using Zarpa.ApiClient;
 using Zarpa.Client.Pages;
 using Zarpa.Client.Pages.Boarding;
 using Zarpa.Client.Services;
@@ -51,6 +52,7 @@ public static class MauiProgram
         builder.Services.AddTransient<TopicPracticeViewModel>();
         builder.Services.AddTransient<TestsViewModel>();
         builder.Services.AddTransient<TopicSessionViewModel>();
+        builder.Services.AddTransient<ExplanationViewModel>();
 
         // Register Services
         builder.Services.AddSingleton<AuthService>();
@@ -68,6 +70,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<TopicPracticePage>();
         builder.Services.AddTransient<TopicSessionPage>();
+        builder.Services.AddTransient<ExplanationPage>();
         builder.Services.AddTransient<ExamPracticePage>();
 
         ConfigureRefit(builder.Services);

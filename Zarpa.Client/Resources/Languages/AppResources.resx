@@ -30,6 +30,9 @@
   <data name="BackToTopics" xml:space="preserve">
     <value>Volver a los temas</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="CheckSpamFolderAdvice" xml:space="preserve">
     <value>Por favor, espera hasta 5 minutos y revisa tu carpeta de spam si no lo ves.</value>
   </data>
@@ -176,6 +179,15 @@
   </data>
   <data name="QuestionsCountFormat" xml:space="preserve">
     <value>{0} preguntas</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>Reiniciar</value>
+  </data>
+  <data name="RestartTopic" xml:space="preserve">
+    <value>Reiniciar tema</value>
+  </data>
+  <data name="RestartTopicConfirmMessage" xml:space="preserve">
+    <value>Se borrará todo tu historial de este tema y empezarás desde el principio. ¿Quieres continuar?</value>
   </data>
   <data name="SelectLicenseFirst" xml:space="preserve">
     <value>Selecciona primero tu titulación.</value>

@@ -20,10 +20,4 @@ public partial class TopicSessionPage : ContentPage
 
         await _viewModel.StartAsync();
     }
-
-    // Swallows taps on the popup card so they don't reach the dimmed layer,
-    // which would close the popup while the user reads or scrolls.
-    private void ExplanationCard_Tapped(object sender, EventArgs e)
-    {
-    }
 }

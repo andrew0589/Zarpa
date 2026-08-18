@@ -29,12 +29,13 @@ namespace Zarpa.Api.Services
         private string AppSecret => _configuration["Authentication:Facebook:AppSecret"]
             ?? throw new InvalidOperationException("Authentication:Facebook:AppSecret is not configured.");
 
-        public string CreateAuthorizationUrl(string redirectUri)
+        public string CreateAuthorizationUrl(string redirectUri, string client)
         {
             // Random state, remembered for one round-trip: the callback must present it back,
             // otherwise the code was not produced by a flow we started (CSRF protection).
+            // The cached value records which client (app/web) started the flow.
             var state = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
-            _cache.Set(StateCacheKey(state), true, StateLifetime);
+            _cache.Set(StateCacheKey(state), client, StateLifetime);
 
             var query = new Dictionary<string, string?>
             {
@@ -49,15 +50,17 @@ namespace Zarpa.Api.Services
             return QueryHelpers.AddQueryString(AuthorizeEndpoint, query);
         }
 
-        public bool ValidateState(string? state)
+        // Returns the client (app/web) that started the flow, or null when the state
+        // is unknown — i.e. the code was not produced by a flow we started.
+        public string? ValidateState(string? state)
         {
-            if (string.IsNullOrEmpty(state)) return false;
+            if (string.IsNullOrEmpty(state)) return null;
 
             var key = StateCacheKey(state);
-            if (!_cache.TryGetValue(key, out _)) return false;
+            if (!_cache.TryGetValue(key, out string? client)) return null;
 
             _cache.Remove(key); // single use
-            return true;
+            return client ?? SocialAuth.AppClient;
         }
 
         // Exchanges the authorization code for an access token and fetches the user's

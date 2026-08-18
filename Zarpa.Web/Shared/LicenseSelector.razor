@@ -1,0 +1,76 @@
+@inject ILicensesApi LicensesApi
+
+@* The clickable PNB/PER/PY/CY cards: loads the account's current selection, click
+   selects optimistically and persists it server-side. Used on the first-run home
+   page and in Perfil → "Tu titulación". *@
+
+@if (_licenses is null)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else if (_loadFailed)
+{
+    <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+}
+else
+{
+    <div class="license-grid">
+        @foreach (var license in _licenses)
+        {
+            <button class="license-card @(license.Id == _selectedId ? "selected" : null)"
+                    @onclick="() => SelectAsync(license)">
+                <span class="license-code">@license.Code</span>
+                <span class="license-name">@license.Name</span>
+                @if (license.Id == _selectedId)
+                {
+                    <span class="license-check">✓</span>
+                }
+            </button>
+        }
+    </div>
+}
+
+@code {
+    // Fires after the server accepted the new selection.
+    [Parameter] public EventCallback<LicenseDto> OnSelected { get; set; }
+
+    private List<LicenseDto>? _licenses;
+    private long? _selectedId;
+    private bool _loadFailed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _licenses = await LicensesApi.GetLicensesAsync();
+
+            // The account's stored selection is the source of truth — it follows the
+            // user across the app and the web (same rule as the app's TestsViewModel).
+            _selectedId = (await LicensesApi.GetSelectedLicenseAsync()).LicenseId;
+        }
+        catch (Exception)
+        {
+            _licenses = [];
+            _loadFailed = true;
+        }
+    }
+
+    private async Task SelectAsync(LicenseDto license)
+    {
+        if (license.Id == _selectedId) return;
+
+        var previous = _selectedId;
+        _selectedId = license.Id;
+
+        try
+        {
+            await LicensesApi.SelectLicenseAsync(new SelectLicenseRequestDto(license.Id));
+            await OnSelected.InvokeAsync(license);
+        }
+        catch (Exception)
+        {
+            // The account copy did not update — undo the optimistic highlight.
+            _selectedId = previous;
+        }
+    }
+}
