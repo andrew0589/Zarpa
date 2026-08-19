@@ -1,0 +1,68 @@
+@inject IComunidadesApi ComunidadesApi
+
+@* Dropdown with the account's autonomous community: loads the current selection,
+   change persists it server-side. Used on the first-run home page and in Perfil. *@
+
+@if (_comunidades is null)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else if (_loadFailed)
+{
+    <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+}
+else
+{
+    <select class="comunidad-select" @onchange="OnChangeAsync">
+        <option value="" disabled selected="@(_selectedId is null)">Seleccionar una autonomía</option>
+        @foreach (var comunidad in _comunidades)
+        {
+            <option value="@comunidad.Id" selected="@(comunidad.Id == _selectedId)">@comunidad.Name</option>
+        }
+    </select>
+}
+
+@code {
+    // Fires after the server accepted the new selection.
+    [Parameter] public EventCallback<ComunidadDto> OnSelected { get; set; }
+
+    private List<ComunidadDto>? _comunidades;
+    private long? _selectedId;
+    private bool _loadFailed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _comunidades = await ComunidadesApi.GetComunidadesAsync();
+
+            // The account's stored selection is the source of truth.
+            _selectedId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
+        }
+        catch (Exception)
+        {
+            _comunidades = [];
+            _loadFailed = true;
+        }
+    }
+
+    private async Task OnChangeAsync(ChangeEventArgs e)
+    {
+        if (!long.TryParse(e.Value?.ToString(), out var comunidadId)) return;
+        if (comunidadId == _selectedId) return;
+
+        var previous = _selectedId;
+        _selectedId = comunidadId;
+
+        try
+        {
+            await ComunidadesApi.SelectComunidadAsync(new SelectComunidadRequestDto(comunidadId));
+            await OnSelected.InvokeAsync(_comunidades!.First(c => c.Id == comunidadId));
+        }
+        catch (Exception)
+        {
+            // The account copy did not update — undo the optimistic selection.
+            _selectedId = previous;
+        }
+    }
+}

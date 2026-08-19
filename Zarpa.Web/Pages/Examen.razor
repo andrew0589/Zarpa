@@ -1,7 +1,119 @@
 @page "/examen"
 @attribute [Authorize]
+@inject IExamsApi ExamsApi
+@inject ILicensesApi LicensesApi
+@inject IComunidadesApi ComunidadesApi
+@inject NavigationManager Navigation
 
 <PageTitle>Simulación de Examen — Zarpa</PageTitle>
 
 <h1>Simulación de Examen</h1>
-<p class="tagline">Próximamente…</p>
+
+@if (!_loaded)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else if (_loadFailed)
+{
+    <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+}
+else
+{
+    <p class="tagline">
+        Exámenes oficiales de <strong>@_licenseCode</strong>@(_comunidadName is null ? null : $" — {_comunidadName}").
+        Se filtran por tu titulación y tu comunidad — se cambian en <a href="perfil">Perfil</a>.
+    </p>
+
+    @if (_byYear.Count == 0)
+    {
+        <p class="page-loading">Todavía no hay exámenes disponibles para esta selección.</p>
+    }
+
+    @foreach (var year in _byYear)
+    {
+        <h2 class="year-header">@year.Key</h2>
+        <div class="exam-list">
+            @foreach (var exam in year)
+            {
+                <button class="exam-card" @onclick="() => OpenExam(exam)">
+                    <div class="exam-title">
+                        <span class="exam-month">@MonthName(exam.Month) @exam.Year</span>
+                        <span class="exam-model">Modelo @(exam.Model ?? "único")</span>
+                        @if (exam.Passed)
+                        {
+                            <span class="status-chip apto">Aprobado</span>
+                        }
+                        else if (exam.Finished)
+                        {
+                            <span class="status-chip noapto">No apto</span>
+                        }
+                        else if (exam.Attempted)
+                        {
+                            <span class="status-chip empezado">Empezado</span>
+                        }
+                    </div>
+                    <span class="exam-meta">@exam.ComunidadName · @exam.QuestionCount preguntas</span>
+                </button>
+            }
+        </div>
+    }
+}
+
+@code {
+    private static readonly string[] Months =
+    [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    ];
+
+    private string _licenseCode = string.Empty;
+    private string? _comunidadName;
+    private List<IGrouping<int, ExamListItemDto>> _byYear = [];
+    private bool _loaded;
+    private bool _loadFailed;
+
+    private static string MonthName(int month) =>
+        month is >= 1 and <= 12 ? Months[month - 1] : month.ToString();
+
+    private void OpenExam(ExamListItemDto exam)
+    {
+        var titulo = $"{MonthName(exam.Month)} {exam.Year} · Modelo {exam.Model ?? "único"}";
+        Navigation.NavigateTo($"examen/{exam.Id}?titulo={Uri.EscapeDataString(titulo)}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // The qualification decides which papers apply — without one, home
+            // is where it gets chosen.
+            var licenses = await LicensesApi.GetLicensesAsync();
+            var selection = await LicensesApi.GetSelectedLicenseAsync();
+            var license = licenses.FirstOrDefault(l => l.Id == selection.LicenseId);
+            if (license is null)
+            {
+                Navigation.NavigateTo("/");
+                return;
+            }
+            _licenseCode = license.Code;
+
+            var comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
+            if (comunidadId is not null)
+            {
+                var comunidades = await ComunidadesApi.GetComunidadesAsync();
+                _comunidadName = comunidades.FirstOrDefault(c => c.Id == comunidadId)?.Name;
+            }
+
+            var exams = await ExamsApi.GetExamsAsync(license.Id);
+            _byYear = [.. exams.GroupBy(e => e.Year).OrderByDescending(g => g.Key)];
+        }
+        catch (Exception)
+        {
+            _loadFailed = true;
+        }
+        finally
+        {
+            _loaded = true;
+        }
+    }
+}

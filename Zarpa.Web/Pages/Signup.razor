@@ -1,0 +1,149 @@
+@page "/signup"
+@inject IAuthApi AuthApi
+@inject WebAuthStateProvider Auth
+@inject NavigationManager Navigation
+
+<PageTitle>Registro — Zarpa</PageTitle>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1>Registro</h1>
+        <p class="tagline">Crea una cuenta para empezar tu preparación.</p>
+
+        <label for="name">Nombre completo</label>
+        <input id="name" type="text" autocomplete="name"
+               placeholder="Tu nombre"
+               @bind="_name" @bind:event="oninput" />
+        @if (_nameError is not null)
+        {
+            <p class="field-error">@_nameError</p>
+        }
+
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" autocomplete="email"
+               placeholder="nombre@dominio.com"
+               @bind="_email" @bind:event="oninput" />
+        @if (_emailError is not null)
+        {
+            <p class="field-error">@_emailError</p>
+        }
+
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" autocomplete="new-password"
+               placeholder="••••••••"
+               @bind="_password" @bind:event="oninput" />
+        @if (_passwordError is not null)
+        {
+            <p class="field-error">@_passwordError</p>
+        }
+
+        <label for="confirm">Confirmar contraseña</label>
+        <input id="confirm" type="password" autocomplete="new-password"
+               placeholder="••••••••"
+               @bind="_confirmPassword" @bind:event="oninput" />
+        @if (_confirmError is not null)
+        {
+            <p class="field-error">@_confirmError</p>
+        }
+
+        <label class="terms-row">
+            <input type="checkbox" @bind="_termsAccepted" />
+            <span>Acepto los Términos y Condiciones</span>
+        </label>
+        @if (_termsError is not null)
+        {
+            <p class="field-error">@_termsError</p>
+        }
+
+        @if (_error is not null)
+        {
+            <p class="error" role="alert">@_error</p>
+        }
+
+        <button class="btn-primary" disabled="@_busy" @onclick="SignupAsync">
+            @(_busy ? "Creando cuenta…" : "Registrarse")
+        </button>
+
+        <p class="auth-footer">
+            ¿Ya tienes una cuenta? <a href="signin">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+
+@code {
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _confirmPassword = string.Empty;
+    private bool _termsAccepted;
+
+    private string? _nameError;
+    private string? _emailError;
+    private string? _passwordError;
+    private string? _confirmError;
+    private string? _termsError;
+    private string? _error;
+    private bool _busy;
+
+    // Same rules as the app's AuthViewModel.ValidateSignupForm.
+    private bool ValidateForm()
+    {
+        _nameError = _emailError = _passwordError = _confirmError = _termsError = null;
+
+        if (string.IsNullOrWhiteSpace(_name))
+            _nameError = "El campo Nombre no es válido.";
+
+        if (string.IsNullOrWhiteSpace(_email) || !_email.Contains('@') || _email.Contains(' '))
+            _emailError = "¡Por favor, agrega un correo electrónico válido!";
+
+        if (string.IsNullOrWhiteSpace(_password))
+            _passwordError = "¡Contraseña incorrecta!";
+        else if (_password.Length < 6)
+            _passwordError = "La contraseña es demasiado corta";
+        else if (_password.Contains(' '))
+            _passwordError = "La contraseña no debe contener espacios";
+
+        if (_password != _confirmPassword)
+            _confirmError = "Las contraseñas no coinciden";
+
+        if (!_termsAccepted)
+            _termsError = "Debes aceptar los Términos y Condiciones.";
+
+        return _nameError is null && _emailError is null && _passwordError is null
+            && _confirmError is null && _termsError is null;
+    }
+
+    private async Task SignupAsync()
+    {
+        if (_busy) return;
+
+        _error = null;
+        if (!ValidateForm()) return;
+
+        _busy = true;
+        try
+        {
+            var result = await AuthApi.SignupAsync(new SignupRequestDto(_name.Trim(), _email.Trim(), _password));
+
+            if (result.IsSuccess)
+            {
+                // Signed in right away (email still unverified) — same as the app;
+                // the verification code is already on its way.
+                await Auth.SigninAsync(result.Data);
+                Navigation.NavigateTo("verificar-email");
+            }
+            else
+            {
+                _error = ErrorMessages.Translate(result.ErrorCode);
+            }
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

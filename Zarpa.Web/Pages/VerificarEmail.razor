@@ -1,0 +1,103 @@
+@page "/verificar-email"
+@attribute [Authorize]
+@inject IAuthApi AuthApi
+@inject WebAuthStateProvider Auth
+@inject NavigationManager Navigation
+
+<PageTitle>Valida tu correo electrónico — Zarpa</PageTitle>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1>Valida tu correo electrónico</h1>
+        <p class="tagline">
+            Se ha enviado un correo electrónico a <strong>@Auth.User?.Email</strong>.
+            Por favor, espera hasta 5 minutos y revisa tu carpeta de spam si no lo ves.
+        </p>
+
+        <label for="code">Código de verificación</label>
+        <input id="code" type="text" inputmode="numeric" maxlength="6"
+               class="code-input" placeholder="000000" autocomplete="one-time-code"
+               @bind="_code" @bind:event="oninput"
+               @onkeydown="OnCodeKeyDown" />
+        @if (_codeError is not null)
+        {
+            <p class="field-error">@_codeError</p>
+        }
+
+        @if (_error is not null)
+        {
+            <p class="error" role="alert">@_error</p>
+        }
+
+        <button class="btn-primary" disabled="@_busy" @onclick="ValidateAsync">
+            @(_busy ? "Validando…" : "Enviar")
+        </button>
+    </div>
+</div>
+
+@code {
+    private string _code = string.Empty;
+    private string? _codeError;
+    private string? _error;
+    private bool _busy;
+
+    // Same rules as the app's VerificationEmailCodeViewModel.ValidateCode.
+    private bool ValidateCode()
+    {
+        _codeError = null;
+
+        if (string.IsNullOrWhiteSpace(_code))
+            _codeError = "El código no puede estar vacío.";
+        else if (!_code.All(char.IsAsciiDigit))
+            _codeError = "El código debe contener solo números.";
+        else if (_code.Length != 6)
+            _codeError = "El código debe tener 6 dígitos.";
+
+        return _codeError is null;
+    }
+
+    private async Task OnCodeKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await ValidateAsync();
+    }
+
+    private async Task ValidateAsync()
+    {
+        if (_busy || Auth.User is null) return;
+
+        _error = null;
+        if (!ValidateCode()) return;
+
+        _busy = true;
+        try
+        {
+            var result = await AuthApi.ValidateCodeAsync(new ValidationRequestDto
+            {
+                Name = Auth.User.Name,
+                Email = Auth.User.Email,
+                ValidationCode = _code,
+            });
+
+            if (result.IsSuccess)
+            {
+                // The stored session still says "unverified" — refresh it so Perfil
+                // shows the verified badge without a re-login.
+                await Auth.UpdateUserAsync(Auth.User with { IsEmailVerified = true });
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                _error = "Código no válido o caducado. Revisa los datos e inténtalo de nuevo.";
+            }
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

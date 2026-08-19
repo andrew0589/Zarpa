@@ -4,6 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Dev secrets (SMTP app password, OAuth secrets) live outside the repo:
+         %APPDATA%\Microsoft\UserSecrets\zarpa-api. Loaded automatically in Development. -->
+    <UserSecretsId>zarpa-api</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

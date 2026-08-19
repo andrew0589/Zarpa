@@ -1,6 +1,7 @@
 @page "/"
 @attribute [Authorize]
 @inject ILicensesApi LicensesApi
+@inject IComunidadesApi ComunidadesApi
 @inject WebAuthStateProvider Auth
 
 <PageTitle>Zarpa</PageTitle>
@@ -11,11 +12,17 @@
 {
     <p class="page-loading">Cargando…</p>
 }
-else if (_selected is null)
+else if (_selectedLicense is null)
 {
-    @* First run (or the account lost its selection): choose before anything else. *@
+    @* First run: the qualification comes first. *@
     <p class="tagline">Elige tu titulación para empezar a practicar.</p>
     <LicenseSelector OnSelected="OnLicenseChosen" />
+}
+else if (!_hasComunidad)
+{
+    @* Then the community — it decides which real exams the simulations offer. *@
+    <p class="tagline">Elige tu comunidad autónoma para las simulaciones de examen.</p>
+    <ComunidadSelector OnSelected="OnComunidadChosen" />
 }
 else
 {
@@ -24,7 +31,8 @@ else
 }
 
 @code {
-    private LicenseDto? _selected;
+    private LicenseDto? _selectedLicense;
+    private bool _hasComunidad;
     private bool _loaded;
 
     protected override async Task OnInitializedAsync()
@@ -33,7 +41,9 @@ else
         {
             var licenses = await LicensesApi.GetLicensesAsync();
             var selection = await LicensesApi.GetSelectedLicenseAsync();
-            _selected = licenses.FirstOrDefault(l => l.Id == selection.LicenseId);
+            _selectedLicense = licenses.FirstOrDefault(l => l.Id == selection.LicenseId);
+
+            _hasComunidad = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId is not null;
         }
         catch (Exception)
         {
@@ -46,5 +56,7 @@ else
         }
     }
 
-    private void OnLicenseChosen(LicenseDto license) => _selected = license;
+    private void OnLicenseChosen(LicenseDto license) => _selectedLicense = license;
+
+    private void OnComunidadChosen(ComunidadDto _) => _hasComunidad = true;
 }

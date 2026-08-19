@@ -14,6 +14,13 @@ namespace Zarpa.Api.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<LicenseEntity?> FindByCodeAsync(string code)
+        {
+            var trimmed = code.Trim();
+            return await _context.Licenses
+                .FirstOrDefaultAsync(l => l.Code == trimmed);
+        }
+
         public async Task<bool> IncludesTopicAsync(long licenseId, long topicId)
         {
             return await _context.LicenseTopics

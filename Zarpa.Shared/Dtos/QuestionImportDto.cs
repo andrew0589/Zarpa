@@ -8,5 +8,7 @@ namespace Zarpa.Shared.Dtos
         int CorrectIndex,
         string? Explanation = null,
         string? ExplanationImageUrl = null,
-        string? SourceExam = null);
+        string? SourceExam = null,
+        // Figure that is part of the statement itself (balizamiento/lights papers).
+        string? QuestionImageUrl = null);
 }

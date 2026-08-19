@@ -38,8 +38,12 @@ builder.Services.AddTransient<PasswordService>();
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<TopicService>();
 builder.Services.AddTransient<LicenseService>();
+builder.Services.AddTransient<ComunidadService>();
+builder.Services.AddTransient<ExamService>();
+builder.Services.AddTransient<ExamSessionService>();
 builder.Services.AddTransient<PracticeSessionService>();
 builder.Services.AddTransient<QuestionImportService>();
+builder.Services.AddTransient<ExamImportService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -48,6 +52,8 @@ builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<ILicenseRepository, LicenseRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
+builder.Services.AddScoped<IExamSessionRepository, ExamSessionRepository>();
 // Memory cache holds the short-lived OAuth "state" values between /start and /callback.
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<GoogleAuthService>();
@@ -139,6 +145,8 @@ app.MapAuthEndpoints();
 app.MapLegalEndpoints();
 app.MapTopicEndpoints();
 app.MapLicenseEndpoints();
+app.MapComunidadEndpoints();
+app.MapExamEndpoints();
 app.MapSessionEndpoints();
 
 app.Run();

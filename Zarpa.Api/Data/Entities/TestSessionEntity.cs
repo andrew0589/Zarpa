@@ -21,6 +21,10 @@ namespace Zarpa.Api.Data.Entities
         public long? TopicID { get; set; }
         public TopicEntity? Topic { get; set; }
 
+        // Only for real-exam simulations: the official paper being replayed.
+        public long? ExamID { get; set; }
+        public ExamEntity? Exam { get; set; }
+
         public DateTime StartedAt { get; set; } = DateTime.UtcNow;
 
         // Null while the session is in progress or was abandoned.

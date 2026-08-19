@@ -20,6 +20,10 @@ namespace Zarpa.Api.Data
         public DbSet<TestSessionEntity> TestSessions { get; set; }
         public DbSet<SessionQuestionEntity> SessionQuestions { get; set; }
         public DbSet<SessionAnswerEntity> SessionAnswers { get; set; }
+        public DbSet<ComunidadAutonomaEntity> ComunidadesAutonomas { get; set; }
+        public DbSet<ExamEntity> Exams { get; set; }
+        public DbSet<ExamQuestionEntity> ExamQuestions { get; set; }
+        public DbSet<ExamSessionAnswerEntity> ExamSessionAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +37,12 @@ namespace Zarpa.Api.Data
                 .HasOne<LicenseEntity>()
                 .WithMany()
                 .HasForeignKey(u => u.SelectedLicenseID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserEntity>()
+                .HasOne<ComunidadAutonomaEntity>()
+                .WithMany()
+                .HasForeignKey(u => u.SelectedComunidadAutonomaID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserLoginEntity>(ul =>
@@ -111,6 +121,65 @@ namespace Zarpa.Api.Data
                  .OnDelete(DeleteBehavior.Restrict);
 
                 s.HasIndex(x => x.UserID);
+
+                // A real-exam simulation references the paper it replays; the paper
+                // cannot be deleted while sessions exist for it.
+                s.HasOne(x => x.Exam)
+                 .WithMany()
+                 .HasForeignKey(x => x.ExamID)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ExamEntity>(e =>
+            {
+                e.HasOne(x => x.ComunidadAutonoma)
+                 .WithMany()
+                 .HasForeignKey(x => x.ComunidadAutonomaID)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.License)
+                 .WithMany()
+                 .HasForeignKey(x => x.LicenseID)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                // Deliberately NOT unique: the import always inserts, duplicates are
+                // cleaned up manually/by script afterwards (admin decision).
+                e.HasIndex(x => new { x.ComunidadAutonomaID, x.LicenseID, x.Year, x.Month });
+            });
+
+            modelBuilder.Entity<ExamQuestionEntity>(eq =>
+            {
+                eq.HasOne(x => x.Exam)
+                  .WithMany()
+                  .HasForeignKey(x => x.ExamID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+                // Topics are permanent reference data (same rule as QuestionEntity).
+                eq.HasOne(x => x.Topic)
+                  .WithMany()
+                  .HasForeignKey(x => x.TopicID)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+                eq.HasIndex(x => new { x.ExamID, x.Position })
+                  .IsUnique();
+            });
+
+            modelBuilder.Entity<ExamSessionAnswerEntity>(esa =>
+            {
+                esa.HasOne(x => x.Session)
+                   .WithMany()
+                   .HasForeignKey(x => x.SessionID)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+                // Answered papers block hard deletes of their questions (and, through
+                // the Exams cascade, of the exam itself) — same rule as the bank.
+                esa.HasOne(x => x.ExamQuestion)
+                   .WithMany()
+                   .HasForeignKey(x => x.ExamQuestionID)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+                esa.HasIndex(x => new { x.SessionID, x.ExamQuestionID })
+                   .IsUnique();
             });
 
             modelBuilder.Entity<SessionQuestionEntity>(sq =>
@@ -189,6 +258,22 @@ namespace Zarpa.Api.Data
                 new LicenseTopicEntity { LicenseID = 1, TopicID = 4, QuestionsInExam = 2 },
                 new LicenseTopicEntity { LicenseID = 1, TopicID = 5, QuestionsInExam = 5 },
                 new LicenseTopicEntity { LicenseID = 1, TopicID = 6, QuestionsInExam = 10 });
+
+            // The autonomous communities that run their own nautical exam sittings.
+            modelBuilder.Entity<ComunidadAutonomaEntity>().HasData(
+                new ComunidadAutonomaEntity { ID = 1, Name = "Andalucía" },
+                new ComunidadAutonomaEntity { ID = 2, Name = "Cantabria" },
+                new ComunidadAutonomaEntity { ID = 3, Name = "Cataluña" },
+                new ComunidadAutonomaEntity { ID = 4, Name = "Ciudad Autónoma de Ceuta" },
+                new ComunidadAutonomaEntity { ID = 5, Name = "Ciudad Autónoma de Melilla" },
+                new ComunidadAutonomaEntity { ID = 6, Name = "Comunidad de Madrid" },
+                new ComunidadAutonomaEntity { ID = 7, Name = "Comunidad Valenciana" },
+                new ComunidadAutonomaEntity { ID = 8, Name = "Galicia" },
+                new ComunidadAutonomaEntity { ID = 9, Name = "Islas Baleares" },
+                new ComunidadAutonomaEntity { ID = 10, Name = "Islas Canarias" },
+                new ComunidadAutonomaEntity { ID = 11, Name = "País Vasco" },
+                new ComunidadAutonomaEntity { ID = 12, Name = "Principado de Asturias" },
+                new ComunidadAutonomaEntity { ID = 13, Name = "Región de Murcia" });
 
             // PER: 45 questions, max 13 total errors; Balizamiento, RIPA and Carta de
             // navegación additionally have their own per-topic error limits.

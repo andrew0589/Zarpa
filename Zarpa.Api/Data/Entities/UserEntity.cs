@@ -37,5 +37,9 @@ namespace Zarpa.Api.Data.Entities
         // The qualification (PNB/PER/PY/CY) the user prepares for, chosen on the Tests
         // tab. Stored per account so it follows the user across devices and reinstalls.
         public long? SelectedLicenseID { get; set; }
+
+        // The autonomous community whose real exams the user wants to simulate.
+        // Null = no preference yet (all communities' exams are offered).
+        public long? SelectedComunidadAutonomaID { get; set; }
     }
 }

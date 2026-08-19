@@ -77,17 +77,7 @@ namespace Zarpa.Api.Services
 
                     // Re-sending a known question with content the bank is missing
                     // completes it — this is how explanations/images are added later.
-                    var enriched = false;
-                    if (string.IsNullOrWhiteSpace(existing.Explanation) && !string.IsNullOrWhiteSpace(dto.Explanation))
-                    {
-                        existing.Explanation = ToExplanationHtml(dto.Explanation);
-                        enriched = true;
-                    }
-                    if (string.IsNullOrWhiteSpace(existing.ExplanationImageUrl) && !string.IsNullOrWhiteSpace(dto.ExplanationImageUrl))
-                    {
-                        existing.ExplanationImageUrl = dto.ExplanationImageUrl;
-                        enriched = true;
-                    }
+                    var enriched = Enrich(existing, dto);
                     if (enriched)
                         enrichedExisting++;
 
@@ -104,6 +94,7 @@ namespace Zarpa.Api.Services
                     TopicID = topic.ID,
                     Text = dto.Text.Trim(),
                     ContentHash = hash,
+                    QuestionImageUrl = dto.QuestionImageUrl,
                     ExplanationImageUrl = dto.ExplanationImageUrl,
                     Explanation = ToExplanationHtml(dto.Explanation),
                     SourceExam = dto.SourceExam,
@@ -124,9 +115,32 @@ namespace Zarpa.Api.Services
             return new QuestionImportResultDto(imported, skippedDuplicates, enrichedExisting, duplicates, suspects, errors);
         }
 
+        // Fills the fields the bank is missing from the incoming DTO. Shared with the
+        // exam import so both channels complete questions the same way.
+        internal static bool Enrich(QuestionEntity existing, QuestionImportDto dto)
+        {
+            var enriched = false;
+            if (string.IsNullOrWhiteSpace(existing.Explanation) && !string.IsNullOrWhiteSpace(dto.Explanation))
+            {
+                existing.Explanation = ToExplanationHtml(dto.Explanation);
+                enriched = true;
+            }
+            if (string.IsNullOrWhiteSpace(existing.ExplanationImageUrl) && !string.IsNullOrWhiteSpace(dto.ExplanationImageUrl))
+            {
+                existing.ExplanationImageUrl = dto.ExplanationImageUrl;
+                enriched = true;
+            }
+            if (string.IsNullOrWhiteSpace(existing.QuestionImageUrl) && !string.IsNullOrWhiteSpace(dto.QuestionImageUrl))
+            {
+                existing.QuestionImageUrl = dto.QuestionImageUrl;
+                enriched = true;
+            }
+            return enriched;
+        }
+
         // A repeated question means "this one comes up often" — keep every exam sitting
         // it appeared in, as long as it fits the column.
-        private static void AppendSource(QuestionEntity existing, string? sourceExam)
+        internal static void AppendSource(QuestionEntity existing, string? sourceExam)
         {
             if (string.IsNullOrWhiteSpace(sourceExam))
                 return;
@@ -140,10 +154,10 @@ namespace Zarpa.Api.Services
 
         // Explanations arrive in Markdown (easier to author) but are stored as HTML —
         // the display contract of the app. HTML input passes through unchanged.
-        private static string? ToExplanationHtml(string? explanation) =>
+        internal static string? ToExplanationHtml(string? explanation) =>
             string.IsNullOrWhiteSpace(explanation) ? null : Markdown.ToHtml(explanation).Trim();
 
-        private static string Truncate(string? text) =>
+        internal static string Truncate(string? text) =>
             string.IsNullOrEmpty(text) ? "" : text.Length <= 60 ? text : text[..60] + "…";
     }
 }

@@ -39,6 +39,14 @@ namespace Zarpa.Web.Auth
             NotifyAuthenticationStateChanged(Task.FromResult(BuildState()));
         }
 
+        // Refreshes the stored user (e.g. after email verification) keeping the token.
+        public async Task UpdateUserAsync(LoggedInUser user)
+        {
+            if (Token is null) return;
+
+            await SigninAsync(new AuthResponseDto(user, Token));
+        }
+
         public async Task SignoutAsync()
         {
             (User, Token) = (null, null);

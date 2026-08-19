@@ -19,8 +19,13 @@ namespace Zarpa.Api.Data.Entities
         [Required, MaxLength(64)]
         public string ContentHash { get; set; }
 
-        // Optional figure shown WITH the explanation — exam questions themselves never
-        // include images. Relative path under wwwroot, e.g. "images/questions/x.png".
+        // Optional figure that is part of the STATEMENT (balizamiento/lights figures on
+        // real papers) — shown before answering. Relative path under wwwroot.
+        [MaxLength(500)]
+        public string? QuestionImageUrl { get; set; }
+
+        // Optional figure shown WITH the explanation, only after answering.
+        // Relative path under wwwroot, e.g. "images/questions/x.png".
         [MaxLength(500)]
         public string? ExplanationImageUrl { get; set; }
 

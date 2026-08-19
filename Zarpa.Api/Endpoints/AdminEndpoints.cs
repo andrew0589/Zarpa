@@ -15,6 +15,28 @@ namespace Zarpa.Api.Endpoints
                     TypedResults.Ok(await importService.ImportAsync(questions)))
                 .AllowAnonymous();
 
+            // One full official exam paper (header + questions in sheet order).
+            app.MapPost("/api/admin/exams/import",
+                async (ExamImportDto exam, ExamImportService importService) =>
+                    TypedResults.Ok(await importService.ImportAsync(exam)))
+                .AllowAnonymous();
+
+            // Bulk: an ARRAY of exam papers in one request. Each exam is imported
+            // independently (its own all-or-nothing); one bad paper does not stop
+            // the rest. Results come back in input order, labeled by sourceFile.
+            app.MapPost("/api/admin/exams/import-bulk",
+                async (List<ExamImportDto> exams, ExamImportService importService) =>
+                {
+                    var results = new List<object>();
+                    foreach (var exam in exams)
+                    {
+                        var result = await importService.ImportAsync(exam);
+                        results.Add(new { exam.SourceFile, Result = result });
+                    }
+                    return TypedResults.Ok(results);
+                })
+                .AllowAnonymous();
+
             return app;
         }
     }

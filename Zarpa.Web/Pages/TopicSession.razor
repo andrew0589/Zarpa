@@ -4,7 +4,6 @@
 @inject ILicensesApi LicensesApi
 @inject NavigationManager Navigation
 @inject ApiOptions Api
-@inject IJSRuntime JS
 
 <PageTitle>@Title — Zarpa</PageTitle>
 
@@ -28,7 +27,7 @@ else if (_completed)
         {
             <p class="error" role="alert">@_error</p>
         }
-        <button class="btn-primary" @onclick="RestartTopicAsync">Reiniciar tema</button>
+        <button class="btn-primary" @onclick="() => _showRestartConfirm = true">Reiniciar tema</button>
         <a class="btn-outline-dark btn-link" href="temas">Volver a los temas</a>
     </div>
 }
@@ -98,6 +97,22 @@ else if (_question is not null)
     </div>
 }
 
+@if (_showRestartConfirm)
+{
+    @* Styled replacement for the browser's confirm(): backdrop cancels, the card
+       swallows its clicks. *@
+    <div class="modal-backdrop" @onclick="() => _showRestartConfirm = false">
+        <div class="modal-card" @onclick:stopPropagation>
+            <h2 class="modal-title">Reiniciar tema</h2>
+            <p class="modal-text">Se borrará todo tu historial de este tema y empezarás desde el principio. ¿Quieres continuar?</p>
+            <div class="modal-actions">
+                <button class="btn-outline-dark" @onclick="() => _showRestartConfirm = false">Cancelar</button>
+                <button class="btn-primary" @onclick="RestartTopicAsync">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter] public int Number { get; set; }
 
@@ -119,6 +134,7 @@ else if (_question is not null)
     private long _chosenId;
     private bool _showExplanation;
     private bool _showImageFullscreen;
+    private bool _showRestartConfirm;
     private bool _completed;
     private bool _loaded;
     private bool _loadFailed;
@@ -233,11 +249,10 @@ else if (_question is not null)
 
     // Deletes the user's whole history for this topic on the server, then starts the
     // topic again from question 1 — same behavior as the app's restart button.
+    // Reached only through the styled confirmation modal above.
     private async Task RestartTopicAsync()
     {
-        var confirmed = await JS.InvokeAsync<bool>("confirm",
-            "Se borrará todo tu historial de este tema y empezarás desde el principio. ¿Quieres continuar?");
-        if (!confirmed) return;
+        _showRestartConfirm = false;
 
         try
         {
