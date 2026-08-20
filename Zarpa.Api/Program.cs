@@ -107,9 +107,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi().AllowAnonymous();
     // Interactive API UI at /scalar/v1 — the manual way to call the import endpoint.
     app.MapScalarApiReference().AllowAnonymous();
-    // Content management (question import) exists only on the developer machine.
-    app.MapAdminEndpoints();
 }
+
+// Content management (question/exam import). Reachable in every environment but
+// guarded by the X-Admin-Key header (AdminKeyEndpointFilter), which fails closed
+// when no key is configured.
+app.MapAdminEndpoints();
 
 // Use forwarded headers before other middleware
 app.UseForwardedHeaders();

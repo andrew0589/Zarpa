@@ -2,10 +2,14 @@
 @attribute [Authorize]
 @inject ILicensesApi LicensesApi
 @inject IComunidadesApi ComunidadesApi
+@inject ITopicsApi TopicsApi
+@inject IExamsApi ExamsApi
 @inject WebAuthStateProvider Auth
+@inject NavigationManager Navigation
 
 <PageTitle>Zarpa</PageTitle>
 
+<div class="@(_showDashboard ? "inicio-page" : null)">
 <h1>Hola, @Auth.User?.Name</h1>
 
 @if (!_loaded)
@@ -16,24 +20,85 @@ else if (_selectedLicense is null)
 {
     @* First run: the qualification comes first. *@
     <p class="tagline">Elige tu titulación para empezar a practicar.</p>
-    <LicenseSelector OnSelected="OnLicenseChosen" />
+    <LicenseSelector OnSelected="OnLicenseChosenAsync" />
 }
 else if (!_hasComunidad)
 {
     @* Then the community — it decides which real exams the simulations offer. *@
     <p class="tagline">Elige tu comunidad autónoma para las simulaciones de examen.</p>
-    <ComunidadSelector OnSelected="OnComunidadChosen" />
+    <ComunidadSelector OnSelected="OnComunidadChosenAsync" />
 }
 else
 {
-    @* Free for now — content comes later; navigation lives in the top bar. *@
-    <p class="tagline">Prepárate para tus titulaciones náuticas</p>
+    <p class="tagline">Tu progreso en @_selectedLicense.Code@(_comunidadName is null ? null : $" — {_comunidadName}")</p>
+
+    <div class="inicio-grid">
+        <section class="retro-card inicio-card">
+            <h2 class="retro-title">Práctica por temas</h2>
+
+            <div class="inicio-hero">
+                <span class="inicio-hero-value">@_temasPercent%</span>
+                <span class="inicio-hero-label">aciertos del temario</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width: @(_temasPercent)%"></div></div>
+
+            <ul class="donut-legend inicio-legend">
+                <li><span class="chip chip-ok"></span><span>Aciertos</span><strong>@_temasCorrect</strong></li>
+                <li><span class="chip chip-ko"></span><span>Fallos</span><strong>@_temasFailed</strong></li>
+                <li><span class="chip chip-rest"></span><span>Sin responder</span><strong>@_temasRemaining</strong></li>
+            </ul>
+
+            <p class="stats-summary">
+                Realizadas <strong>@(_temasCorrect + _temasFailed)</strong> de <strong>@_temasTotal</strong> preguntas
+            </p>
+
+            <a class="btn-primary btn-link inicio-cta" href="temas">Ir a Temas</a>
+        </section>
+
+        <section class="retro-card inicio-card">
+            <h2 class="retro-title">Simulación de examen</h2>
+
+            <div class="inicio-hero">
+                <span class="inicio-hero-value">@_examsPassed <span class="inicio-hero-de">de</span> @_examsTotal</span>
+                <span class="inicio-hero-label">exámenes aprobados</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width: @(_examsPercent)%"></div></div>
+
+            <ul class="donut-legend inicio-legend">
+                <li><span class="chip chip-ok"></span><span>Aprobados</span><strong>@_examsPassed</strong></li>
+                <li><span class="chip chip-ko"></span><span>No aptos</span><strong>@_examsFailed</strong></li>
+                <li><span class="chip chip-rest"></span><span>Sin hacer</span><strong>@_examsPending</strong></li>
+            </ul>
+
+            <p class="stats-summary">
+                Exámenes oficiales de <strong>@_selectedLicense.Code</strong>@(_comunidadName is null ? null : $" · {_comunidadName}")
+            </p>
+
+            <a class="btn-primary btn-link inicio-cta" href="examen">Ir a Examen</a>
+        </section>
+    </div>
 }
+</div>
 
 @code {
     private LicenseDto? _selectedLicense;
     private bool _hasComunidad;
+    private string? _comunidadName;
     private bool _loaded;
+
+    private int _temasTotal;
+    private int _temasCorrect;
+    private int _temasFailed;
+    private int _temasRemaining;
+    private int _temasPercent;
+
+    private int _examsTotal;
+    private int _examsPassed;
+    private int _examsFailed;
+    private int _examsPending;
+    private int _examsPercent;
+
+    private bool _showDashboard => _loaded && _selectedLicense is not null && _hasComunidad;
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,6 +109,9 @@ else
             _selectedLicense = licenses.FirstOrDefault(l => l.Id == selection.LicenseId);
 
             _hasComunidad = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId is not null;
+
+            if (_selectedLicense is not null && _hasComunidad)
+                await LoadProgressAsync();
         }
         catch (Exception)
         {
@@ -56,7 +124,42 @@ else
         }
     }
 
-    private void OnLicenseChosen(LicenseDto license) => _selectedLicense = license;
+    private async Task LoadProgressAsync()
+    {
+        // Topic progress is per qualification; the simulation progress additionally
+        // narrows to the account's community — the exams endpoint filters by it
+        // server-side, so this page only aggregates what it gets back.
+        var topicsTask = TopicsApi.GetTopicsAsync(_selectedLicense!.Id);
+        var examsTask = ExamsApi.GetExamsAsync(_selectedLicense.Id);
 
-    private void OnComunidadChosen(ComunidadDto _) => _hasComunidad = true;
+        var topics = (await topicsTask).Topics;
+        _temasTotal = topics.Sum(t => t.QuestionCount);
+        _temasCorrect = topics.Sum(t => t.CorrectCount);
+        _temasFailed = topics.Sum(t => t.FailedCount);
+        _temasRemaining = _temasTotal - _temasCorrect - _temasFailed;
+        _temasPercent = _temasTotal == 0 ? 0 : (int)Math.Round(100.0 * _temasCorrect / _temasTotal);
+
+        var exams = await examsTask;
+        _examsTotal = exams.Count;
+        _examsPassed = exams.Count(e => e.Passed);
+        _examsFailed = exams.Count(e => e.Finished && !e.Passed);
+        _examsPending = _examsTotal - _examsPassed - _examsFailed;
+        _examsPercent = _examsTotal == 0 ? 0 : (int)Math.Round(100.0 * _examsPassed / _examsTotal);
+
+        var comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
+        if (comunidadId is not null)
+            _comunidadName = (await ComunidadesApi.GetComunidadesAsync()).FirstOrDefault(c => c.Id == comunidadId)?.Name;
+    }
+
+    private async Task OnLicenseChosenAsync(LicenseDto license)
+    {
+        _selectedLicense = license;
+        if (_showDashboard) await LoadProgressAsync();
+    }
+
+    private async Task OnComunidadChosenAsync(ComunidadDto _)
+    {
+        _hasComunidad = true;
+        if (_showDashboard) await LoadProgressAsync();
+    }
 }

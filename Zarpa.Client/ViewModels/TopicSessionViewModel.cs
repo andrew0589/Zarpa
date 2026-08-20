@@ -109,8 +109,8 @@ namespace Zarpa.Client.ViewModels
             QuestionText = question.Text;
 
             AnswerOptions.Clear();
-            foreach (var answer in question.Answers)
-                AnswerOptions.Add(new AnswerOptionItem(answer));
+            for (var i = 0; i < question.Answers.Count; i++)
+                AnswerOptions.Add(new AnswerOptionItem(question.Answers[i], (char)('A' + i)));
 
             ProgressText = string.Format(AppResources.QuestionProgressFormat, _answered + 1, _total);
             ShowQuestion = true;
@@ -224,10 +224,12 @@ namespace Zarpa.Client.ViewModels
         private async Task BackToTopicsAsync() => await Shell.Current.GoToAsync("..");
     }
 
-    public partial class AnswerOptionItem(SessionAnswerOptionDto dto) : ObservableObject
+    public partial class AnswerOptionItem(SessionAnswerOptionDto dto, char letter) : ObservableObject
     {
         public long Id { get; } = dto.Id;
-        public string Text { get; } = dto.Text;
+
+        // Lettered like the official paper: "A) Pantoques."
+        public string Text { get; } = $"{letter}) {dto.Text}";
 
         [ObservableProperty] private Color _backgroundColor = Colors.White;
         [ObservableProperty] private Color _borderColor = Color.FromArgb("#D8DEE6");

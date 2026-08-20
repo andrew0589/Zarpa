@@ -41,12 +41,14 @@ else if (_question is not null)
     <div class="question-card">@_question.Text</div>
 
     <div class="answer-list">
-        @foreach (var answer in _question.Answers)
+        @for (var i = 0; i < _question.Answers.Count; i++)
         {
+            var answer = _question.Answers[i];
+            var letter = (char)('A' + i);
             <button class="answer @AnswerClass(answer)" disabled="@(_result is not null)"
                     @onpointerdown="OnAnswerPointerDown"
                     @onclick="e => AnswerIfTapAsync(answer, e)">
-                @answer.Text
+                <span class="answer-letter">@letter)</span>@answer.Text
             </button>
         }
     </div>

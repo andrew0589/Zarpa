@@ -92,7 +92,7 @@ else if (_result is not null)
                     var cls = i == question.CorrectIndex ? "correct"
                         : i == question.ChosenIndex ? "wrong"
                         : null;
-                    <div class="answer review @cls">@question.Answers[i - 1]</div>
+                    <div class="answer review @cls"><span class="answer-letter">@Letter(i))</span>@question.Answers[i - 1]</div>
                 }
             </div>
         </div>
@@ -141,7 +141,7 @@ else if (_session is not null)
             <button class="answer @(_chosen.GetValueOrDefault(question.Id) == choice ? "selected" : null)"
                     @onpointerdown="OnAnswerPointerDown"
                     @onclick="e => SelectAnswerIfTapAsync(question, choice, e)">
-                @question.Answers[choice - 1]
+                <span class="answer-letter">@Letter(choice))</span>@question.Answers[choice - 1]
             </button>
         }
     </div>
@@ -278,6 +278,8 @@ else if (_session is not null)
         }
         StateHasChanged();
     }
+
+    private static char Letter(int index) => (char)('A' + index - 1);
 
     private double _pointerDownY;
 
