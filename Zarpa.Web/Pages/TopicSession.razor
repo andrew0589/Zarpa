@@ -44,7 +44,8 @@ else if (_question is not null)
         @foreach (var answer in _question.Answers)
         {
             <button class="answer @AnswerClass(answer)" disabled="@(_result is not null)"
-                    @onclick="() => AnswerAsync(answer)">
+                    @onpointerdown="OnAnswerPointerDown"
+                    @onclick="e => AnswerIfTapAsync(answer, e)">
                 @answer.Text
             </button>
         }
@@ -214,6 +215,19 @@ else if (_question is not null)
         }
 
         _question = _remaining.Peek();
+    }
+
+    private double _pointerDownY;
+
+    private void OnAnswerPointerDown(PointerEventArgs e) => _pointerDownY = e.ClientY;
+
+    // A finger that moved vertically between touch and release was SCROLLING —
+    // on phones that must not answer the question it happened to land on.
+    private async Task AnswerIfTapAsync(SessionAnswerOptionDto answer, MouseEventArgs e)
+    {
+        if (Math.Abs(e.ClientY - _pointerDownY) > 12) return;
+
+        await AnswerAsync(answer);
     }
 
     private async Task AnswerAsync(SessionAnswerOptionDto answer)

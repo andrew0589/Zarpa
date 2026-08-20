@@ -12,7 +12,15 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // wwwroot/appsettings.json — the production build ships the real API domain there.
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:7136/";
+// Without a configured value, the API is assumed on the HOST THE PAGE CAME FROM,
+// port 7136 — so localhost works on the dev PC and the LAN IP works from phones,
+// with no config changes between the two.
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
+{
+    var pageHost = new Uri(builder.HostEnvironment.BaseAddress).Host;
+    apiBaseUrl = $"http://{pageHost}:7136/";
+}
 
 builder.Services.AddSingleton(new ApiOptions(apiBaseUrl));
 

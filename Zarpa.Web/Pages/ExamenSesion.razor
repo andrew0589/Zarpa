@@ -7,6 +7,7 @@
 
 <PageTitle>@Title — Zarpa</PageTitle>
 
+<div class="examen-page">
 @if (!_loaded)
 {
     <p class="page-loading">Cargando…</p>
@@ -138,7 +139,8 @@ else if (_session is not null)
         {
             var choice = i;
             <button class="answer @(_chosen.GetValueOrDefault(question.Id) == choice ? "selected" : null)"
-                    @onclick="() => SelectAnswerAsync(question, choice)">
+                    @onpointerdown="OnAnswerPointerDown"
+                    @onclick="e => SelectAnswerIfTapAsync(question, choice, e)">
                 @question.Answers[choice - 1]
             </button>
         }
@@ -153,6 +155,27 @@ else if (_session is not null)
         <button class="btn-outline-dark" disabled="@(_index == 0)" @onclick="() => _index--">← Anterior</button>
         <button class="btn-outline-dark" disabled="@(_index == _questions.Count - 1)" @onclick="() => _index++">Siguiente →</button>
         <button class="btn-primary" @onclick="() => _showFinishConfirm = true">Finalizar examen</button>
+    </div>
+}
+
+@if (_loaded && !_loadFailed && _result is null && _session is not null)
+{
+    @* While the exam runs, leaving needs a confirmation: internal navigation opens
+       our modal, closing the tab gets the browser's native prompt. *@
+    <NavigationLock ConfirmExternalNavigation="true" OnBeforeInternalNavigation="OnBeforeNavigationAsync" />
+}
+
+@if (_showExitConfirm)
+{
+    <div class="modal-backdrop" @onclick="() => _showExitConfirm = false">
+        <div class="modal-card" @onclick:stopPropagation>
+            <h2 class="modal-title">Salir del examen</h2>
+            <p class="modal-text">¿Seguro que quieres salir? Este intento se borrará y no quedará guardado.</p>
+            <div class="modal-actions">
+                <button class="btn-outline-dark" @onclick="() => _showExitConfirm = false">Continuar el examen</button>
+                <button class="btn-primary" @onclick="ConfirmExitAsync">Salir y borrar</button>
+            </div>
+        </div>
     </div>
 }
 
@@ -173,6 +196,7 @@ else if (_session is not null)
         </div>
     </div>
 }
+</div>
 
 @code {
     [Parameter] public long ExamId { get; set; }
@@ -190,6 +214,9 @@ else if (_session is not null)
     private System.Timers.Timer? _timer;
     private ExamSessionResultDto? _result;
     private bool _showFinishConfirm;
+    private bool _showExitConfirm;
+    private bool _exitConfirmed;
+    private string? _pendingExitUrl;
     private bool _showAllResults;
     private bool _loaded;
     private bool _loadFailed;
@@ -252,6 +279,19 @@ else if (_session is not null)
         StateHasChanged();
     }
 
+    private double _pointerDownY;
+
+    private void OnAnswerPointerDown(PointerEventArgs e) => _pointerDownY = e.ClientY;
+
+    // A finger that moved vertically between touch and release was SCROLLING —
+    // on phones that must not select the answer it happened to land on.
+    private async Task SelectAnswerIfTapAsync(ExamSessionQuestionDto question, int choice, MouseEventArgs e)
+    {
+        if (Math.Abs(e.ClientY - _pointerDownY) > 12) return;
+
+        await SelectAnswerAsync(question, choice);
+    }
+
     private async Task SelectAnswerAsync(ExamSessionQuestionDto question, int choice)
     {
         var previous = _chosen.GetValueOrDefault(question.Id);
@@ -271,11 +311,40 @@ else if (_session is not null)
         }
     }
 
+    private void OnBeforeNavigationAsync(LocationChangingContext context)
+    {
+        if (_exitConfirmed || _result is not null) return;
+
+        // Hold the navigation until the user decides in our modal.
+        context.PreventNavigation();
+        _pendingExitUrl = context.TargetLocation;
+        _showExitConfirm = true;
+    }
+
+    private async Task ConfirmExitAsync()
+    {
+        _showExitConfirm = false;
+        _exitConfirmed = true;
+        _timer?.Stop();
+
+        try
+        {
+            await ExamsApi.AbandonExamSessionAsync(_session!.SessionId);
+        }
+        catch (Exception)
+        {
+            // Best effort — an unfinished leftover gets cleaned up on the next start.
+        }
+
+        Navigation.NavigateTo(_pendingExitUrl ?? "examen");
+    }
+
     private async Task FinishAsync()
     {
         if (_finishing || _session is null) return;
         _finishing = true;
         _showFinishConfirm = false;
+        _showExitConfirm = false;
         _timer?.Stop();
 
         try

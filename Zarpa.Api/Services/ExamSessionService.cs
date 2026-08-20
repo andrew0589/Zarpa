@@ -30,16 +30,16 @@ namespace Zarpa.Api.Services
 
             var session = await _repository.FindOpenSessionAsync(userId, examId);
 
-            // An abandoned attempt whose clock ran out is graded as it stands —
-            // that is what happens at a real sitting when time is up.
+            // A running, non-expired attempt is resumed; anything else (an expired
+            // abandoned attempt, or previous finished results) is DELETED before the
+            // fresh start — by design only the latest attempt of a paper is kept.
             if (session is not null && IsExpired(session, exam.License.ExamMinutes, grace: TimeSpan.Zero))
-            {
-                await GradeAndCloseAsync(session, exam, questions);
                 session = null;
-            }
 
             if (session is null)
             {
+                await _repository.DeleteSessionsForExamAsync(userId, examId);
+
                 session = new TestSessionEntity
                 {
                     UserID = userId,
@@ -127,6 +127,18 @@ namespace Zarpa.Api.Services
                 await GradeAndCloseAsync(session, exam, questions);
 
             return await BuildResultAsync(session, exam, questions);
+        }
+
+        // The user walked out mid-exam and confirmed it: the attempt is discarded
+        // entirely (answers cascade) instead of being graded.
+        public async Task<bool> AbandonAsync(long userId, long sessionId)
+        {
+            var session = await _repository.FindSessionAsync(sessionId, userId);
+            if (session is null || session.ExamID is null || session.FinishedAt is not null)
+                return false;
+
+            await _repository.DeleteSessionAsync(session);
+            return true;
         }
 
         // Review of an already-graded attempt (page refreshes must not lose the report).

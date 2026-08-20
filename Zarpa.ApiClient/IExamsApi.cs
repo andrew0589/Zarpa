@@ -21,5 +21,8 @@ namespace Zarpa.ApiClient
 
         [Get("/api/exams/sessions/{sessionId}/result")]
         Task<ExamSessionResultDto> GetExamSessionResultAsync(long sessionId);
+
+        [Delete("/api/exams/sessions/{sessionId}")]
+        Task AbandonExamSessionAsync(long sessionId);
     }
 }

@@ -72,6 +72,20 @@ namespace Zarpa.Api.Data.Repositories
             _context.TestSessions.Add(session);
         }
 
+        public async Task DeleteSessionsForExamAsync(long userId, long examId)
+        {
+            // ExamSessionAnswers cascade at the database level.
+            await _context.TestSessions
+                .Where(s => s.UserID == userId && s.ExamID == examId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteSessionAsync(TestSessionEntity session)
+        {
+            _context.TestSessions.Remove(session);
+            await _context.SaveChangesAsync();
+        }
+
         public void AddAnswer(ExamSessionAnswerEntity answer)
         {
             _context.ExamSessionAnswers.Add(answer);

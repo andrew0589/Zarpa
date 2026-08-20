@@ -8,13 +8,22 @@
             <a class="brand" href="/">Zarpa</a>
             <AuthorizeView>
                 <Authorized>
-                    <nav class="topbar-nav">
+                    <button class="menu-toggle" aria-label="Menú" @onclick="() => _menuOpen = !_menuOpen">☰</button>
+
+                    @* Clicking any item closes the mobile dropdown; on desktop the
+                       same nav renders inline and the handler is harmless. *@
+                    <nav class="topbar-nav @(_menuOpen ? "open" : null)" @onclick="() => _menuOpen = false">
                         <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
                         <NavLink href="temas">Temas</NavLink>
                         <NavLink href="examen">Examen</NavLink>
                         <NavLink href="estudiar">Estudiar</NavLink>
                         <NavLink href="perfil">Perfil</NavLink>
+                        <div class="nav-user-mobile">
+                            <span class="user-name">@context.User.Identity?.Name</span>
+                            <button class="btn-outline" @onclick="SignoutAsync">Cerrar sesión</button>
+                        </div>
                     </nav>
+
                     <div class="topbar-user">
                         <span class="user-name">@context.User.Identity?.Name</span>
                         <button class="btn-outline" @onclick="SignoutAsync">Cerrar sesión</button>
@@ -30,6 +39,8 @@
 </div>
 
 @code {
+    private bool _menuOpen;
+
     private async Task SignoutAsync()
     {
         await Auth.SignoutAsync();

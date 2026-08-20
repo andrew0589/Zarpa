@@ -27,6 +27,14 @@ namespace Zarpa.Api.Data.Repositories
 
         void AddSession(TestSessionEntity session);
 
+        // Deletes ALL of the user's sessions for this paper (answers cascade).
+        // Called when a fresh attempt starts: the exam list mirrors only the
+        // latest attempt, older data is deliberately cleaned up.
+        Task DeleteSessionsForExamAsync(long userId, long examId);
+
+        // Deletes one abandoned session (answers cascade).
+        Task DeleteSessionAsync(TestSessionEntity session);
+
         void AddAnswer(ExamSessionAnswerEntity answer);
 
         Task SaveChangesAsync();

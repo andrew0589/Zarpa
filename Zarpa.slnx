@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Zarpa.Api.Tests/Zarpa.Api.Tests.csproj" />
   <Project Path="Zarpa.Api/Zarpa.Api.csproj" />
   <Project Path="Zarpa.ApiClient/Zarpa.ApiClient.csproj" />
   <Project Path="Zarpa.Client/Zarpa.Client.csproj">

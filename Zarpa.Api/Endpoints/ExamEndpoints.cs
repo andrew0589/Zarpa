@@ -37,6 +37,14 @@ namespace Zarpa.Api.Endpoints
                         ? Results.Ok(result)
                         : Results.BadRequest());
 
+            // Confirmed walk-out mid-exam: the unfinished attempt is discarded
+            // entirely (answers cascade). Finished sessions cannot be abandoned.
+            app.MapDelete("/api/exams/sessions/{sessionId:long}",
+                async (long sessionId, ClaimsPrincipal user, ExamSessionService sessionService) =>
+                    await sessionService.AbandonAsync(user.GetUserId(), sessionId)
+                        ? Results.Ok()
+                        : Results.BadRequest());
+
             // Re-reads the report of an already-graded attempt.
             app.MapGet("/api/exams/sessions/{sessionId:long}/result",
                 async (long sessionId, ClaimsPrincipal user, ExamSessionService sessionService) =>

@@ -102,6 +102,64 @@ h1 {
     flex-shrink: 0;
 }
 
+.menu-toggle {
+    display: none;
+    margin-left: auto;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.nav-user-mobile {
+    display: none;
+}
+
+/* Mobile: nav collapses behind the hamburger; user block moves into the dropdown. */
+@media (max-width: 860px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .topbar-user {
+        display: none;
+    }
+
+    .topbar-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0.15rem;
+        background: var(--primary);
+        padding: 0.5rem 1.25rem 1rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
+
+        .topbar-nav.open {
+            display: flex;
+        }
+
+        .topbar-nav a {
+            padding: 0.7rem 0.75rem;
+        }
+
+    .nav-user-mobile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 0.5rem;
+        padding-top: 0.8rem;
+    }
+}
+
 .user-name {
     font-size: 0.9rem;
 }
@@ -744,6 +802,7 @@ h1 {
     padding: 0.85rem 1rem;
     cursor: pointer;
     transition: border-color 0.15s ease;
+    touch-action: manipulation;
 }
 
     .answer:hover:not(:disabled) {
@@ -843,6 +902,14 @@ h1 {
     }
 
 /* Real-exam picker (Examen) */
+.examen-page {
+    /* Wider than the 560px content column — centered on the viewport. */
+    width: min(880px, calc(100vw - 2.5rem));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .year-header {
     font-size: 1.05rem;
     font-weight: 700;
@@ -858,11 +925,12 @@ h1 {
 }
 
 .exam-card {
-    display: flex;
+    /* Fixed columns: month | model | status | meta — the chips line up
+       vertically across rows, independent of the title's length. */
+    display: grid;
+    grid-template-columns: 11rem minmax(8.5rem, auto) minmax(6rem, auto) 1fr;
     align-items: center;
-    justify-content: space-between;
     gap: 0.75rem;
-    flex-wrap: wrap;
     background: white;
     border: 1.5px solid var(--card-border);
     border-radius: 12px;
@@ -877,6 +945,21 @@ h1 {
     .exam-card:hover {
         border-color: var(--accent);
     }
+
+.exam-model-cell,
+.exam-status {
+    justify-self: start;
+}
+
+@media (max-width: 680px) {
+    .exam-card {
+        grid-template-columns: 1fr auto;
+    }
+
+    .exam-meta {
+        grid-column: 1 / -1;
+    }
+}
 
 .status-chip {
     font-size: 0.75rem;
@@ -923,6 +1006,8 @@ h1 {
 .exam-meta {
     color: var(--gray-400);
     font-size: 0.85rem;
+    justify-self: end;
+    text-align: right;
 }
 
 /* Exam simulation session */
