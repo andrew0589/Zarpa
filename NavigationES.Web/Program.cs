@@ -1,0 +1,69 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Refit;
+using NavigationES.ApiClient;
+using NavigationES.Web;
+using NavigationES.Web.Auth;
+using NavigationES.Web.Utilities;
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// wwwroot/appsettings.json — the production build ships the real API domain there.
+// Without a configured value, the API is assumed on the HOST THE PAGE CAME FROM,
+// port 7136 — so localhost works on the dev PC and the LAN IP works from phones,
+// with no config changes between the two.
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
+{
+    var pageHost = new Uri(builder.HostEnvironment.BaseAddress).Host;
+    apiBaseUrl = $"http://{pageHost}:7136/";
+}
+
+builder.Services.AddSingleton(new ApiOptions(apiBaseUrl));
+
+builder.Services.AddAuthorizationCore();
+// One instance behind both faces: components inject WebAuthStateProvider to
+// sign in/out, Blazor's [Authorize] machinery sees it as AuthenticationStateProvider.
+builder.Services.AddSingleton<WebAuthStateProvider>();
+builder.Services.AddSingleton<AuthenticationStateProvider>(sp => sp.GetRequiredService<WebAuthStateProvider>());
+builder.Services.AddTransient<AuthHeaderHandler>();
+
+ConfigureRefit(builder.Services, apiBaseUrl);
+
+await builder.Build().RunAsync();
+
+static void ConfigureRefit(IServiceCollection services, string apiBaseUrl)
+{
+    // Same registration style as the MAUI head (MauiProgram.ConfigureRefit): the
+    // source-generated clients from NavigationES.ApiClient, with the bearer handler on top.
+    var refitSettings = new RefitSettings();
+
+    services.AddRefitGeneratedClient<IAuthApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    services.AddRefitGeneratedClient<ITopicsApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    services.AddRefitGeneratedClient<ILicensesApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    services.AddRefitGeneratedClient<IComunidadesApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    services.AddRefitGeneratedClient<ISessionsApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    services.AddRefitGeneratedClient<IExamsApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+    void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(apiBaseUrl);
+}

@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="NavigationES.Api.Tests/NavigationES.Api.Tests.csproj" />
+  <Project Path="NavigationES.Api/NavigationES.Api.csproj" />
+  <Project Path="NavigationES.ApiClient/NavigationES.ApiClient.csproj" />
+  <Project Path="NavigationES.Client/NavigationES.Client.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="NavigationES.Shared/NavigationES.Shared.csproj" />
+  <Project Path="NavigationES.Web/NavigationES.Web.csproj" />
+</Solution>

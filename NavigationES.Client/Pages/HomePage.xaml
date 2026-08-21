@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NavigationES.Client.Pages.HomePage"
+             xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             Title="{x:Static lang:AppResources.HomePage}"
+             Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Spacing="20"
+                         Padding="30"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center">
+        <Label Text="NavigationES"
+               HorizontalOptions="Center"
+               FontSize="52"
+               TextColor="{StaticResource Primary}"
+               FontAttributes="Bold"/>
+        <Label Text="{x:Static lang:AppResources.Welcome}"
+               HorizontalOptions="Center"
+               FontSize="20"
+               FontAttributes="Bold"/>
+        <Button Text="{x:Static lang:AppResources.Signout}"
+                Clicked="Signout_Clicked"
+                Margin="0,30,0,0"/>
+    </VerticalStackLayout>
+</ContentPage>

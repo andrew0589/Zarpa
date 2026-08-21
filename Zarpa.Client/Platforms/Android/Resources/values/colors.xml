@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Zarpa palette (keep in sync with Resources\Styles\Colors.xaml): the native theme
-         uses these for the caret, text-selection handles and widget tints. -->
-    <color name="colorPrimary">#0B3D5C</color>
-    <color name="colorPrimaryDark">#082C43</color>
-    <color name="colorAccent">#2AA5A0</color>
-</resources>

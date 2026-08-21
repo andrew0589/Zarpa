@@ -1,0 +1,364 @@
+@page "/examen/{ExamId:long}"
+@attribute [Authorize]
+@implements IDisposable
+@inject IExamsApi ExamsApi
+@inject ApiOptions Api
+@inject NavigationManager Navigation
+
+<PageTitle>@Title — NavigationES</PageTitle>
+
+<div class="examen-page">
+@if (!_loaded)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else if (_loadFailed)
+{
+    <a class="back-link" href="examen">←&nbsp;Volver a los exámenes</a>
+    <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+}
+else if (_result is not null)
+{
+    <a class="back-link" href="examen">←&nbsp;Volver a los exámenes</a>
+    <h1>@Title</h1>
+
+    <div class="verdict @(_result.Passed ? "apto" : "noapto")">
+        @(_result.Passed ? "APTO" : "NO APTO")
+    </div>
+
+    <div class="result-stats">
+        <div class="stat"><span class="stat-value ok">@_result.Correct</span><span class="stat-label">Aciertos</span></div>
+        <div class="stat"><span class="stat-value ko">@_result.Wrong</span><span class="stat-label">Fallos</span></div>
+        <div class="stat"><span class="stat-value">@_result.Unanswered</span><span class="stat-label">Sin responder</span></div>
+        <div class="stat">
+            <span class="stat-value @(_result.MaxTotalErrors is int max && _result.TotalErrors > max ? "ko" : null)">
+                @_result.TotalErrors@(_result.MaxTotalErrors is int m ? $" / {m}" : null)
+            </span>
+            <span class="stat-label">Errores totales</span>
+        </div>
+    </div>
+
+    <h2 class="section-heading">Errores por tema</h2>
+    <p class="topic-note">
+        Solo Balizamiento, RIPA y Carta de navegación tienen límite propio de errores —
+        en el resto, los errores cuentan únicamente para el total.
+    </p>
+    <div class="topic-result-list">
+        @foreach (var topic in _result.Topics)
+        {
+            var state = !topic.WithinLimit ? "exceeded"
+                : topic.MaxErrors is int lim && topic.Errors == lim ? "atlimit"
+                : null;
+            <div class="topic-result @state">
+                <span>@topic.TopicNumber. @topic.TopicName</span>
+                <span>
+                    @(topic.MaxErrors is int topicMax
+                        ? $"{topic.Errors} de {topicMax} errores permitidos"
+                        : topic.Errors == 1 ? "1 error" : $"{topic.Errors} errores")
+                </span>
+            </div>
+        }
+    </div>
+
+    List<ExamResultQuestionDto> reviewQuestions = _showAllResults
+        ? _result.Questions
+        : [.. _result.Questions.Where(q => q.ChosenIndex != q.CorrectIndex)];
+
+    <div class="review-header">
+        <h2 class="section-heading">@(_showAllResults ? "Todas las preguntas" : "Preguntas falladas")</h2>
+        <button class="btn-explanation" @onclick="() => _showAllResults = !_showAllResults">
+            @(_showAllResults ? "Ver solo los errores" : "Ver todas las preguntas")
+        </button>
+    </div>
+
+    @if (reviewQuestions.Count == 0)
+    {
+        <p class="page-loading">¡Ningún error!</p>
+    }
+    @foreach (var question in reviewQuestions)
+    {
+        <div class="review-question">
+            <div class="review-title">
+                <span class="topic-num">@question.Position</span>
+                <span>@question.Text</span>
+            </div>
+            @if (question.ChosenIndex is null)
+            {
+                <p class="review-unanswered">Sin responder</p>
+            }
+            <div class="answer-list">
+                @for (var i = 1; i <= question.Answers.Count; i++)
+                {
+                    var cls = i == question.CorrectIndex ? "correct"
+                        : i == question.ChosenIndex ? "wrong"
+                        : null;
+                    <div class="answer review @cls"><span class="answer-letter">@Letter(i))</span>@question.Answers[i - 1]</div>
+                }
+            </div>
+        </div>
+    }
+
+    <a class="btn-primary btn-link btn-next" href="examen">Volver a los exámenes</a>
+}
+else if (_session is not null)
+{
+    var question = _questions[_index];
+    <div class="exam-topbar">
+        <a class="back-link" href="examen">←&nbsp;Salir</a>
+        <span class="exam-topbar-title">@Title</span>
+        @if (_remaining is not null)
+        {
+            <span class="exam-timer @(_remaining < 300 ? "low" : null)">@TimerText</span>
+        }
+    </div>
+
+    <div class="qnav">
+        @for (var i = 0; i < _questions.Count; i++)
+        {
+            var idx = i;
+            <button class="qnav-btn @(idx == _index ? "current" : null) @(_chosen.GetValueOrDefault(_questions[idx].Id) is not null ? "answered" : null)"
+                    @onclick="() => _index = idx">
+                @_questions[idx].Position
+            </button>
+        }
+    </div>
+
+    <div class="question-card">
+        <div class="session-progress progress-header">
+            <span>Pregunta @question.Position de @_questions.Count</span>
+        </div>
+        @question.Text
+        @if (question.QuestionImageUrl is not null)
+        {
+            <img class="question-img" src="@ImageUrl(question.QuestionImageUrl)" alt="Figura" />
+        }
+    </div>
+
+    <div class="answer-list">
+        @for (var i = 1; i <= question.Answers.Count; i++)
+        {
+            var choice = i;
+            <button class="answer @(_chosen.GetValueOrDefault(question.Id) == choice ? "selected" : null)"
+                    @onpointerdown="OnAnswerPointerDown"
+                    @onclick="e => SelectAnswerIfTapAsync(question, choice, e)">
+                <span class="answer-letter">@Letter(choice))</span>@question.Answers[choice - 1]
+            </button>
+        }
+    </div>
+
+    @if (_error is not null)
+    {
+        <p class="error" role="alert">@_error</p>
+    }
+
+    <div class="exam-controls">
+        <button class="btn-outline-dark" disabled="@(_index == 0)" @onclick="() => _index--">← Anterior</button>
+        <button class="btn-outline-dark" disabled="@(_index == _questions.Count - 1)" @onclick="() => _index++">Siguiente →</button>
+        <button class="btn-primary" @onclick="() => _showFinishConfirm = true">Finalizar examen</button>
+    </div>
+}
+
+@if (_loaded && !_loadFailed && _result is null && _session is not null)
+{
+    @* While the exam runs, leaving needs a confirmation: internal navigation opens
+       our modal, closing the tab gets the browser's native prompt. *@
+    <NavigationLock ConfirmExternalNavigation="true" OnBeforeInternalNavigation="OnBeforeNavigationAsync" />
+}
+
+@if (_showExitConfirm)
+{
+    <div class="modal-backdrop" @onclick="() => _showExitConfirm = false">
+        <div class="modal-card" @onclick:stopPropagation>
+            <h2 class="modal-title">Salir del examen</h2>
+            <p class="modal-text">¿Seguro que quieres salir? Este intento se borrará y no quedará guardado.</p>
+            <div class="modal-actions">
+                <button class="btn-outline-dark" @onclick="() => _showExitConfirm = false">Continuar el examen</button>
+                <button class="btn-primary" @onclick="ConfirmExitAsync">Salir y borrar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_showFinishConfirm)
+{
+    <div class="modal-backdrop" @onclick="() => _showFinishConfirm = false">
+        <div class="modal-card" @onclick:stopPropagation>
+            <h2 class="modal-title">Finalizar examen</h2>
+            <p class="modal-text">
+                @(UnansweredCount > 0
+                    ? $"Tienes {UnansweredCount} preguntas sin responder — contarán como errores. ¿Quieres entregar el examen?"
+                    : "¿Quieres entregar el examen y ver la corrección?")
+            </p>
+            <div class="modal-actions">
+                <button class="btn-outline-dark" @onclick="() => _showFinishConfirm = false">Cancelar</button>
+                <button class="btn-primary" @onclick="FinishAsync">Entregar</button>
+            </div>
+        </div>
+    </div>
+}
+</div>
+
+@code {
+    [Parameter] public long ExamId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "titulo")]
+    public string? Titulo { get; set; }
+
+    private string Title => Titulo ?? "Simulación de examen";
+
+    private StartExamSessionDto? _session;
+    private List<ExamSessionQuestionDto> _questions = [];
+    private readonly Dictionary<long, int?> _chosen = [];
+    private int _index;
+    private int? _remaining;
+    private System.Timers.Timer? _timer;
+    private ExamSessionResultDto? _result;
+    private bool _showFinishConfirm;
+    private bool _showExitConfirm;
+    private bool _exitConfirmed;
+    private string? _pendingExitUrl;
+    private bool _showAllResults;
+    private bool _loaded;
+    private bool _loadFailed;
+    private bool _finishing;
+    private string? _error;
+
+    private int UnansweredCount => _questions.Count(q => _chosen.GetValueOrDefault(q.Id) is null);
+
+    // Above one hour the hours must show — mm:ss alone would render 90 minutes
+    // as "30:00" (the hour gets silently dropped).
+    private string TimerText
+    {
+        get
+        {
+            var time = TimeSpan.FromSeconds(_remaining ?? 0);
+            return time.TotalHours >= 1 ? time.ToString(@"h\:mm\:ss") : time.ToString(@"mm\:ss");
+        }
+    }
+
+    private string ImageUrl(string url) =>
+        Uri.IsWellFormedUriString(url, UriKind.Absolute) ? url : Api.Url(url);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _session = await ExamsApi.StartExamSessionAsync(ExamId);
+            _questions = _session.Questions;
+            foreach (var question in _questions)
+                _chosen[question.Id] = question.ChosenIndex;
+
+            _remaining = _session.RemainingSeconds;
+            if (_remaining is not null)
+            {
+                _timer = new System.Timers.Timer(1000);
+                _timer.Elapsed += (_, _) => _ = InvokeAsync(TickAsync);
+                _timer.Start();
+            }
+        }
+        catch (Exception)
+        {
+            _loadFailed = true;
+        }
+        finally
+        {
+            _loaded = true;
+        }
+    }
+
+    private async Task TickAsync()
+    {
+        if (_remaining is null || _result is not null) return;
+
+        _remaining = Math.Max(0, _remaining.Value - 1);
+        if (_remaining == 0)
+        {
+            // Time is up — the paper is handed in as it stands, like the real thing.
+            await FinishAsync();
+        }
+        StateHasChanged();
+    }
+
+    private static char Letter(int index) => (char)('A' + index - 1);
+
+    private double _pointerDownY;
+
+    private void OnAnswerPointerDown(PointerEventArgs e) => _pointerDownY = e.ClientY;
+
+    // A finger that moved vertically between touch and release was SCROLLING —
+    // on phones that must not select the answer it happened to land on.
+    private async Task SelectAnswerIfTapAsync(ExamSessionQuestionDto question, int choice, MouseEventArgs e)
+    {
+        if (Math.Abs(e.ClientY - _pointerDownY) > 12) return;
+
+        await SelectAnswerAsync(question, choice);
+    }
+
+    private async Task SelectAnswerAsync(ExamSessionQuestionDto question, int choice)
+    {
+        var previous = _chosen.GetValueOrDefault(question.Id);
+        if (previous == choice) return;
+
+        _chosen[question.Id] = choice;
+        _error = null;
+        try
+        {
+            await ExamsApi.SubmitExamAnswerAsync(_session!.SessionId, new SubmitExamAnswerRequestDto(question.Id, choice));
+        }
+        catch (Exception)
+        {
+            // The answer did not reach the server — undo so the sheet stays honest.
+            _chosen[question.Id] = previous;
+            _error = "No se pudo guardar la respuesta. Inténtalo de nuevo.";
+        }
+    }
+
+    private void OnBeforeNavigationAsync(LocationChangingContext context)
+    {
+        if (_exitConfirmed || _result is not null) return;
+
+        // Hold the navigation until the user decides in our modal.
+        context.PreventNavigation();
+        _pendingExitUrl = context.TargetLocation;
+        _showExitConfirm = true;
+    }
+
+    private async Task ConfirmExitAsync()
+    {
+        _showExitConfirm = false;
+        _exitConfirmed = true;
+        _timer?.Stop();
+
+        try
+        {
+            await ExamsApi.AbandonExamSessionAsync(_session!.SessionId);
+        }
+        catch (Exception)
+        {
+            // Best effort — an unfinished leftover gets cleaned up on the next start.
+        }
+
+        Navigation.NavigateTo(_pendingExitUrl ?? "examen");
+    }
+
+    private async Task FinishAsync()
+    {
+        if (_finishing || _session is null) return;
+        _finishing = true;
+        _showFinishConfirm = false;
+        _showExitConfirm = false;
+        _timer?.Stop();
+
+        try
+        {
+            _result = await ExamsApi.FinishExamSessionAsync(_session.SessionId);
+        }
+        catch (Exception)
+        {
+            _error = "Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.";
+            _finishing = false;
+        }
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

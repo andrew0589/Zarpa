@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/appicon.appiconset</string>
+	<!-- Callback scheme for WebAuthenticator (social login): the API redirects to
+	     navigationes://auth-callback at the end of the OAuth flow. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Social Login Callback</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>navigationes</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Required since iOS 14: without this key, iOS silently blocks connections to LAN IPs
+	     (e.g. the dev API) instead of prompting the user - it never shows as a permission error,
+	     just as a failed/timed-out request. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>NavigationES connects to the local development API server while testing on your network.</string>
+	<!-- Allows plain-HTTP calls to the dev API on the local network (see DevelopmentEnvironmentService.PhysicalDeviceUrl).
+	     NSAllowsLocalNetworking only exempts loopback/.local hosts, not LAN IPs, so the dev-machine IP
+	     needs its own NSExceptionDomains entry (mirrors Android's network_security_config.xml list). -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>192.168.1.136</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>

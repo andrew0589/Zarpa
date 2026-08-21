@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:controls="clr-namespace:NavigationES.Client.Controls"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
+             x:Class="NavigationES.Client.Pages.ExplanationPage"
+             Title="{x:Static lang:AppResources.ExplanationLabel}"
+             x:DataType="vm:ExplanationViewModel"
+             BackgroundColor="#F2F4F8">
+
+    <Grid RowDefinitions="Auto,*"
+          Padding="16,20"
+          RowSpacing="16"
+          MaximumWidthRequest="500">
+
+        <!-- Figure: pinch, double-tap and pan to zoom. Clipped so the
+             scaled image stays inside its card. -->
+        <Border Grid.Row="0"
+                IsVisible="{Binding HasImage}"
+                BackgroundColor="White"
+                Stroke="Transparent"
+                StrokeShape="RoundRectangle 16"
+                Padding="0">
+            <Border.Shadow>
+                <Shadow Brush="#14102A43" Offset="0,4" Radius="10" />
+            </Border.Shadow>
+            <controls:PinchZoomView HeightRequest="320" IsClippedToBounds="True">
+                <Image Source="{Binding ImageUrl}"
+                       Aspect="AspectFit" />
+            </controls:PinchZoomView>
+        </Border>
+
+        <ScrollView Grid.Row="1" IsVisible="{Binding HasText}">
+            <Border BackgroundColor="White"
+                    Stroke="Transparent"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="18,16">
+                <Border.Shadow>
+                    <Shadow Brush="#14102A43" Offset="0,4" Radius="10" />
+                </Border.Shadow>
+                <Label Text="{Binding ExplanationText}"
+                       TextType="Html"
+                       TextColor="{StaticResource Gray600}"
+                       FontSize="15" />
+            </Border>
+        </ScrollView>
+    </Grid>
+</ContentPage>

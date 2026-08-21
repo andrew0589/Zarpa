@@ -1,0 +1,50 @@
+@page "/perfil"
+@attribute [Authorize]
+@inject WebAuthStateProvider Auth
+
+<PageTitle>Perfil — NavigationES</PageTitle>
+
+<div class="perfil-grid">
+    <div class="perfil-left">
+        <section class="retro-card">
+            <h2 class="retro-title">Tu titulación</h2>
+            <LicenseSelector />
+        </section>
+
+        <section class="retro-card">
+            <h2 class="retro-title">Tu comunidad autónoma</h2>
+            <ComunidadSelector />
+        </section>
+    </div>
+
+    <section class="retro-card">
+        <h2 class="retro-title">Datos personales</h2>
+
+        <div class="retro-avatar">@Initial</div>
+
+        <dl class="datos-list">
+            <div class="datos-row">
+                <dt>Nombre</dt>
+                <dd>@Auth.User?.Name</dd>
+            </div>
+            <div class="datos-row">
+                <dt>Correo</dt>
+                <dd>@Auth.User?.Email</dd>
+            </div>
+        </dl>
+
+        @if (Auth.User?.IsEmailVerified == true)
+        {
+            <span class="retro-tag ok">✓ Correo verificado</span>
+        }
+        else
+        {
+            <span class="retro-tag warn">Correo sin verificar</span>
+        }
+    </section>
+</div>
+
+@code {
+    private string Initial =>
+        string.IsNullOrWhiteSpace(Auth.User?.Name) ? "?" : Auth.User.Name.Trim()[..1].ToUpperInvariant();
+}

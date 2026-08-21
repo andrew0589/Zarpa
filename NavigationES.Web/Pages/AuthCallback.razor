@@ -1,0 +1,56 @@
+@page "/auth-callback"
+@inject WebAuthStateProvider Auth
+@inject NavigationManager Navigation
+
+<PageTitle>Iniciando sesión — NavigationES</PageTitle>
+
+@if (_error is null)
+{
+    <p class="page-loading">Iniciando sesión…</p>
+}
+else
+{
+    <div class="auth-wrap">
+        <div class="auth-card">
+            <p class="error" role="alert">@_error</p>
+            <a class="btn-primary btn-link" href="signin">Volver a iniciar sesión</a>
+        </div>
+    </div>
+}
+
+@code {
+    private string? _error;
+
+    // The API's social callback lands here with the result in the URL FRAGMENT
+    // (#token=…&userId=… or #error=…) — see AuthEndpoints.SuccessRedirect.
+    protected override async Task OnInitializedAsync()
+    {
+        var fragment = new Uri(Navigation.Uri).Fragment.TrimStart('#');
+        var values = System.Web.HttpUtility.ParseQueryString(fragment);
+
+        var error = values["error"];
+        if (error is not null)
+        {
+            _error = ErrorMessages.Translate(error);
+            return;
+        }
+
+        var token = values["token"];
+        if (string.IsNullOrEmpty(token) || !long.TryParse(values["userId"], out var userId))
+        {
+            _error = ErrorMessages.Translate(null);
+            return;
+        }
+
+        var user = new LoggedInUser(
+            userId,
+            values["name"] ?? string.Empty,
+            values["email"] ?? string.Empty,
+            values["verified"] == "true");
+
+        await Auth.SigninAsync(new AuthResponseDto(user, token));
+
+        // replace: the token-carrying URL must not stay in the browser history.
+        Navigation.NavigateTo("/", replace: true);
+    }
+}

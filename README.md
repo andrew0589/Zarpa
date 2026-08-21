@@ -1,4 +1,4 @@
-# Zarpa
+# NavigationES
 
 App de test pentru titulaciones náuticas (España): PNB, PER, Patrón de Yate, Capitán de Yate.
 
@@ -10,20 +10,20 @@ flow OAuth server-driven prin WebAuthenticator, tabela UserLogins, JWT).
 
 | Ce | Valoare |
 |---|---|
-| ApplicationId / bundle ID | `com.zarpa.app` |
-| Schema deep link | `zarpa://` |
+| ApplicationId / bundle ID | `com.navigationes.app` |
+| Schema deep link | `navigationes://` |
 | Port API local (dev) | `7136` (diferit de Church Runner ca să poată rula amândouă) |
-| URL API producție | `https://api.zarpa.example` — TODO: domeniu real |
+| URL API producție | `https://api.navigationes.example` — TODO: domeniu real |
 
 ## Configurare necesară înainte să meargă (toate placeholder-e acum)
 
-### Zarpa.Api — appsettings / user-secrets / env vars pe server
-- `ConnectionStrings:ZarpaDb` — SQL Server
+### NavigationES.Api — appsettings / user-secrets / env vars pe server
+- `ConnectionStrings:NavigationESDb` — SQL Server
 - `Jwt:*` — cheile JWT (aceleași nume ca în Church Runner)
 - `Authentication:Google:{ClientId,ClientSecret}` — client OAuth **nou** tip "Web application"
   (redirect: `https://<api-prod>/api/auth/google/callback` + `http://localhost:7136/api/auth/google/callback`)
 - `Authentication:Apple:{ServicesId,TeamId,KeyId,PrivateKey}` — App ID + Services ID **noi** pentru
-  bundle `com.zarpa.app`, cheie .p8 nouă; return URL pe domeniul API-ului de producție
+  bundle `com.navigationes.app`, cheie .p8 nouă; return URL pe domeniul API-ului de producție
   (Apple nu acceptă localhost — testezi social pe API-ul deployat)
 - `Authentication:Facebook:{AppId,AppSecret}` — app Facebook **nou** (Consumer + Facebook Login);
   pentru Live Mode: privacy policy URL + data deletion URL (există la `/privacy` și `/data-deletion`)
@@ -33,7 +33,7 @@ flow OAuth server-driven prin WebAuthenticator, tabela UserLogins, JWT).
   (trebuie găzduită separat, ca la Church Runner)
 
 ### Bază de date
-- Migrațiile EF nu sunt create încă: `dotnet ef migrations add Initial --project Zarpa.Api` apoi `database update`
+- Migrațiile EF nu sunt create încă: `dotnet ef migrations add Initial --project NavigationES.Api` apoi `database update`
 
 ### Client — de ajustat în cod
 - `Services/Environment/ProductionEnvironmentService.cs` — URL-ul API-ului de producție
@@ -41,8 +41,8 @@ flow OAuth server-driven prin WebAuthenticator, tabela UserLogins, JWT).
 - Iconiță/splash — sunt cele default de template
 
 ## Build & rulare
-- Soluția e `Zarpa.slnx` (formatul nou de soluție din .NET 10) — se deschide normal în Visual Studio
-- Rulează comenzile `dotnet` din `C:\Zarpa` (global.json de aici alege SDK-ul 10;
+- Soluția e `NavigationES.slnx` (formatul nou de soluție din .NET 10) — se deschide normal în Visual Studio
+- Rulează comenzile `dotnet` din `C:\NavigationES` (global.json de aici alege SDK-ul 10;
   din alt folder poate prinde alt SDK)
 - Token-ul de sesiune al clientului e stocat în `Preferences` sub cheia `AuthKey` (ca în sursă)
 
