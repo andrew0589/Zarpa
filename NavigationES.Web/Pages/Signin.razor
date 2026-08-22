@@ -22,6 +22,10 @@
                @bind="_password" @bind:event="oninput"
                @onkeydown="OnPasswordKeyDown" />
 
+        <p style="text-align: right; margin-top: 8px; margin-bottom: 16px;">
+            <a href="reset-password.html" style="font-size: 0.9em; color: #666; text-decoration: none;">¿Olvidaste la contraseña?</a>
+        </p>
+
         @if (_error is not null)
         {
             <p class="error" role="alert">@_error</p>
