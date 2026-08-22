@@ -96,10 +96,14 @@ Console.WriteLine($"ENVIRONMENT: {builder.Environment.EnvironmentName}");
 
 var app = builder.Build();
 
-// TODO: run EF Core migrations / database init here once a database is available,
-// e.g. create migrations with `dotnet ef migrations add Initial` and then:
-//   using var scope = app.Services.CreateScope();
-//   scope.ServiceProvider.GetRequiredService<NavigationESDbContext>().Database.Migrate();
+// Bring the schema up to date on startup: a fresh deployment has an empty database
+// and nothing else runs `dotnet ef database update` on the server. Idempotent — it
+// applies only the migrations the database is missing. EnableRetryOnFailure on the
+// DbContext covers the case where SQL Server is still coming up.
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<NavigationESDbContext>().Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

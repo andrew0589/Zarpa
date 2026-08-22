@@ -1,0 +1,27 @@
+# Build outputs — never ship the host's bin/obj into the image, they poison the
+# container restore with Windows-built assets.
+**/bin/
+**/obj/
+
+# Not part of any server-side build: the MAUI head can't build on Linux and the
+# tests aren't run in the image. Excluding them keeps the build context small.
+NavigationES.Client/
+NavigationES.Api.Tests/
+
+# Tooling / editor state
+.git/
+.github/
+.vs/
+.claude/
+**/*.user
+**/*.suo
+
+# Docs and local-only files
+*.md
+!README.md
+.env
+.env.*
+
+# OS files
+Thumbs.db
+.DS_Store

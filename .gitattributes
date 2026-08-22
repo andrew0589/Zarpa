@@ -1,0 +1,11 @@
+# Default: let git normalise text files in the repo, check out native on Windows.
+* text=auto
+
+# Files consumed by Linux containers must keep LF regardless of the host — a CRLF
+# shebang line makes the kernel fail the exec with "no such file or directory".
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+nginx.conf text eol=lf
+docker-compose*.yml text eol=lf
+.dockerignore text eol=lf

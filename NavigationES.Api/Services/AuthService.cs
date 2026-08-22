@@ -56,7 +56,7 @@ namespace NavigationES.Api.Services
                 var subject = EmailSubjects.EmailVerification;
                 var body = EmailTemplates.BuildVerificationBody(user.Name, user.EmailVerificationCode, 15);
 
-                var emailSent = await _emailService.SendEmailAsync(user.Email, subject, body, true);
+                await _emailService.SendEmailAsync(user.Email, subject, body, true);
 
                 return GenerateAuthResponse(user);
             }
@@ -324,16 +324,22 @@ namespace NavigationES.Api.Services
                 .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Token == dto.Token && !x.IsUsed);
 
-            if (resetToken == null) return ResultDto.Failure("The password reset link is invalid or has expired. Please request a new one.");
+            if (resetToken == null) return ResultDto.Failure(ErrorCodes.ResetLinkInvalidError);
 
             // Check if token is expired
-            if (resetToken.Expiration < DateTime.UtcNow) return ResultDto.Failure("The password reset link has expired. Please request a new one to continue.");
+            if (resetToken.Expiration < DateTime.UtcNow) return ResultDto.Failure(ErrorCodes.ResetLinkExpiredError);
 
-            if (string.IsNullOrWhiteSpace(dto.NewPassword)) return ResultDto.Failure("Password cannot be empty");
+            // The reset page checks these too, but it is the only caller — a request
+            // sent straight to the endpoint must not be able to set a weaker password
+            // than the sign-up form accepts.
+            if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
+                return ResultDto.Failure(ErrorCodes.PasswordTooShortError);
+
+            if (dto.NewPassword.Contains(' ')) return ResultDto.Failure(ErrorCodes.PasswordHasSpacesError);
 
             // Get user and update password
             var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == resetToken.UserID);
-            if (user == null) return ResultDto.Failure("User does not exists");
+            if (user == null) return ResultDto.Failure(ErrorCodes.UserDoesNotExist);
 
             // Generate new salt and hash for the new password
             (user.Salt, user.Hash) = _passwordService.GenerateSaltAndHash(dto.NewPassword);
@@ -347,7 +353,10 @@ namespace NavigationES.Api.Services
             }
             catch (Exception ex)
             {
-                return ResultDto.Failure(ex.Message);
+                // The raw exception text used to be returned to the caller — on an
+                // anonymous endpoint that hands schema details to anyone with a token.
+                Console.WriteLine($"Password reset failed: {ex.Message}");
+                return ResultDto.Failure(ErrorCodes.UnknownError);
             }
         }
 
