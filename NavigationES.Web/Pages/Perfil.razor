@@ -1,6 +1,8 @@
 @page "/perfil"
 @attribute [Authorize]
 @inject WebAuthStateProvider Auth
+@inject IAuthApi AuthApi
+@inject NavigationManager Navigation
 
 <PageTitle>Perfil — NavigationES</PageTitle>
 
@@ -41,10 +43,78 @@
         {
             <span class="retro-tag warn">Correo sin verificar</span>
         }
+
+        <div class="danger-zone">
+            <h3 class="danger-title">Zona de peligro</h3>
+
+            @if (!_confirmingDelete)
+            {
+                <button class="btn-danger-outline" @onclick="() => _confirmingDelete = true">
+                    Eliminar cuenta
+                </button>
+            }
+            else
+            {
+                <p class="danger-warning">
+                    Se eliminará tu cuenta y todo tu progreso (tests, exámenes y
+                    estadísticas) de forma permanente. Esta acción no se puede deshacer.
+                </p>
+
+                @if (_deleteError is not null)
+                {
+                    <p class="error" role="alert">@_deleteError</p>
+                }
+
+                <div class="danger-actions">
+                    <button class="btn-cancel" disabled="@_deleting"
+                            @onclick="() => { _confirmingDelete = false; _deleteError = null; }">
+                        Cancelar
+                    </button>
+                    <button class="btn-danger" disabled="@_deleting" @onclick="DeleteAccountAsync">
+                        @(_deleting ? "Eliminando…" : "Sí, eliminar mi cuenta")
+                    </button>
+                </div>
+            }
+        </div>
     </section>
 </div>
 
 @code {
+    private bool _confirmingDelete;
+    private bool _deleting;
+    private string? _deleteError;
+
     private string Initial =>
         string.IsNullOrWhiteSpace(Auth.User?.Name) ? "?" : Auth.User.Name.Trim()[..1].ToUpperInvariant();
+
+    private async Task DeleteAccountAsync()
+    {
+        if (_deleting) return;
+
+        _deleting = true;
+        _deleteError = null;
+        try
+        {
+            var result = await AuthApi.DeleteAccountAsync();
+
+            if (result.IsSuccess)
+            {
+                // The account is gone; the local token now points at nothing.
+                await Auth.SignoutAsync();
+                Navigation.NavigateTo("signin");
+            }
+            else
+            {
+                _deleteError = ErrorMessages.Translate(result.ErrorMessage);
+            }
+        }
+        catch (Exception)
+        {
+            _deleteError = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _deleting = false;
+        }
+    }
 }

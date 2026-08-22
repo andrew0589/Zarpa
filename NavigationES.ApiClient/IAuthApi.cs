@@ -16,5 +16,10 @@ namespace NavigationES.ApiClient
 
         [Post("/api/checkValidationCode")]
         Task<ResultDto> ValidateCodeAsync(ValidationRequestDto validation);
+
+        // Requires the bearer token (AuthHeaderHandler adds it); deletes the
+        // signed-in user's account and all of their data.
+        [Delete("/api/account")]
+        Task<ResultDto> DeleteAccountAsync();
     }
 }

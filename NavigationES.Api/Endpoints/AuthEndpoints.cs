@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using NavigationES.Api.Auth;
 using NavigationES.Api.Services;
 using NavigationES.Shared.Constants;
 using NavigationES.Shared.Dtos;
@@ -30,6 +32,12 @@ namespace NavigationES.Api.Endpoints
             {
                 return TypedResults.Ok(await authService.ValidateCodeAsync(validation));
             }).AllowAnonymous();
+
+            // The one authenticated endpoint in this file (no AllowAnonymous — the
+            // fallback policy applies): deletes the signed-in user's own account and,
+            // through the database cascades, everything derived from it.
+            app.MapDelete("/api/account", async (ClaimsPrincipal principal, AuthService authService) =>
+                TypedResults.Ok(await authService.DeleteAccountAsync(principal.GetUserId())));
 
             // Opened in the system browser by WebAuthenticator (or navigated to by the
             // website with ?client=web); sends the user to Google's consent page. The

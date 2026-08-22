@@ -490,6 +490,75 @@ h1 {
     margin: 0 0 1.2rem 0;
 }
 
+/* Account deletion block at the bottom of the Datos personales card. */
+.danger-zone {
+    margin-top: 1.6rem;
+    border-top: 1.5px dashed var(--card-border);
+    padding-top: 1rem;
+}
+
+.danger-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #b3261e;
+    margin: 0 0 0.8rem 0;
+}
+
+.danger-warning {
+    font-size: 0.85rem;
+    color: #5b5b5b;
+    line-height: 1.5;
+    margin: 0 0 0.9rem 0;
+}
+
+.danger-actions {
+    display: flex;
+    gap: 0.7rem;
+}
+
+.btn-danger-outline,
+.btn-danger,
+.btn-cancel {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-danger-outline {
+    background: white;
+    color: #b3261e;
+    border: 1.5px solid #b3261e;
+}
+
+    .btn-danger-outline:hover {
+        background: #fdf0ef;
+    }
+
+.btn-danger {
+    background: #b3261e;
+    color: white;
+    border: 1.5px solid #b3261e;
+}
+
+    .btn-danger:hover:not(:disabled) {
+        background: #8f1d17;
+    }
+
+.btn-cancel {
+    background: white;
+    color: var(--off-black);
+    border: 1.5px solid var(--card-border);
+}
+
+.btn-danger:disabled,
+.btn-cancel:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Square license cards (overrides the shared selector inside Perfil only) */
 .perfil-grid .license-grid {
     grid-template-columns: repeat(2, 1fr);

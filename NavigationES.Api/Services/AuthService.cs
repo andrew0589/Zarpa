@@ -9,13 +9,14 @@ using NavigationES.Shared.Dtos;
 
 namespace NavigationES.Api.Services
 {
-    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService)
+    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService, AppleAuthService appleAuthService)
     {
         private readonly NavigationESDbContext _context = context;
         private readonly TokenService _tokenService = tokenService;
         private readonly PasswordService _passwordService = passwordService;
         private readonly IConfiguration _configuration = configuration;
         private readonly IEmailService _emailService = emailService;
+        private readonly AppleAuthService _appleAuthService = appleAuthService;
 
         public async Task<ResultWithDataDto<AuthResponseDto>> SignupAsync(SignupRequestDto dto)
         {
@@ -411,6 +412,39 @@ namespace NavigationES.Api.Services
                 // Log internal error for debugging
                 Console.WriteLine($"Email verification failed: {ex.Message}");
                 return ResultDto.Failure("An error occurred while verifying your email. Please try again later.");
+            }
+        }
+
+        // Permanently removes the account. The database cascades take everything
+        // derived from it: UserLogins, PasswordResetTokens, TestSessions and — through
+        // the sessions — SessionQuestions, SessionAnswers and ExamSessionAnswers.
+        public async Task<ResultDto> DeleteAccountAsync(long userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == userId);
+            if (user is null) return ResultDto.Failure(ErrorCodes.UserDoesNotExist);
+
+            // Apple grants are revoked first so a returning user gets the first-time
+            // consent screen again (App Store Guideline 5.1.1(v)). Best-effort: a
+            // revoke failure must not leave the account undeleted.
+            var appleLogins = await _context.UserLogins
+                .Where(l => l.UserID == userId
+                         && l.Provider == AppleAuthService.ProviderName
+                         && l.RefreshToken != null)
+                .ToListAsync();
+
+            foreach (var login in appleLogins)
+                await _appleAuthService.TryRevokeRefreshTokenAsync(login.RefreshToken!);
+
+            try
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return ResultDto.Success();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Account deletion failed for user {userId}: {ex.Message}");
+                return ResultDto.Failure(ErrorCodes.UnknownError);
             }
         }
     }
