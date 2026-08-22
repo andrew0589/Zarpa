@@ -103,6 +103,7 @@ services:
       - "traefik.http.routers.navigationes-web-http.rule=Host(`navigationes.eu`) || Host(`www.navigationes.eu`)"
       - "traefik.http.routers.navigationes-web-http.entrypoints=web"
       - "traefik.http.routers.navigationes-web-http.middlewares=navigationes-https"
+      - "traefik.http.routers.navigationes-web-http.service=navigationes-web"
 
 networks:
   dokploy-network:
