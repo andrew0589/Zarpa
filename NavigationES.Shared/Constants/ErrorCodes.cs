@@ -24,8 +24,10 @@ public static class ErrorCodes
     public const string ResetLinkInvalidError = "ResetLinkInvalidError";
     // The token was valid but is past its one-hour lifetime.
     public const string ResetLinkExpiredError = "ResetLinkExpiredError";
-    // Same rule the sign-up form enforces: at least 6 characters, no spaces.
+    // Password validation: at least 6 characters, at least one letter, at least one symbol, no spaces.
     public const string PasswordTooShortError = "PasswordTooShortError";
     public const string PasswordHasSpacesError = "PasswordHasSpacesError";
+    public const string PasswordMissingLetterError = "PasswordMissingLetterError";
+    public const string PasswordMissingSymbolError = "PasswordMissingSymbolError";
     #endregion
 }

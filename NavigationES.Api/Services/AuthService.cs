@@ -335,7 +335,14 @@ namespace NavigationES.Api.Services
             if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
                 return ResultDto.Failure(ErrorCodes.PasswordTooShortError);
 
-            if (dto.NewPassword.Contains(' ')) return ResultDto.Failure(ErrorCodes.PasswordHasSpacesError);
+            if (dto.NewPassword.Contains(' '))
+                return ResultDto.Failure(ErrorCodes.PasswordHasSpacesError);
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(dto.NewPassword, @"[a-zA-Z]"))
+                return ResultDto.Failure(ErrorCodes.PasswordMissingLetterError);
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(dto.NewPassword, @"[!@#$%^&*\-_=+\[\]{};:'"",.<>?/\\|`~]"))
+                return ResultDto.Failure(ErrorCodes.PasswordMissingSymbolError);
 
             // Get user and update password
             var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == resetToken.UserID);
