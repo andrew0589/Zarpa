@@ -146,7 +146,10 @@ else if (_session is not null)
         }
     </div>
 
-    @if (_unsaved.Count > 0)
+    @* Only after a save has actually failed: every answer sits in _unsaved for the
+       length of its round-trip, so keying this off the backlog alone made the
+       warning blink on every tap. *@
+    @if (_saveFailed && _unsaved.Count > 0)
     {
         <p class="error" role="status">
             Sin conexión con el servidor: @(_unsaved.Count == 1 ? "1 respuesta" : $"{_unsaved.Count} respuestas")
@@ -226,6 +229,8 @@ else if (_session is not null)
     private readonly Dictionary<long, int?> _chosen = [];
     // Questions whose latest choice has not reached the server yet.
     private readonly HashSet<long> _unsaved = [];
+    // Set when a save attempt actually fails, cleared once the backlog drains.
+    private bool _saveFailed;
     private bool _flushing;
     private int _flushTicks;
     private int _index;
@@ -367,9 +372,12 @@ else if (_session is not null)
                 {
                     // Server unreachable or refusing — stop here and let the timer
                     // try the whole backlog again shortly.
+                    _saveFailed = true;
                     return;
                 }
             }
+
+            _saveFailed = false;
         }
         finally
         {
