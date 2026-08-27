@@ -1,4 +1,4 @@
-using NavigationES.Api.Data.Entities;
+﻿using NavigationES.Api.Data.Entities;
 using NavigationES.Api.Data.Repositories;
 using NavigationES.Shared.Dtos;
 
@@ -73,7 +73,8 @@ namespace NavigationES.Api.Services
                 }
                 if (!topicsByNumber.TryGetValue(q.TopicNumber, out var topic))
                 {
-                    errors.Add($"{label}: unknown topicNumber {q.TopicNumber} (expected 1–11).");
+                    errors.Add($"{label}: unknown topicNumber {q.TopicNumber} "
+                              + $"(seeded: {string.Join(", ", topicsByNumber.Keys.Order())}).");
                     continue;
                 }
                 if (q.Answers is not { Count: 4 } || q.Answers.Any(string.IsNullOrWhiteSpace))

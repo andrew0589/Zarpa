@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NavigationES.Api.Data.Entities;
 
 namespace NavigationES.Api.Data
@@ -248,7 +248,17 @@ namespace NavigationES.Api.Data
                 new TopicEntity { ID = 8, Number = 8, Name = "Emergencias en la mar" },
                 new TopicEntity { ID = 9, Number = 9, Name = "Meteorología" },
                 new TopicEntity { ID = 10, Number = 10, Name = "Teoría de la navegación" },
-                new TopicEntity { ID = 11, Number = 11, Name = "Carta de navegación" });
+                new TopicEntity { ID = 11, Number = 11, Name = "Carta de navegación" },
+                // PY and CY examine the same subjects at a deeper level, so they get
+                // their own topics rather than reusing 1-11.
+                new TopicEntity { ID = 12, Number = 12, Name = "Seguridad en la mar (PY)" },
+                new TopicEntity { ID = 13, Number = 13, Name = "Meteorología (PY)" },
+                new TopicEntity { ID = 14, Number = 14, Name = "Teoría de navegación (PY)" },
+                new TopicEntity { ID = 15, Number = 15, Name = "Navegación carta (PY)" },
+                new TopicEntity { ID = 16, Number = 16, Name = "Meteorología (CY)" },
+                new TopicEntity { ID = 17, Number = 17, Name = "Inglés (CY)" },
+                new TopicEntity { ID = 18, Number = 18, Name = "Teoría de navegación (CY)" },
+                new TopicEntity { ID = 19, Number = 19, Name = "Cálculo de navegación (CY)" });
 
             // PNB: 27 questions across the first six topics, no per-topic error limits.
             modelBuilder.Entity<LicenseTopicEntity>().HasData(
@@ -289,6 +299,19 @@ namespace NavigationES.Api.Data
                 new LicenseTopicEntity { LicenseID = 2, TopicID = 9, QuestionsInExam = 4 },
                 new LicenseTopicEntity { LicenseID = 2, TopicID = 10, QuestionsInExam = 5 },
                 new LicenseTopicEntity { LicenseID = 2, TopicID = 11, QuestionsInExam = 4, MaxErrors = 2 });
+
+            // PY and CY: 40 questions each, sat as two separate 20-question modules —
+            // genérico (the first two topics) and navegación (the last two). Per-topic
+            // error limits are left unset until the official rules are confirmed.
+            modelBuilder.Entity<LicenseTopicEntity>().HasData(
+                new LicenseTopicEntity { LicenseID = 3, TopicID = 12, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 3, TopicID = 13, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 3, TopicID = 14, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 3, TopicID = 15, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 4, TopicID = 16, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 4, TopicID = 17, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 4, TopicID = 18, QuestionsInExam = 10 },
+                new LicenseTopicEntity { LicenseID = 4, TopicID = 19, QuestionsInExam = 10 });
         }
     }
 }
