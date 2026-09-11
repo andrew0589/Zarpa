@@ -39,6 +39,10 @@ namespace NavigationES.Api.Endpoints
             app.MapDelete("/api/account", async (ClaimsPrincipal principal, AuthService authService) =>
                 TypedResults.Ok(await authService.DeleteAccountAsync(principal.GetUserId())));
 
+            // Renames the signed-in user; answers with a refreshed session (user + token).
+            app.MapPut("/api/account/name", async (UpdateNameRequestDto dto, ClaimsPrincipal principal, AuthService authService) =>
+                TypedResults.Ok(await authService.UpdateNameAsync(principal.GetUserId(), dto)));
+
             // Opened in the system browser by WebAuthenticator (or navigated to by the
             // website with ?client=web); sends the user to Google's consent page. The
             // redirect_uri is this API's /callback below and must match one of the

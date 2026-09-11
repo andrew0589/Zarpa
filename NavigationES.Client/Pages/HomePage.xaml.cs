@@ -1,31 +1,32 @@
-using NavigationES.Client.Services;
-using NavigationES.Client.Utilities;
+using NavigationES.Client.ViewModels;
 
 namespace NavigationES.Client.Pages;
 
 public partial class HomePage : ContentPage
 {
-    private readonly AuthService _authService;
-    private readonly UserSessionService _session;
-    private readonly SelectedLicenseService _selectedLicense;
+    private readonly HomeViewModel _viewModel;
 
-    public HomePage(AuthService authService, UserSessionService session, SelectedLicenseService selectedLicense)
+    public HomePage(HomeViewModel viewModel)
     {
         InitializeComponent();
 
-        _authService = authService;
-        _session = session;
-        _selectedLicense = selectedLicense;
+        _viewModel = viewModel;
+        BindingContext = viewModel;
     }
 
-    private async void Signout_Clicked(object sender, EventArgs e)
+    protected async override void OnAppearing()
     {
-        _authService.Signout();
-        _session.Clear();
-        // The license choice lives on the account; the local cache must not leak
-        // into whoever signs in next on this device.
-        _selectedLicense.Clear();
+        base.OnAppearing();
 
-        await Shell.Current.GoToAsync($"//{nameof(SigninPage)}");
+        // Reloads on every return so the progress reflects what was just practiced.
+        await _viewModel.LoadAsync();
+    }
+
+    protected override void OnDisappearing()
+    {
+        // Known Android RefreshView issue: a spinner left active while the page's
+        // platform views detach crashes with "PlatformView cannot be null here".
+        _viewModel.IsRefreshing = false;
+        base.OnDisappearing();
     }
 }

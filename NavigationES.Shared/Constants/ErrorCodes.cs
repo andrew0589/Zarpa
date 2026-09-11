@@ -17,6 +17,8 @@ public static class ErrorCodes
     public const string FacebookAuthFailedError = "FacebookAuthFailedError";
     // Facebook account has no email we can link by (permission denied or phone-only account).
     public const string FacebookNoEmailError = "FacebookNoEmailError";
+    // Profile rename: the new display name is empty or longer than the column allows (50).
+    public const string NameNotValidError = "NameNotValidError";
     #endregion
 
     #region Password reset

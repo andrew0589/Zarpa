@@ -3,6 +3,7 @@
 @inject WebAuthStateProvider Auth
 @inject IAuthApi AuthApi
 @inject NavigationManager Navigation
+@using NavigationES.Shared.Constants
 
 <PageTitle>Perfil — NavigationES</PageTitle>
 
@@ -26,8 +27,35 @@
 
         <dl class="datos-list">
             <div class="datos-row">
-                <dt>Nombre</dt>
-                <dd>@Auth.User?.Name</dd>
+                <dt>
+                    <span>Nombre</span>
+                    @if (!_editingName)
+                    {
+                        <button type="button" class="datos-edit" @onclick="StartEditName">Editar</button>
+                    }
+                </dt>
+                @if (!_editingName)
+                {
+                    <dd>@Auth.User?.Name</dd>
+                }
+                else
+                {
+                    @* Inline rename: Enter saves, Escape cancels. *@
+                    <div class="datos-editor">
+                        <input class="datos-input" maxlength="50" disabled="@_savingName"
+                               @bind="_nameDraft" @bind:event="oninput" @onkeydown="OnNameKeyDownAsync" />
+                        @if (_nameError is not null)
+                        {
+                            <p class="error" role="alert">@_nameError</p>
+                        }
+                        <div class="datos-actions">
+                            <button type="button" class="btn-cancel" disabled="@_savingName" @onclick="CancelEditName">Cancelar</button>
+                            <button type="button" class="btn-primary" disabled="@_savingName" @onclick="SaveNameAsync">
+                                @(_savingName ? "Guardando…" : "Guardar")
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="datos-row">
                 <dt>Correo</dt>
@@ -86,6 +114,78 @@
 
     private string Initial =>
         string.IsNullOrWhiteSpace(Auth.User?.Name) ? "?" : Auth.User.Name.Trim()[..1].ToUpperInvariant();
+
+    private bool _editingName;
+    private bool _savingName;
+    private string _nameDraft = string.Empty;
+    private string? _nameError;
+
+    private void StartEditName()
+    {
+        _nameDraft = Auth.User?.Name ?? string.Empty;
+        _nameError = null;
+        _editingName = true;
+    }
+
+    private void CancelEditName()
+    {
+        if (_savingName) return;
+
+        _editingName = false;
+        _nameError = null;
+    }
+
+    private async Task OnNameKeyDownAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await SaveNameAsync();
+        else if (e.Key == "Escape") CancelEditName();
+    }
+
+    private async Task SaveNameAsync()
+    {
+        if (_savingName) return;
+
+        // Same limit as the API (UserEntity.Name is 50 chars).
+        var name = _nameDraft.Trim();
+        if (name.Length is 0 or > 50)
+        {
+            _nameError = ErrorMessages.Translate(ErrorCodes.NameNotValidError);
+            return;
+        }
+
+        if (name == Auth.User?.Name)
+        {
+            _editingName = false;
+            return;
+        }
+
+        _savingName = true;
+        _nameError = null;
+        try
+        {
+            var result = await AuthApi.UpdateNameAsync(new UpdateNameRequestDto(name));
+
+            if (result.IsSuccess)
+            {
+                // The API answers with a refreshed session (the JWT carries the first
+                // name) — stored like a sign-in, so the top bar picks the new name up.
+                await Auth.SigninAsync(result.Data);
+                _editingName = false;
+            }
+            else
+            {
+                _nameError = ErrorMessages.Translate(result.ErrorCode);
+            }
+        }
+        catch (Exception)
+        {
+            _nameError = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _savingName = false;
+        }
+    }
 
     private async Task DeleteAccountAsync()
     {

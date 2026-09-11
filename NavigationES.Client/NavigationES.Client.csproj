@@ -38,20 +38,22 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(TargetFramework)'=='net10.0-ios'">
+	  <CodesignKey>Apple Development: Created via API (6L9UZN24LB)</CodesignKey>
+	  <CodesignProvision>VS: WildCard Development</CodesignProvision>
+	</PropertyGroup>
+
 	<!-- Debug on a physical Android phone reaches the local API through localhost:7136
 	     (see DevelopmentEnvironmentService), which needs an adb reverse tunnel. Recreate it
 	     on every Debug build so a replugged/rebooted phone never needs a manual adb call.
 	     ContinueOnError: no device connected must not fail the build. -->
-	<Target Name="_AdbReverseForLocalApi" AfterTargets="Build"
-	        Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">
+	<Target Name="_AdbReverseForLocalApi" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">
 		<PropertyGroup>
 			<_AdbExe>$(AndroidSdkDirectory)\platform-tools\adb.exe</_AdbExe>
 			<_AdbExe Condition="!Exists('$(_AdbExe)')">$(ProgramFiles(x86))\Android\android-sdk\platform-tools\adb.exe</_AdbExe>
 			<_AdbExe Condition="!Exists('$(_AdbExe)')">adb</_AdbExe>
 		</PropertyGroup>
-		<Exec Command="&quot;$(_AdbExe)&quot; reverse tcp:7136 tcp:7136"
-		      ContinueOnError="true" IgnoreExitCode="true"
-		      StandardOutputImportance="low" StandardErrorImportance="low" />
+		<Exec Command="&quot;$(_AdbExe)&quot; reverse tcp:7136 tcp:7136" ContinueOnError="true" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low" />
 	</Target>
 
 	<ItemGroup>

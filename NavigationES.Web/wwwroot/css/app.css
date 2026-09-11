@@ -667,6 +667,65 @@ h1 {
         overflow-wrap: anywhere;
     }
 
+    /* Inline rename of the display name (Nombre -> Editar). */
+    .datos-row dt {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+.datos-edit {
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--primary);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+    .datos-edit:hover {
+        text-decoration: underline;
+    }
+
+.datos-editor {
+    margin-top: 0.35rem;
+}
+
+.datos-input {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    font: inherit;
+    color: var(--off-black);
+    background: white;
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    outline: none;
+}
+
+    .datos-input:focus {
+        border-color: var(--accent);
+    }
+
+    .datos-input:disabled {
+        opacity: 0.6;
+    }
+
+.datos-actions {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 0.7rem;
+}
+
+    .datos-actions .btn-primary {
+        font-size: 0.9rem;
+        padding: 0.55rem 1rem;
+    }
+
 .retro-tag {
     display: inline-block;
     font-size: 0.8rem;

@@ -46,22 +46,14 @@ public partial class TestsPage : ContentPage
         if (!await EnsureLicenseSelectedAsync())
             return;
 
-        // TODO: navigate to the timed exam-simulation flow once it exists.
+        await Shell.Current.GoToAsync(nameof(ExamsPage));
     }
 
-    private async void PracticeByTopic_Clicked(object sender, EventArgs e)
+    private async void PracticeByTopic_Tapped(object sender, EventArgs e)
     {
         if (!await EnsureLicenseSelectedAsync())
             return;
 
         await Shell.Current.GoToAsync(nameof(TopicPracticePage));
-    }
-
-    private async void PracticeLikeExam_Clicked(object sender, EventArgs e)
-    {
-        if (!await EnsureLicenseSelectedAsync())
-            return;
-
-        await Shell.Current.GoToAsync(nameof(ExamPracticePage));
     }
 }

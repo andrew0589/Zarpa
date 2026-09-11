@@ -1,26 +1,286 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NavigationES.Client.Pages.HomePage"
              xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
+             xmlns:controls="clr-namespace:NavigationES.Client.Controls"
+             xmlns:dtos="clr-namespace:NavigationES.Shared.Dtos;assembly=NavigationES.Shared"
+             x:Class="NavigationES.Client.Pages.HomePage"
              Title="{x:Static lang:AppResources.HomePage}"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             x:DataType="vm:HomeViewModel"
+             BackgroundColor="#F2F4F8">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- The web's .retro-card / .retro-title -->
+            <Style x:Key="RetroCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="Stroke" Value="#D8DEE6" />
+                <Setter Property="StrokeThickness" Value="1.5" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+                <Setter Property="Padding" Value="20,18,20,22" />
+            </Style>
+            <Style x:Key="RetroTitle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <!-- The web's 1.5px dashed separators (.retro-title, .datos-row, .stats-summary) -->
+            <Style x:Key="RetroRule" TargetType="controls:DashedRule">
+                <Setter Property="Margin" Value="0,10,0,16" />
+            </Style>
+            <Style x:Key="Tagline" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray600}" />
+                <Setter Property="FontSize" Value="15" />
+            </Style>
+            <Style x:Key="HeroValue" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="34" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="HeroLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="LegendLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray600}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+            <Style x:Key="LegendValue" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+            <Style x:Key="LegendChip" TargetType="BoxView">
+                <Setter Property="WidthRequest" Value="12" />
+                <Setter Property="HeightRequest" Value="12" />
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+            <Style x:Key="OutlinePrimaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-    <VerticalStackLayout Spacing="20"
-                         Padding="30"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center">
-        <Label Text="NavigationES"
-               HorizontalOptions="Center"
-               FontSize="52"
-               TextColor="{StaticResource Primary}"
-               FontAttributes="Bold"/>
-        <Label Text="{x:Static lang:AppResources.Welcome}"
-               HorizontalOptions="Center"
-               FontSize="20"
-               FontAttributes="Bold"/>
-        <Button Text="{x:Static lang:AppResources.Signout}"
-                Clicked="Signout_Clicked"
-                Margin="0,30,0,0"/>
-    </VerticalStackLayout>
+    <Grid>
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}"
+                 RefreshColor="{StaticResource Accent}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,28,16,32" MaximumWidthRequest="600" Spacing="0">
+
+            <!-- "Hola, Nombre" -->
+            <Label Text="{Binding Greeting}"
+                   TextColor="{StaticResource OffBlack}"
+                   FontSize="26"
+                   FontAttributes="Bold" />
+
+            <Label Text="{x:Static lang:AppResources.UnknownError}"
+                   TextColor="Red"
+                   FontSize="14"
+                   Margin="0,12,0,0"
+                   IsVisible="{Binding LoadFailed}" />
+
+            <!-- First run, step 1: the qualification comes first. -->
+            <VerticalStackLayout Spacing="0" Margin="0,8,0,0" IsVisible="{Binding ShowLicenseStep}">
+                <Label Text="{x:Static lang:AppResources.ChooseLicenseTagline}" Style="{StaticResource Tagline}" />
+
+                <VerticalStackLayout Spacing="10" Margin="0,16,0,0"
+                                     BindableLayout.ItemsSource="{Binding Licenses}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:LicenseOptionItem">
+                            <Border BackgroundColor="White"
+                                    Stroke="#D8DEE6"
+                                    StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="16,14">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#EAF6F5" />
+                                        <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectLicenseCommand, Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                                    <Border Grid.Column="0"
+                                            BackgroundColor="{StaticResource Primary}"
+                                            Stroke="Transparent"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,5"
+                                            MinimumWidthRequest="52"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding Code}"
+                                               TextColor="White"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center" />
+                                    </Border>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           TextColor="{StaticResource OffBlack}"
+                                           FontSize="15"
+                                           VerticalOptions="Center" />
+                                    <Border Grid.Column="2"
+                                            BackgroundColor="{StaticResource Accent}"
+                                            Stroke="Transparent"
+                                            StrokeShape="RoundRectangle 12"
+                                            WidthRequest="24"
+                                            HeightRequest="24"
+                                            VerticalOptions="Center"
+                                            IsVisible="{Binding IsSelected}">
+                                        <Label Text="✓"
+                                               TextColor="White"
+                                               FontSize="12"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- First run, step 2: the community decides which real exams the simulations offer. -->
+            <VerticalStackLayout Spacing="0" Margin="0,8,0,0" IsVisible="{Binding ShowComunidadStep}">
+                <Label Text="{x:Static lang:AppResources.ChooseComunidadTagline}" Style="{StaticResource Tagline}" />
+                <Border BackgroundColor="White"
+                        Stroke="#D8DEE6"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,0"
+                        MinimumHeightRequest="48"
+                        Margin="0,16,0,0">
+                    <Picker Title="{x:Static lang:AppResources.ComunidadPlaceholder}"
+                            ItemsSource="{Binding Comunidades}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=dtos:ComunidadDto}"
+                            SelectedItem="{Binding SelectedComunidad}"
+                            TextColor="{StaticResource OffBlack}"
+                            TitleColor="{StaticResource Gray400}"
+                            FontSize="15"
+                            VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Dashboard -->
+            <VerticalStackLayout Spacing="18" Margin="0,8,0,0" IsVisible="{Binding ShowDashboard}">
+                <Label Text="{Binding ProgressTagline}" Style="{StaticResource Tagline}" />
+
+                <!-- Práctica por temas -->
+                <Border Style="{StaticResource RetroCard}">
+                    <Border.Shadow>
+                        <Shadow Brush="#14102A43" Offset="3,3" Radius="0" Opacity="1" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="{x:Static lang:AppResources.HomeTopicsTitle}" Style="{StaticResource RetroTitle}" />
+                        <controls:DashedRule Style="{StaticResource RetroRule}" />
+
+                        <Label Text="{Binding TemasPercentText}" Style="{StaticResource HeroValue}" />
+                        <Label Text="{x:Static lang:AppResources.TopicsHeroLabel}" Style="{StaticResource HeroLabel}" />
+                        <ProgressBar Progress="{Binding TemasProgress}"
+                                     ProgressColor="{StaticResource Accent}"
+                                     Margin="0,14,0,16" />
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="9">
+                            <BoxView Grid.Row="0" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#2AA5A0" BackgroundColor="#2AA5A0" />
+                            <Label Grid.Row="0" Grid.Column="1" Text="{x:Static lang:AppResources.AciertosLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="0" Grid.Column="2" Text="{Binding TemasCorrect}" Style="{StaticResource LegendValue}" />
+
+                            <BoxView Grid.Row="1" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#D64545" BackgroundColor="#D64545" />
+                            <Label Grid.Row="1" Grid.Column="1" Text="{x:Static lang:AppResources.FallosLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding TemasFailed}" Style="{StaticResource LegendValue}" />
+
+                            <BoxView Grid.Row="2" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#AEBACA" BackgroundColor="#AEBACA" />
+                            <Label Grid.Row="2" Grid.Column="1" Text="{x:Static lang:AppResources.SinResponderLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="2" Grid.Column="2" Text="{Binding TemasRemaining}" Style="{StaticResource LegendValue}" />
+                        </Grid>
+
+                        <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,16,0,12" />
+                        <Label Text="{Binding TemasSummary}" TextColor="{StaticResource Gray600}" FontSize="14" />
+
+                        <Button Text="{x:Static lang:AppResources.GoToTopics}"
+                                Command="{Binding GoToTopicsCommand}"
+                                CornerRadius="10"
+                                Margin="0,16,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Simulación de examen -->
+                <Border Style="{StaticResource RetroCard}">
+                    <Border.Shadow>
+                        <Shadow Brush="#14102A43" Offset="3,3" Radius="0" Opacity="1" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="{x:Static lang:AppResources.HomeExamsTitle}" Style="{StaticResource RetroTitle}" />
+                        <controls:DashedRule Style="{StaticResource RetroRule}" />
+
+                        <!-- "3 de 12" -->
+                        <Label HorizontalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding ExamsPassed}" TextColor="{StaticResource OffBlack}" FontSize="34" FontAttributes="Bold" />
+                                    <Span Text="{x:Static lang:AppResources.OfSeparator}" TextColor="{StaticResource Gray400}" FontSize="16" />
+                                    <Span Text="{Binding ExamsTotal}" TextColor="{StaticResource OffBlack}" FontSize="34" FontAttributes="Bold" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Text="{x:Static lang:AppResources.ExamsHeroLabel}" Style="{StaticResource HeroLabel}" />
+                        <ProgressBar Progress="{Binding ExamsProgress}"
+                                     ProgressColor="{StaticResource Accent}"
+                                     Margin="0,14,0,16" />
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="9">
+                            <BoxView Grid.Row="0" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#2AA5A0" BackgroundColor="#2AA5A0" />
+                            <Label Grid.Row="0" Grid.Column="1" Text="{x:Static lang:AppResources.AprobadosLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="0" Grid.Column="2" Text="{Binding ExamsPassed}" Style="{StaticResource LegendValue}" />
+
+                            <BoxView Grid.Row="1" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#D64545" BackgroundColor="#D64545" />
+                            <Label Grid.Row="1" Grid.Column="1" Text="{x:Static lang:AppResources.NoAptosLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding ExamsFailed}" Style="{StaticResource LegendValue}" />
+
+                            <BoxView Grid.Row="2" Grid.Column="0" Style="{StaticResource LegendChip}" Color="#AEBACA" BackgroundColor="#AEBACA" />
+                            <Label Grid.Row="2" Grid.Column="1" Text="{x:Static lang:AppResources.SinHacerLabel}" Style="{StaticResource LegendLabel}" />
+                            <Label Grid.Row="2" Grid.Column="2" Text="{Binding ExamsPending}" Style="{StaticResource LegendValue}" />
+                        </Grid>
+
+                        <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,16,0,12" />
+                        <Label Text="{Binding ExamsSummary}" TextColor="{StaticResource Gray600}" FontSize="14" />
+
+                        <Button Text="{x:Static lang:AppResources.GoToExams}"
+                                Command="{Binding GoToExamsCommand}"
+                                CornerRadius="10"
+                                Margin="0,16,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- The web keeps "Cerrar sesión" in its top bar; the app has no top bar. -->
+            <Button Text="{x:Static lang:AppResources.Signout}"
+                    Style="{StaticResource OutlinePrimaryButton}"
+                    Command="{Binding SignoutCommand}"
+                    Margin="0,28,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+    </RefreshView>
+    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                       IsVisible="{Binding IsBusy}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Color="{StaticResource Accent}" />
+    </Grid>
 </ContentPage>

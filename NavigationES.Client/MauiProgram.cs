@@ -53,6 +53,10 @@ public static class MauiProgram
         builder.Services.AddTransient<TestsViewModel>();
         builder.Services.AddTransient<TopicSessionViewModel>();
         builder.Services.AddTransient<ExplanationViewModel>();
+        builder.Services.AddTransient<ProfileViewModel>();
+        builder.Services.AddTransient<HomeViewModel>();
+        builder.Services.AddTransient<ExamsViewModel>();
+        builder.Services.AddTransient<ExamSessionViewModel>();
 
         // Register Services
         builder.Services.AddSingleton<AuthService>();
@@ -71,7 +75,8 @@ public static class MauiProgram
         builder.Services.AddTransient<TopicPracticePage>();
         builder.Services.AddTransient<TopicSessionPage>();
         builder.Services.AddTransient<ExplanationPage>();
-        builder.Services.AddTransient<ExamPracticePage>();
+        builder.Services.AddTransient<ExamsPage>();
+        builder.Services.AddTransient<ExamSessionPage>();
 
         ConfigureRefit(builder.Services);
 
@@ -144,6 +149,12 @@ public static class MauiProgram
             .ConfigureHttpClient(SetHttpClient);
 
         services.AddRefitGeneratedClient<ISessionsApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        services.AddRefitGeneratedClient<IComunidadesApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        services.AddRefitGeneratedClient<IExamsApi>(refitSettings)
             .ConfigureHttpClient(SetHttpClient);
 
         void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(envService.ApiBaseUrl);

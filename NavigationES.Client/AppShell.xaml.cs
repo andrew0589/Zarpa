@@ -19,7 +19,8 @@ public partial class AppShell : Shell
             typeof(TopicPracticePage),
             typeof(TopicSessionPage),
             typeof(ExplanationPage),
-            typeof(ExamPracticePage),
+            typeof(ExamsPage),
+            typeof(ExamSessionPage),
         ];
 
     private static void RegisterRoutes()

@@ -21,5 +21,10 @@ namespace NavigationES.ApiClient
         // signed-in user's account and all of their data.
         [Delete("/api/account")]
         Task<ResultDto> DeleteAccountAsync();
+
+        // Renames the signed-in user; the answer is a refreshed session (user + token)
+        // that replaces the stored one.
+        [Put("/api/account/name")]
+        Task<ResultWithDataDto<AuthResponseDto>> UpdateNameAsync(UpdateNameRequestDto dto);
     }
 }
