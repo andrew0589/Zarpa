@@ -27,7 +27,7 @@ namespace NavigationES.Api.Auth
         // header — is filed under "app".
         public const string ClientHeader = "X-Client";
         public const string UnknownClient = "app";
-        public static readonly TimeSpan MinInterval = TimeSpan.FromMinutes(10);
+        public static readonly TimeSpan MinInterval = TimeSpan.FromMinutes(30);
 
         private static readonly string[] KnownClients = ["web", "android", "ios", "windows", UnknownClient];
 

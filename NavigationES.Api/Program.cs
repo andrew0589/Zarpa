@@ -46,6 +46,7 @@ builder.Services.AddTransient<PracticeSessionService>();
 builder.Services.AddTransient<QuestionImportService>();
 builder.Services.AddTransient<ExamImportService>();
 builder.Services.AddTransient<AdminUserService>();
+builder.Services.AddTransient<AdminContentService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -149,7 +150,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // "Last used" tracker: stamps Users.LastActiveAt/LastActiveClient for any request
-// that arrived with a valid JWT (throttled to one write per 10 minutes per user).
+// that arrived with a valid JWT (throttled to one write per 30 minutes per user).
 app.UseMiddleware<UserActivityMiddleware>();
 
 app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
@@ -163,5 +164,6 @@ app.MapExamEndpoints();
 app.MapSessionEndpoints();
 // Usuarios tab: JWT + IsAdmin (checked in the database on every call).
 app.MapAdminUserEndpoints();
+app.MapAdminContentEndpoints();
 
 app.Run();

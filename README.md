@@ -64,9 +64,13 @@ flow OAuth server-driven prin WebAuthenticator, tabela UserLogins, JWT).
   se marchează `InactivityWarningSentAt` și tab-ul arată countdown-ul), eliminar (același flux
   ca „Eliminar cuenta” din Perfil). Conturile admin nu pot fi șterse/avertizate din tab.
 - Tracker „ultima utilizare”: `UserActivityMiddleware` scrie `Users.LastActiveAt` +
-  `LastActiveClient` la orice request autentificat, cel mult o dată la 10 minute per user
+  `LastActiveClient` la orice request autentificat, cel mult o dată la 30 de minute per user
   și client. Clientul vine din header-ul `X-Client`: web → `web`, MAUI → `android`/`ios`/
   `windows`; build-uri vechi de app (fără header) apar ca `app`.
+- Tab-ul „Contenido” (`/admin/contenido`, `GET /api/admin/content`, același filtru `IsAdmin`, doar citire):
+  banca de întrebări per temă (active / inactive) și per titulație (câte teme, câte întrebări intră
+  într-un examen, `MaxErrors`), plus simulările importate per comunitate autonomă și titulație
+  (număr de examene, întrebări, ani acoperiți).
 
 ## Note
 - Pe Windows butoanele de social login sunt ascunse (WebAuthenticator nu e implementat în MAUI Windows)

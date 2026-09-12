@@ -1745,3 +1745,50 @@ h1 {
     background: var(--primary);
     color: white;
 }
+
+/* Admin — Contenido tab (AdminContenido.razor): two stat matrices side by side on
+   wide screens, stacked when the viewport cannot fit two 520px columns. */
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.admin-subtitle {
+    margin: 0 0 0.35rem 0;
+    font-size: 1.1rem;
+}
+
+.admin-hint {
+    margin: 0 0 1rem 0;
+    color: var(--gray-600);
+    font-size: 0.88rem;
+}
+
+.admin-table.admin-table-stats {
+    min-width: 560px;
+}
+
+    .admin-table.admin-table-stats tfoot td {
+        font-weight: 600;
+        border-top: 1.5px solid var(--card-border);
+        border-bottom: none;
+        background: #F7FAFD;
+    }
+
+.admin-num,
+.admin-table th.admin-num {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-dash {
+    color: var(--gray-400);
+}
+
+.admin-table tr.is-empty td,
+.admin-table tr.is-empty .admin-user-name {
+    color: var(--gray-400);
+}

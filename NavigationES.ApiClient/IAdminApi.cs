@@ -22,5 +22,9 @@ namespace NavigationES.ApiClient
         // Same removal as the user's own "Eliminar cuenta"; refused for administrators.
         [Delete("/api/admin/users/{id}")]
         Task<ResultDto> DeleteUserAsync(long id);
+
+        // The Contenido tab: question bank per topic and license, exam simulations per comunidad.
+        [Get("/api/admin/content")]
+        Task<AdminContentDto> GetContentAsync();
     }
 }

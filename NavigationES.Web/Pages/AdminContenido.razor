@@ -1,0 +1,202 @@
+@page "/admin/contenido"
+@attribute [Authorize(Roles = WebAuthStateProvider.AdminRole)]
+@inject IAdminApi AdminApi
+
+<PageTitle>Contenido — NavigationES</PageTitle>
+
+<div class="admin-page">
+    <h1>Contenido</h1>
+    <p class="tagline">
+        @if (_content is null)
+        {
+            <text>Cargando…</text>
+        }
+        else
+        {
+            <text>@_content.Topics.Count temas · @TotalBank preguntas en el banco · @TotalExams simulaciones con @TotalExamQuestions preguntas</text>
+        }
+    </p>
+
+    @if (_error is not null)
+    {
+        <p class="error" role="alert">@_error</p>
+    }
+    else if (_content is null)
+    {
+        <p class="page-loading">Cargando…</p>
+    }
+    else
+    {
+        <div class="admin-grid">
+            <section class="retro-card admin-card">
+                <h2 class="admin-subtitle">Temas por titulación</h2>
+                <p class="admin-hint">
+                    Banco = preguntas activas del tema. En cada titulación, cuántas preguntas del tema
+                    entran en un examen y el máximo de errores permitido en él.
+                </p>
+                <div class="admin-table-wrap">
+                    <table class="admin-table admin-table-stats">
+                        <thead>
+                            <tr>
+                                <th>Tema</th>
+                                <th class="admin-num">Banco</th>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <th class="admin-num" title="@l.Name">@l.Code</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in _content.Topics)
+                            {
+                                <tr>
+                                    <td><div class="admin-user-name">@(t.Number). @t.Name</div></td>
+                                    <td class="admin-num">
+                                        <strong>@t.ActiveQuestionCount</strong>
+                                        @if (t.InactiveQuestionCount > 0)
+                                        {
+                                            <span class="admin-small admin-block">+@t.InactiveQuestionCount inactivas</span>
+                                        }
+                                    </td>
+                                    @foreach (var l in _content.Licenses)
+                                    {
+                                        var cell = t.Licenses.FirstOrDefault(x => x.LicenseId == l.Id);
+                                        <td class="admin-num">
+                                            @if (cell is null)
+                                            {
+                                                <span class="admin-dash">—</span>
+                                            }
+                                            else
+                                            {
+                                                <strong>@cell.QuestionsInExam</strong>
+                                                @if (cell.MaxErrors is not null)
+                                                {
+                                                    <span class="admin-small admin-block">máx. @cell.MaxErrors @(cell.MaxErrors == 1 ? "error" : "errores")</span>
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Temas</td>
+                                <td class="admin-num">@_content.Topics.Count</td>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <td class="admin-num">@l.TopicCount</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td>Preguntas por examen</td>
+                                <td class="admin-num"><span class="admin-dash">—</span></td>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <td class="admin-num">
+                                        @l.QuestionsInExam
+                                        @if (l.MaxTotalErrors is not null)
+                                        {
+                                            <span class="admin-small admin-block">máx. @l.MaxTotalErrors errores</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                            <tr>
+                                <td>Preguntas en el banco</td>
+                                <td class="admin-num">@TotalBank</td>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <td class="admin-num">@l.BankQuestionCount</td>
+                                }
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+
+            <section class="retro-card admin-card">
+                <h2 class="admin-subtitle">Simulaciones por comunidad</h2>
+                <p class="admin-hint">
+                    Exámenes reales importados por comunidad autónoma y titulación, con sus preguntas
+                    y los años que cubren.
+                </p>
+                <div class="admin-table-wrap">
+                    <table class="admin-table admin-table-stats">
+                        <thead>
+                            <tr>
+                                <th>Comunidad</th>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <th class="admin-num" title="@l.Name">@l.Code</th>
+                                }
+                                <th class="admin-num">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in _content.Comunidades)
+                            {
+                                var total = c.Licenses.Sum(x => x.ExamCount);
+                                <tr class="@(total == 0 ? "is-empty" : null)">
+                                    <td><div class="admin-user-name">@c.Name</div></td>
+                                    @foreach (var l in _content.Licenses)
+                                    {
+                                        var cell = c.Licenses.FirstOrDefault(x => x.LicenseId == l.Id);
+                                        <td class="admin-num">
+                                            @if (cell is null)
+                                            {
+                                                <span class="admin-dash">—</span>
+                                            }
+                                            else
+                                            {
+                                                <strong>@cell.ExamCount</strong>
+                                                <span class="admin-small admin-block">@cell.QuestionCount preg. · @Years(cell.FirstYear, cell.LastYear)</span>
+                                            }
+                                        </td>
+                                    }
+                                    <td class="admin-num"><strong>@total</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total</td>
+                                @foreach (var l in _content.Licenses)
+                                {
+                                    <td class="admin-num">@l.ExamCount</td>
+                                }
+                                <td class="admin-num">@TotalExams</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    private AdminContentDto? _content;
+    private string? _error;
+
+    private int TotalBank => _content?.Topics.Sum(t => t.ActiveQuestionCount) ?? 0;
+    private int TotalExams => _content?.Licenses.Sum(l => l.ExamCount) ?? 0;
+    private int TotalExamQuestions => _content?.Comunidades.Sum(c => c.Licenses.Sum(x => x.QuestionCount)) ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _content = await AdminApi.GetContentAsync();
+        }
+        catch (Exception)
+        {
+            // A 401 already redirected to /signin; a 403 means the admin flag was
+            // revoked since sign-in — either way there is nothing to show here.
+            _error = ErrorMessages.Translate(null);
+        }
+    }
+
+    // "2023" for a single year, "2019–2025" for a range.
+    private static string Years(int first, int last) => first == last ? first.ToString() : $"{first}–{last}";
+}
