@@ -11,33 +11,30 @@
 
     <Grid>
     <ScrollView>
-        <VerticalStackLayout Padding="16,20" MaximumWidthRequest="500" Spacing="0">
-
-            <!-- Progress -->
-            <Label Text="{Binding ProgressText}"
-                   TextColor="{StaticResource Gray600}"
-                   FontSize="13"
-                   FontAttributes="Bold" />
-            <ProgressBar Progress="{Binding Progress}"
-                         ProgressColor="{StaticResource Accent}"
-                         Margin="0,8,0,0" />
+        <VerticalStackLayout Padding="16,20,16,32" MaximumWidthRequest="600" Spacing="0">
 
             <!-- Question + answers -->
             <VerticalStackLayout IsVisible="{Binding ShowQuestion}" Spacing="0">
+                <Label Text="{Binding ProgressText}"
+                       TextColor="{StaticResource Gray600}"
+                       FontSize="14"
+                       FontAttributes="Bold" />
+                <ProgressBar Progress="{Binding Progress}"
+                             ProgressColor="{StaticResource Accent}"
+                             Margin="0,8,0,0" />
+
                 <Border BackgroundColor="White"
                         Stroke="Transparent"
                         StrokeShape="RoundRectangle 16"
                         Padding="18,16"
                         Margin="0,16,0,0">
                     <Border.Shadow>
-                        <Shadow Brush="#14102A43" Offset="0,4" Radius="10" />
+                        <Shadow Brush="#14102A43" Offset="0,4" Radius="10" Opacity="1" />
                     </Border.Shadow>
-                    <VerticalStackLayout Spacing="0">
-                        <Label Text="{Binding QuestionText}"
-                               TextColor="{StaticResource OffBlack}"
-                               FontSize="17"
-                               FontAttributes="Bold" />
-                    </VerticalStackLayout>
+                    <Label Text="{Binding QuestionText}"
+                           TextColor="{StaticResource OffBlack}"
+                           FontSize="17"
+                           FontAttributes="Bold" />
                 </Border>
 
                 <VerticalStackLayout Spacing="10" Margin="0,16,0,0"
@@ -53,13 +50,27 @@
                                     <TapGestureRecognizer Command="{Binding SelectAnswerCommand, Source={RelativeSource AncestorType={x:Type vm:TopicSessionViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="{Binding Text}"
-                                       TextColor="{StaticResource OffBlack}"
-                                       FontSize="15" />
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Letter}"
+                                           TextColor="{StaticResource Primary}"
+                                           FontSize="15"
+                                           FontAttributes="Bold" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Text}"
+                                           TextColor="{StaticResource OffBlack}"
+                                           FontSize="15" />
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
+
+                <Label Text="{Binding Error}"
+                       TextColor="Red"
+                       FontSize="13"
+                       Margin="0,12,0,0"
+                       IsVisible="{Binding HasError}" />
 
                 <!-- Feedback after answering -->
                 <VerticalStackLayout IsVisible="{Binding ShowFeedback}" Spacing="0" Margin="0,16,0,0">
@@ -68,7 +79,7 @@
                            FontSize="17"
                            FontAttributes="Bold" />
 
-                    <!-- Opens the explanation page — shown whatever the answer was. -->
+                    <!-- Toggles the inline explanation — shown whatever the answer was. -->
                     <Border BackgroundColor="White"
                             Stroke="{StaticResource Primary}"
                             StrokeThickness="1"
@@ -78,7 +89,7 @@
                             HorizontalOptions="Start"
                             IsVisible="{Binding HasExplanation}">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ShowExplanationCommand}" />
+                            <TapGestureRecognizer Command="{Binding ToggleExplanationCommand}" />
                         </Border.GestureRecognizers>
                         <HorizontalStackLayout Spacing="8">
                             <Label Text="{x:Static fa:Solid.CircleInfo}"
@@ -94,6 +105,33 @@
                         </HorizontalStackLayout>
                     </Border>
 
+                    <Border BackgroundColor="White"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 16"
+                            Padding="16"
+                            Margin="0,12,0,0"
+                            IsVisible="{Binding ShowExplanation}">
+                        <Border.Shadow>
+                            <Shadow Brush="#14102A43" Offset="0,4" Radius="10" Opacity="1" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="12">
+                            <!-- Tap the figure to open it full-screen (pinch-to-zoom). -->
+                            <Image Source="{Binding ExplanationImageUrl}"
+                                   Aspect="AspectFit"
+                                   HeightRequest="220"
+                                   IsVisible="{Binding HasExplanationImage}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenImageCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="{Binding Explanation}"
+                                   TextType="Html"
+                                   TextColor="{StaticResource Gray600}"
+                                   FontSize="15"
+                                   IsVisible="{Binding HasExplanationText}" />
+                        </VerticalStackLayout>
+                    </Border>
+
                     <Button Text="{x:Static lang:AppResources.NextQuestion}"
                             Command="{Binding NextQuestionCommand}"
                             CornerRadius="10"
@@ -102,29 +140,44 @@
             </VerticalStackLayout>
 
             <!-- Topic finished -->
-            <VerticalStackLayout IsVisible="{Binding IsCompleted}" Spacing="14" Margin="0,48,0,0">
-                <Label Text="{x:Static fa:Solid.CircleCheck}"
-                       FontFamily="FASolid"
-                       FontSize="46"
-                       TextColor="{StaticResource Accent}"
-                       HorizontalOptions="Center" />
-                <Label Text="{x:Static lang:AppResources.TopicCompleted}"
-                       TextColor="{StaticResource OffBlack}"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       HorizontalTextAlignment="Center" />
-                <Button Text="{x:Static lang:AppResources.RestartTopic}"
-                        Command="{Binding RestartTopicCommand}"
-                        CornerRadius="10"
-                        Margin="0,10,0,0" />
-                <Button Text="{x:Static lang:AppResources.BackToTopics}"
-                        Command="{Binding BackToTopicsCommand}"
-                        CornerRadius="10"
-                        BackgroundColor="Transparent"
-                        TextColor="{StaticResource Primary}"
-                        BorderColor="{StaticResource Primary}"
-                        BorderWidth="1" />
-            </VerticalStackLayout>
+            <Border BackgroundColor="White"
+                    Stroke="Transparent"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="24"
+                    Margin="0,24,0,0"
+                    IsVisible="{Binding IsCompleted}">
+                <Border.Shadow>
+                    <Shadow Brush="#14102A43" Offset="0,4" Radius="10" Opacity="1" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="{x:Static fa:Solid.CircleCheck}"
+                           FontFamily="FASolid"
+                           FontSize="46"
+                           TextColor="{StaticResource Accent}"
+                           HorizontalOptions="Center" />
+                    <Label Text="{x:Static lang:AppResources.TopicCompleted}"
+                           TextColor="{StaticResource OffBlack}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding Error}"
+                           TextColor="Red"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding HasError}" />
+                    <Button Text="{x:Static lang:AppResources.RestartTopic}"
+                            Command="{Binding RestartTopicCommand}"
+                            CornerRadius="10"
+                            Margin="0,10,0,0" />
+                    <Button Text="{x:Static lang:AppResources.BackToTopics}"
+                            Command="{Binding BackToTopicsCommand}"
+                            CornerRadius="10"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource Primary}"
+                            BorderWidth="1" />
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
     <ActivityIndicator IsRunning="{Binding IsBusy}"

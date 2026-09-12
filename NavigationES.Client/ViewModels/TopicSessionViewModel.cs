@@ -10,8 +10,11 @@ using NavigationES.Shared.Dtos;
 
 namespace NavigationES.Client.ViewModels
 {
+    // The website's TopicSession page: one question at a time, immediate feedback
+    // with an inline explanation, and the completed card with "Reiniciar tema".
     [QueryProperty(nameof(TopicNumber), "topicNumber")]
     [QueryProperty(nameof(TopicName), "topicName")]
+    [QueryProperty(nameof(Completed), "completed")]
     public partial class TopicSessionViewModel(
         ISessionsApi sessionsApi,
         SelectedLicenseService selectedLicense,
@@ -22,6 +25,9 @@ namespace NavigationES.Client.ViewModels
         private readonly IEnvironmentService _environmentService = environmentService;
 
         public int TopicNumber { get; set; }
+        // Already-completed topic: land on the completed screen without starting a
+        // session — starting one would re-plan the full question set.
+        public bool Completed { get; set; }
 
         [ObservableProperty] private string _topicName = string.Empty;
         [ObservableProperty] private string _progressText = string.Empty;
@@ -37,7 +43,14 @@ namespace NavigationES.Client.ViewModels
         [ObservableProperty] private bool _hasExplanationImage;
         // Either text or figure — controls the "Explicación" button.
         [ObservableProperty] private bool _hasExplanation;
+        [ObservableProperty] private bool _showExplanation;
         [ObservableProperty] private bool _isCompleted;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasError))]
+        private string? _error;
+
+        public bool HasError => Error is not null;
 
         public ObservableCollection<AnswerOptionItem> AnswerOptions { get; } = [];
 
@@ -59,6 +72,14 @@ namespace NavigationES.Client.ViewModels
                 return;
             }
 
+            if (Completed)
+            {
+                _started = true;
+                ShowQuestion = false;
+                IsCompleted = true;
+                return;
+            }
+
             IsBusy = true;
             try
             {
@@ -69,6 +90,7 @@ namespace NavigationES.Client.ViewModels
                 _total = session.TotalQuestions;
                 _answered = session.AnsweredCount;
 
+                _remaining.Clear();
                 foreach (var question in session.RemainingQuestions)
                     _remaining.Enqueue(question);
 
@@ -88,11 +110,13 @@ namespace NavigationES.Client.ViewModels
         private void ShowNextQuestion()
         {
             ShowFeedback = false;
+            ShowExplanation = false;
             Explanation = null;
             ExplanationImageUrl = null;
             HasExplanationText = false;
             HasExplanationImage = false;
             HasExplanation = false;
+            Error = null;
             _answerLocked = false;
 
             Progress = _total == 0 ? 0 : (double)_answered / _total;
@@ -101,7 +125,6 @@ namespace NavigationES.Client.ViewModels
             {
                 ShowQuestion = false;
                 IsCompleted = true;
-                ProgressText = string.Format(AppResources.QuestionProgressFormat, _total, _total);
                 return;
             }
 
@@ -121,6 +144,7 @@ namespace NavigationES.Client.ViewModels
         {
             if (_answerLocked || _remaining.Count == 0) return;
             _answerLocked = true;
+            Error = null;
 
             try
             {
@@ -140,9 +164,9 @@ namespace NavigationES.Client.ViewModels
                 Progress = _total == 0 ? 0 : (double)_answered / _total;
 
                 FeedbackText = result.IsCorrect ? AppResources.CorrectFeedback : AppResources.IncorrectFeedback;
-                FeedbackColor = result.IsCorrect ? Color.FromArgb("#2AA5A0") : Colors.Red;
+                FeedbackColor = result.IsCorrect ? Color.FromArgb("#2AA5A0") : Color.FromArgb("#D64545");
                 Explanation = result.Explanation;
-                ExplanationImageUrl = BuildImageUrl(result.ExplanationImageUrl);
+                ExplanationImageUrl = ImageUrls.Absolute(_environmentService, result.ExplanationImageUrl);
                 HasExplanationText = !string.IsNullOrWhiteSpace(result.Explanation);
                 HasExplanationImage = ExplanationImageUrl is not null;
                 HasExplanation = HasExplanationText || HasExplanationImage;
@@ -150,34 +174,25 @@ namespace NavigationES.Client.ViewModels
             }
             catch (Exception)
             {
-                // The answer did not reach the server — unlock so the user can retry.
+                // The answer did not reach the server — unlock so the user can tap again.
                 _answerLocked = false;
-                await UserMessageHelper.ShowErrorAsync(AppResources.UnknownError);
+                Error = AppResources.UnknownError;
             }
         }
 
-        // The DB stores relative paths ("images/questions/x.png"); the Image control
-        // needs an absolute URL, whose base differs per environment (emulator/device).
-        private string? BuildImageUrl(string? imageUrl)
-        {
-            if (string.IsNullOrWhiteSpace(imageUrl))
-                return null;
-            if (Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
-                return imageUrl;
-
-            return $"{_environmentService.ApiBaseUrl.TrimEnd('/')}/{imageUrl.TrimStart('/')}";
-        }
-
         [RelayCommand]
-        private async Task ShowExplanationAsync()
-        {
-            var parameters = new Dictionary<string, object>();
-            if (Explanation is not null)
-                parameters["explanationText"] = Explanation;
-            if (ExplanationImageUrl is not null)
-                parameters["imageUrl"] = ExplanationImageUrl;
+        private void ToggleExplanation() => ShowExplanation = !ShowExplanation;
 
-            await Shell.Current.GoToAsync(nameof(Pages.ExplanationPage), parameters);
+        // The web's lightbox: the figure full-screen, here with pinch-to-zoom.
+        [RelayCommand]
+        private async Task OpenImageAsync()
+        {
+            if (ExplanationImageUrl is null) return;
+
+            await Shell.Current.GoToAsync(nameof(Pages.ExplanationPage), new Dictionary<string, object>
+            {
+                ["imageUrl"] = ExplanationImageUrl,
+            });
         }
 
         [RelayCommand]
@@ -206,13 +221,15 @@ namespace NavigationES.Client.ViewModels
                 _answered = 0;
                 _total = 0;
                 _started = false;
+                Completed = false;
                 IsCompleted = false;
+                Error = null;
 
                 await StartAsync();
             }
             catch (Exception)
             {
-                await UserMessageHelper.ShowErrorAsync(AppResources.UnknownError);
+                Error = AppResources.UnknownError;
             }
             finally
             {
@@ -228,8 +245,9 @@ namespace NavigationES.Client.ViewModels
     {
         public long Id { get; } = dto.Id;
 
-        // Lettered like the official paper: "A) Pantoques."
-        public string Text { get; } = $"{letter}) {dto.Text}";
+        // Lettered like the official paper: "A)" then the text.
+        public string Letter { get; } = $"{letter})";
+        public string Text { get; } = dto.Text;
 
         [ObservableProperty] private Color _backgroundColor = Colors.White;
         [ObservableProperty] private Color _borderColor = Color.FromArgb("#D8DEE6");

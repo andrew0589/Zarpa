@@ -2,21 +2,392 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
+             xmlns:controls="clr-namespace:NavigationES.Client.Controls"
+             xmlns:dtos="clr-namespace:NavigationES.Shared.Dtos;assembly=NavigationES.Shared"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="NavigationES.Client.Pages.ProfilePage"
              Title="{x:Static lang:AppResources.TabProfile}"
+             x:DataType="vm:ProfileViewModel"
              BackgroundColor="#F2F4F8">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
-    <VerticalStackLayout Spacing="10"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center">
-        <Label Text="{x:Static lang:AppResources.TabProfile}"
-               HorizontalOptions="Center"
-               FontSize="24"
-               TextColor="{StaticResource Primary}"
-               FontAttributes="Bold" />
-        <Label Text="{x:Static lang:AppResources.ComingSoon}"
-               HorizontalOptions="Center"
-               FontSize="16"
-               TextColor="{StaticResource Gray500}" />
-    </VerticalStackLayout>
+            <!-- The web's .retro-card / .retro-title -->
+            <Style x:Key="RetroCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="Stroke" Value="#D8DEE6" />
+                <Setter Property="StrokeThickness" Value="1.5" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+                <Setter Property="Padding" Value="20,18,20,22" />
+            </Style>
+            <Style x:Key="RetroTitle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <!-- The web's 1.5px dashed separators (.retro-title, .datos-row, .stats-summary) -->
+            <Style x:Key="RetroRule" TargetType="controls:DashedRule">
+                <Setter Property="Margin" Value="0,10,0,16" />
+            </Style>
+            <Style x:Key="DatosKey" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="CharacterSpacing" Value="1.2" />
+                <Setter Property="TextTransform" Value="Uppercase" />
+            </Style>
+            <Style x:Key="DatosValue" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="0,2,0,0" />
+            </Style>
+
+            <!-- .btn-danger-outline / .btn-danger / .btn-cancel -->
+            <Style x:Key="DangerOutlineButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="#B3261E" />
+                <Setter Property="BorderColor" Value="#B3261E" />
+                <Setter Property="BorderWidth" Value="1.5" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+            </Style>
+            <Style x:Key="DangerButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#B3261E" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            <Style x:Key="CancelButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="BorderColor" Value="#D8DEE6" />
+                <Setter Property="BorderWidth" Value="1.5" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            <Style x:Key="OutlinePrimaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}"
+                 RefreshColor="{StaticResource Accent}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,20,16,32" MaximumWidthRequest="600" Spacing="18">
+
+            <!-- Tu titulación -->
+            <Border Style="{StaticResource RetroCard}">
+                <Border.Shadow>
+                    <Shadow Brush="#14102A43" Offset="3,3" Radius="0" Opacity="1" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="{x:Static lang:AppResources.YourLicenseLabel}" Style="{StaticResource RetroTitle}" />
+                    <controls:DashedRule Style="{StaticResource RetroRule}" />
+
+                    <!-- Square PNB/PER/PY/CY cards: tap selects and persists it on the account. -->
+                    <FlexLayout Wrap="Wrap"
+                                Direction="Row"
+                                JustifyContent="Start"
+                                AlignItems="Start"
+                                AlignContent="Start"
+                                Margin="-6"
+                                BindableLayout.ItemsSource="{Binding Licenses}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:LicenseOptionItem">
+                                <Grid FlexLayout.Basis="50%" Padding="6">
+                                    <Border BackgroundColor="White"
+                                            Stroke="#D8DEE6"
+                                            StrokeThickness="1.5"
+                                            StrokeShape="RoundRectangle 14"
+                                            Padding="12"
+                                            HeightRequest="118">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="#EAF6F5" />
+                                                <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding SelectLicenseCommand, Source={RelativeSource AncestorType={x:Type vm:ProfileViewModel}}}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid>
+                                            <VerticalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
+                                                <Border BackgroundColor="{StaticResource Primary}"
+                                                        Stroke="Transparent"
+                                                        StrokeShape="RoundRectangle 8"
+                                                        Padding="11,5"
+                                                        HorizontalOptions="Center">
+                                                    <Label Text="{Binding Code}"
+                                                           TextColor="White"
+                                                           FontSize="15"
+                                                           FontAttributes="Bold" />
+                                                </Border>
+                                                <Label Text="{Binding Name}"
+                                                       TextColor="{StaticResource Gray600}"
+                                                       FontSize="12.5"
+                                                       HorizontalTextAlignment="Center"
+                                                       LineBreakMode="WordWrap"
+                                                       MaxLines="2" />
+                                            </VerticalStackLayout>
+                                            <Border BackgroundColor="{StaticResource Accent}"
+                                                    Stroke="Transparent"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    WidthRequest="24"
+                                                    HeightRequest="24"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Start"
+                                                    IsVisible="{Binding IsSelected}">
+                                                <Label Text="✓"
+                                                       TextColor="White"
+                                                       FontSize="12"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Tu comunidad autónoma -->
+            <Border Style="{StaticResource RetroCard}">
+                <Border.Shadow>
+                    <Shadow Brush="#14102A43" Offset="3,3" Radius="0" Opacity="1" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="{x:Static lang:AppResources.ProfileComunidadTitle}" Style="{StaticResource RetroTitle}" />
+                    <controls:DashedRule Style="{StaticResource RetroRule}" />
+                    <Border BackgroundColor="White"
+                            Stroke="#D8DEE6"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="10,0"
+                            MinimumHeightRequest="48">
+                        <Picker Title="{x:Static lang:AppResources.ComunidadPlaceholder}"
+                                ItemsSource="{Binding Comunidades}"
+                                ItemDisplayBinding="{Binding Name, x:DataType=dtos:ComunidadDto}"
+                                SelectedItem="{Binding SelectedComunidad}"
+                                TextColor="{StaticResource OffBlack}"
+                                TitleColor="{StaticResource Gray400}"
+                                FontSize="15"
+                                VerticalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Datos personales -->
+            <Border Style="{StaticResource RetroCard}">
+                <Border.Shadow>
+                    <Shadow Brush="#14102A43" Offset="3,3" Radius="0" Opacity="1" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="{x:Static lang:AppResources.PersonalDataTitle}" Style="{StaticResource RetroTitle}" />
+                    <controls:DashedRule Style="{StaticResource RetroRule}" />
+
+                    <Border BackgroundColor="{StaticResource Primary}"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 32"
+                            WidthRequest="64"
+                            HeightRequest="64"
+                            HorizontalOptions="Start">
+                        <Border.Shadow>
+                            <Shadow Brush="#732AA5A0" Offset="3,3" Radius="0" />
+                        </Border.Shadow>
+                        <Label Text="{Binding Initial}"
+                               TextColor="White"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+
+                    <VerticalStackLayout Spacing="0" Margin="0,16,0,0">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   Text="{x:Static lang:AppResources.ProfileNameLabel}"
+                                   Style="{StaticResource DatosKey}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{x:Static lang:AppResources.EditName}"
+                                   TextColor="{StaticResource Primary}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   IsVisible="{Binding EditingName, Converter={StaticResource InvertedBoolConverter}}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding StartEditNameCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                        <Label Text="{Binding UserName}"
+                               Style="{StaticResource DatosValue}"
+                               IsVisible="{Binding EditingName, Converter={StaticResource InvertedBoolConverter}}" />
+
+                        <!-- Inline rename: Entry + Cancelar / Guardar -->
+                        <VerticalStackLayout Spacing="0" Margin="0,6,0,0" IsVisible="{Binding EditingName}">
+                            <Border BackgroundColor="White"
+                                    Stroke="#D8DEE6"
+                                    StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="12,0"
+                                    MinimumHeightRequest="46">
+                                <Entry Text="{Binding NameDraft}"
+                                       Placeholder="{x:Static lang:AppResources.NamePlaceholder}"
+                                       MaxLength="50"
+                                       TextColor="{StaticResource OffBlack}"
+                                       FontSize="15"
+                                       VerticalOptions="Center"
+                                       ReturnType="Done"
+                                       ReturnCommand="{Binding SaveNameCommand}" />
+                            </Border>
+                            <Label Text="{Binding NameError}"
+                                   TextColor="Red"
+                                   FontSize="13"
+                                   Margin="0,8,0,0"
+                                   IsVisible="{Binding NameError, Converter={StaticResource IsNotNullConverter}}" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,10,0,0">
+                                <Button Grid.Column="0"
+                                        Text="{x:Static lang:AppResources.Cancel}"
+                                        Style="{StaticResource CancelButton}"
+                                        Command="{Binding CancelEditNameCommand}"
+                                        IsEnabled="{Binding NotSavingName}" />
+                                <Button Grid.Column="1"
+                                        Text="{Binding SaveNameButtonText}"
+                                        Command="{Binding SaveNameCommand}"
+                                        IsEnabled="{Binding NotSavingName}"
+                                        CornerRadius="10" />
+                            </Grid>
+                        </VerticalStackLayout>
+                        <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,10,0,10" />
+                        <Label Text="{x:Static lang:AppResources.ProfileEmailLabel}" Style="{StaticResource DatosKey}" />
+                        <Label Text="{Binding UserEmail}" Style="{StaticResource DatosValue}" LineBreakMode="CharacterWrap" />
+                        <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,10,0,16" />
+                    </VerticalStackLayout>
+
+                    <Border BackgroundColor="#DFF3EC"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 99"
+                            Padding="12,6"
+                            HorizontalOptions="Start"
+                            IsVisible="{Binding IsEmailVerified}">
+                        <Label Text="{x:Static lang:AppResources.EmailVerifiedTag}"
+                               TextColor="#1E7A76"
+                               FontSize="13"
+                               FontAttributes="Bold" />
+                    </Border>
+                    <Border BackgroundColor="#FCEFC7"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 99"
+                            Padding="12,6"
+                            HorizontalOptions="Start"
+                            IsVisible="{Binding IsEmailVerified, Converter={StaticResource InvertedBoolConverter}}">
+                        <Label Text="{x:Static lang:AppResources.EmailNotVerifiedTag}"
+                               TextColor="#8A6D1A"
+                               FontSize="13"
+                               FontAttributes="Bold" />
+                    </Border>
+
+                    <!-- Zona de peligro: in-app account deletion (App Store Guideline 5.1.1(v)) -->
+                    <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,24,0,14" />
+                    <Label Text="{x:Static lang:AppResources.DangerZoneTitle}"
+                           TextColor="#B3261E"
+                           FontSize="13"
+                           FontAttributes="Bold" />
+
+                    <Button Text="{x:Static lang:AppResources.DeleteAccount}"
+                            Style="{StaticResource DangerOutlineButton}"
+                            Command="{Binding StartDeleteCommand}"
+                            HorizontalOptions="Start"
+                            Margin="0,12,0,0"
+                            IsVisible="{Binding ConfirmingDelete, Converter={StaticResource InvertedBoolConverter}}" />
+
+                    <VerticalStackLayout Spacing="0" Margin="0,12,0,0" IsVisible="{Binding ConfirmingDelete}">
+                        <Label Text="{x:Static lang:AppResources.DeleteAccountWarning}"
+                               TextColor="#5B5B5B"
+                               FontSize="13.5"
+                               LineHeight="1.3" />
+                        <Label Text="{Binding DeleteError}"
+                               TextColor="Red"
+                               FontSize="13"
+                               Margin="0,10,0,0"
+                               IsVisible="{Binding DeleteError, Converter={StaticResource IsNotNullConverter}}" />
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,14,0,0">
+                            <Button Grid.Column="0"
+                                    Text="{x:Static lang:AppResources.Cancel}"
+                                    Style="{StaticResource CancelButton}"
+                                    Command="{Binding CancelDeleteCommand}"
+                                    IsEnabled="{Binding NotDeleting}" />
+                            <Button Grid.Column="1"
+                                    Text="{Binding DeleteButtonText}"
+                                    Style="{StaticResource DangerButton}"
+                                    Command="{Binding DeleteAccountCommand}"
+                                    IsEnabled="{Binding NotDeleting}" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- The web keeps "Cerrar sesión" in its top bar; here it closes the card. -->
+                    <Button Text="{x:Static lang:AppResources.Signout}"
+                            Style="{StaticResource OutlinePrimaryButton}"
+                            Command="{Binding SignoutCommand}"
+                            Margin="0,24,0,0" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+    </RefreshView>
+    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                       IsVisible="{Binding IsBusy}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Color="{StaticResource Accent}" />
+    </Grid>
 </ContentPage>

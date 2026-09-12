@@ -2,11 +2,11 @@ using NavigationES.Client.ViewModels;
 
 namespace NavigationES.Client.Pages;
 
-public partial class ProfilePage : ContentPage
+public partial class ExamsPage : ContentPage
 {
-    private readonly ProfileViewModel _viewModel;
+    private readonly ExamsViewModel _viewModel;
 
-    public ProfilePage(ProfileViewModel viewModel)
+    public ExamsPage(ExamsViewModel viewModel)
     {
         InitializeComponent();
 
@@ -18,6 +18,7 @@ public partial class ProfilePage : ContentPage
     {
         base.OnAppearing();
 
+        // Reloads on every return so a just-finished paper shows its new status.
         await _viewModel.LoadAsync();
     }
 

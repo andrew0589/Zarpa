@@ -1,0 +1,371 @@
+@page "/admin/usuarios"
+@attribute [Authorize(Roles = WebAuthStateProvider.AdminRole)]
+@inject IAdminApi AdminApi
+@inject WebAuthStateProvider Auth
+
+<PageTitle>Usuarios — NavigationES</PageTitle>
+
+<div class="admin-page">
+    <h1>Usuarios</h1>
+    <p class="tagline">
+        @if (_list is null)
+        {
+            <text>Cargando…</text>
+        }
+        else
+        {
+            <text>@_list.TotalCount @(_list.TotalCount == 1 ? "cuenta" : "cuentas")@(string.IsNullOrWhiteSpace(_appliedSearch) ? null : $" · búsqueda «{_appliedSearch}»")</text>
+        }
+    </p>
+
+    <section class="retro-card admin-card">
+        <form class="admin-toolbar" @onsubmit="SearchAsync" @onsubmit:preventDefault>
+            <input class="admin-search" type="search" placeholder="Buscar por nombre o correo"
+                   @bind="_search" @bind:event="oninput" />
+            <select class="admin-select" @bind="_order" @bind:after="ReloadAsync" aria-label="Ordenar">
+                <option value="recent">Actividad más reciente</option>
+                <option value="inactive">Más inactivos primero</option>
+                <option value="newest">Alta más reciente</option>
+                <option value="name">Nombre</option>
+            </select>
+            <button type="submit" class="btn-primary admin-btn" disabled="@_loading">Buscar</button>
+        </form>
+
+        @if (_message is not null)
+        {
+            <p class="admin-message" role="status">@_message</p>
+        }
+        @if (_error is not null)
+        {
+            <p class="error" role="alert">@_error</p>
+        }
+
+        @if (_list is null)
+        {
+            @if (_error is null)
+            {
+                <p class="page-loading">Cargando…</p>
+            }
+        }
+        else if (_list.Items.Count == 0)
+        {
+            <p class="tagline">No hay usuarios que coincidan.</p>
+        }
+        else
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Acceso</th>
+                            <th>Historial</th>
+                            <th>Alta</th>
+                            <th>Última actividad</th>
+                            <th>Aviso de inactividad</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in _list.Items)
+                        {
+                            var isSelf = u.Id == Auth.User?.Id;
+                            var warning = WarningState(u);
+                            <tr class="@(u.IsAdmin ? "is-admin" : null)">
+                                <td>
+                                    <div class="admin-user-name">
+                                        @u.Name
+                                        @if (isSelf)
+                                        {
+                                            <span class="admin-you">(tú)</span>
+                                        }
+                                    </div>
+                                    <div class="admin-user-email">@u.Email</div>
+                                    @if (u.IsAdmin || !u.IsEmailVerified)
+                                    {
+                                        <div class="admin-badges">
+                                            @if (u.IsAdmin)
+                                            {
+                                                <span class="status-chip admin">Admin</span>
+                                            }
+                                            @if (!u.IsEmailVerified)
+                                            {
+                                                <span class="status-chip noapto">Sin verificar</span>
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                                <td class="admin-muted">@Access(u)</td>
+                                <td class="admin-muted">
+                                    @if (u.SelectedLicenseCode is not null)
+                                    {
+                                        <strong>@u.SelectedLicenseCode</strong><br />
+                                    }
+                                    @u.TopicSessionCount @(u.TopicSessionCount == 1 ? "tema" : "temas") · @u.ExamSessionCount @(u.ExamSessionCount == 1 ? "examen" : "exámenes")
+                                </td>
+                                <td class="admin-muted">@FormatDate(u.CreatedAt)</td>
+                                <td>
+                                    <div>@Relative(u.LastActiveAt)</div>
+                                    @if (u.LastActiveAt is not null)
+                                    {
+                                        <div class="admin-muted admin-small">@FormatDate(u.LastActiveAt) @ClientLabel(u.LastActiveClient)</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="status-chip @warning.Css">@warning.Label</span>
+                                    @if (u.InactivityWarningSentAt is not null)
+                                    {
+                                        <span class="admin-small admin-block">Enviado el @FormatDate(u.InactivityWarningSentAt)</span>
+                                    }
+                                </td>
+                                <td class="admin-actions">
+                                    <button class="btn-cancel admin-btn-sm" disabled="@_busy"
+                                            @onclick="() => Ask(PendingKind.ClearHistory, u)">Vaciar historial</button>
+                                    <button class="btn-cancel admin-btn-sm" disabled="@(_busy || u.IsAdmin)"
+                                            title="@(u.IsAdmin ? "No disponible para administradores" : null)"
+                                            @onclick="() => Ask(PendingKind.Warn, u)">Enviar aviso</button>
+                                    <button class="btn-danger-outline admin-btn-sm" disabled="@(_busy || u.IsAdmin)"
+                                            title="@(u.IsAdmin ? "No disponible para administradores" : null)"
+                                            @onclick="() => Ask(PendingKind.Delete, u)">Eliminar</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (TotalPages > 1)
+            {
+                <div class="admin-pager">
+                    <button class="btn-cancel admin-btn-sm" disabled="@(_loading || _list.Page <= 1)"
+                            @onclick="() => GoToPageAsync(_list.Page - 1)">Anterior</button>
+                    <span>Página @_list.Page de @TotalPages</span>
+                    <button class="btn-cancel admin-btn-sm" disabled="@(_loading || _list.Page >= TotalPages)"
+                            @onclick="() => GoToPageAsync(_list.Page + 1)">Siguiente</button>
+                </div>
+            }
+        }
+    </section>
+</div>
+
+@if (_pending is not null)
+{
+    <div class="modal-backdrop" @onclick="CancelPending">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <h2 class="modal-title">@_pending.Title</h2>
+            <p class="modal-text">@_pending.Text</p>
+            @if (_pendingError is not null)
+            {
+                <p class="error" role="alert">@_pendingError</p>
+            }
+            <div class="modal-actions">
+                <button class="btn-cancel" disabled="@_busy" @onclick="CancelPending">Cancelar</button>
+                <button class="@(_pending.Kind == PendingKind.Delete ? "btn-danger" : "btn-primary")"
+                        disabled="@_busy" @onclick="ConfirmPendingAsync">
+                    @(_busy ? "Un momento…" : _pending.ConfirmLabel)
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private enum PendingKind { ClearHistory, Warn, Delete }
+
+    private sealed record PendingAction(PendingKind Kind, AdminUserDto User, string Title, string Text, string ConfirmLabel);
+
+    // Matches the month the inactivity email announces (AdminUserService.SendInactivityWarningAsync).
+    private const int WarningDays = 30;
+
+    private AdminUserListDto? _list;
+    private bool _loading;
+    private bool _busy;
+    private string _search = string.Empty;
+    private string _appliedSearch = string.Empty;
+    private string _order = "recent";
+    private int _page = 1;
+    private string? _message;
+    private string? _error;
+    private PendingAction? _pending;
+    private string? _pendingError;
+
+    private int TotalPages =>
+        _list is null ? 1 : Math.Max(1, (int)Math.Ceiling((double)_list.TotalCount / _list.PageSize));
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _error = null;
+        try
+        {
+            var search = string.IsNullOrWhiteSpace(_search) ? null : _search.Trim();
+            _list = await AdminApi.GetUsersAsync(search, _order, _page);
+            _appliedSearch = search ?? string.Empty;
+
+            // The page can fall off the end after a deletion or a narrower search.
+            if (_list.Items.Count == 0 && _list.Page > 1)
+            {
+                _page = Math.Max(1, TotalPages);
+                _list = await AdminApi.GetUsersAsync(search, _order, _page);
+            }
+        }
+        catch (Exception)
+        {
+            // A 401 already redirected to /signin; a 403 means the admin flag was
+            // revoked since sign-in — either way there is nothing to show here.
+            _error = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private Task SearchAsync()
+    {
+        _page = 1;
+        return LoadAsync();
+    }
+
+    private Task ReloadAsync()
+    {
+        _page = 1;
+        return LoadAsync();
+    }
+
+    private Task GoToPageAsync(int page)
+    {
+        _page = page;
+        return LoadAsync();
+    }
+
+    private void Ask(PendingKind kind, AdminUserDto user)
+    {
+        _message = null;
+        _pendingError = null;
+        _pending = kind switch
+        {
+            PendingKind.ClearHistory => new PendingAction(kind, user,
+                "Vaciar historial",
+                $"Se borrarán todos los tests por temas y las simulaciones de examen de {user.Name} ({user.Email}). La cuenta y sus preferencias se conservan.",
+                "Sí, vaciar"),
+            PendingKind.Warn => new PendingAction(kind, user,
+                "Enviar aviso de inactividad",
+                $"Se enviará un correo a {user.Email} avisando de que la cuenta se eliminará si no se usa durante el próximo mes.",
+                "Enviar correo"),
+            _ => new PendingAction(kind, user,
+                "Eliminar cuenta",
+                $"Se eliminará la cuenta de {user.Name} ({user.Email}) y todo su progreso de forma permanente. Esta acción no se puede deshacer.",
+                "Sí, eliminar"),
+        };
+    }
+
+    private void CancelPending()
+    {
+        if (_busy) return;
+
+        _pending = null;
+        _pendingError = null;
+    }
+
+    private async Task ConfirmPendingAsync()
+    {
+        if (_pending is null || _busy) return;
+
+        _busy = true;
+        _pendingError = null;
+        try
+        {
+            var result = _pending.Kind switch
+            {
+                PendingKind.ClearHistory => await AdminApi.ClearHistoryAsync(_pending.User.Id),
+                PendingKind.Warn => await AdminApi.SendInactivityWarningAsync(_pending.User.Id),
+                _ => await AdminApi.DeleteUserAsync(_pending.User.Id),
+            };
+
+            if (result.IsSuccess)
+            {
+                _message = _pending.Kind switch
+                {
+                    PendingKind.ClearHistory => $"Historial de {_pending.User.Name} vaciado.",
+                    PendingKind.Warn => $"Aviso enviado a {_pending.User.Email}.",
+                    _ => $"Cuenta de {_pending.User.Email} eliminada.",
+                };
+                _pending = null;
+                await LoadAsync();
+            }
+            else
+            {
+                _pendingError = ErrorMessages.Translate(result.ErrorMessage);
+            }
+        }
+        catch (Exception)
+        {
+            _pendingError = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    // ----- presentation helpers -----
+
+    private static string Access(AdminUserDto u)
+    {
+        var parts = new List<string>();
+        if (u.HasPassword) parts.Add("Contraseña");
+        parts.AddRange(u.Providers);
+        return parts.Count == 0 ? "—" : string.Join(" · ", parts);
+    }
+
+    // Timestamps arrive as UTC; shown in the browser's zone.
+    private static DateTime AsUtc(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc);
+
+    private static string FormatDate(DateTime? utc) =>
+        utc is null ? "—" : AsUtc(utc.Value).ToLocalTime().ToString("dd/MM/yyyy HH:mm");
+
+    private static string Relative(DateTime? utc)
+    {
+        if (utc is null) return "Nunca";
+
+        var span = DateTime.UtcNow - AsUtc(utc.Value);
+        if (span < TimeSpan.FromMinutes(1)) return "Ahora mismo";
+        if (span < TimeSpan.FromHours(1)) return $"Hace {(int)span.TotalMinutes} min";
+        if (span < TimeSpan.FromDays(1)) return $"Hace {(int)span.TotalHours} h";
+        if (span < TimeSpan.FromDays(30)) return Plural((int)span.TotalDays, "día", "días");
+        if (span < TimeSpan.FromDays(365)) return Plural((int)(span.TotalDays / 30), "mes", "meses");
+        return Plural((int)(span.TotalDays / 365), "año", "años");
+    }
+
+    private static string Plural(int n, string one, string many) => $"Hace {n} {(n == 1 ? one : many)}";
+
+    private static string ClientLabel(string? client) => client switch
+    {
+        "web" => "· web",
+        "android" => "· Android",
+        "ios" => "· iOS",
+        "windows" => "· Windows",
+        "app" => "· app",
+        _ => string.Empty,
+    };
+
+    // The countdown promised by the email: a month after the warning the account is
+    // deletable unless the user came back (LastActiveAt moved past the warning).
+    private static (string Label, string Css) WarningState(AdminUserDto u)
+    {
+        if (u.InactivityWarningSentAt is null)
+            return ("Sin aviso", "empezado");
+
+        var sent = AsUtc(u.InactivityWarningSentAt.Value);
+        if (u.LastActiveAt is not null && AsUtc(u.LastActiveAt.Value) > sent)
+            return ("Volvió a entrar", "apto");
+
+        var daysLeft = WarningDays - (int)(DateTime.UtcNow - sent).TotalDays;
+        return daysLeft > 0
+            ? ($"Quedan {daysLeft} {(daysLeft == 1 ? "día" : "días")}", "warn")
+            : ("Plazo vencido", "noapto");
+    }
+}

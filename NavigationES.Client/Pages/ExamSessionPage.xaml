@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
+             x:Class="NavigationES.Client.Pages.ExamSessionPage"
+             Title="{Binding Title}"
+             x:DataType="vm:ExamSessionViewModel"
+             BackgroundColor="#F2F4F8">
+
+    <!-- Leaving mid-exam goes through the confirmation (and abandons the attempt). -->
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding ExitCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- .btn-outline-dark -->
+            <Style x:Key="OutlineDarkButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="BorderColor" Value="#D8DEE6" />
+                <Setter Property="BorderWidth" Value="1.5" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="14,10" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.45" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            <!-- .btn-explanation -->
+            <Style x:Key="OutlinePrimaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderColor" Value="{StaticResource Primary}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="MinimumHeightRequest" Value="40" />
+            </Style>
+            <Style x:Key="SectionHeading" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <Style x:Key="StatCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="Stroke" Value="#D8DEE6" />
+                <Setter Property="StrokeThickness" Value="1.5" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+                <Setter Property="Padding" Value="6,10" />
+            </Style>
+            <Style x:Key="StatValue" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource OffBlack}" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="StatLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12,16,32" MaximumWidthRequest="600" Spacing="0">
+
+            <Label Text="{x:Static lang:AppResources.UnknownError}"
+                   TextColor="Red"
+                   FontSize="14"
+                   IsVisible="{Binding LoadFailed}" />
+
+            <!-- ===== Running exam ===== -->
+            <VerticalStackLayout Spacing="0" IsVisible="{Binding ShowExam}">
+
+                <!-- Countdown (timed licenses only); turns red under five minutes. -->
+                <Border BackgroundColor="White"
+                        Stroke="#D8DEE6"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="12,5"
+                        HorizontalOptions="End"
+                        Margin="0,0,0,10"
+                        IsVisible="{Binding HasTimer}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding TimerLow}" Value="True">
+                            <Setter Property="Stroke" Value="#D64545" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Label Text="{Binding TimerText}"
+                           TextColor="{StaticResource Primary}"
+                           FontSize="17"
+                           FontAttributes="Bold">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding TimerLow}" Value="True">
+                                <Setter Property="TextColor" Value="#D64545" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+
+                <!-- Question navigator: current / answered states -->
+                <FlexLayout Wrap="Wrap"
+                            Direction="Row"
+                            JustifyContent="Start"
+                            AlignItems="Start"
+                            AlignContent="Start"
+                            BindableLayout.ItemsSource="{Binding Nav}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ExamNavItem">
+                            <Border WidthRequest="34"
+                                    HeightRequest="34"
+                                    Margin="0,0,5,5"
+                                    BackgroundColor="{Binding BackgroundColor}"
+                                    Stroke="{Binding BorderColor}"
+                                    StrokeThickness="{Binding BorderThickness}"
+                                    StrokeShape="RoundRectangle 8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoToQuestionCommand, Source={RelativeSource AncestorType={x:Type vm:ExamSessionViewModel}}}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding PositionText}"
+                                       TextColor="{Binding TextColor}"
+                                       FontAttributes="{Binding FontAttributes}"
+                                       FontSize="12"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <!-- Question -->
+                <Border BackgroundColor="White"
+                        Stroke="Transparent"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="18,16"
+                        Margin="0,8,0,0">
+                    <Border.Shadow>
+                        <Shadow Brush="#14102A43" Offset="0,4" Radius="10" Opacity="1" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="{Binding ProgressText}"
+                               TextColor="{StaticResource Gray600}"
+                               FontSize="13"
+                               FontAttributes="Bold" />
+                        <Label Text="{Binding QuestionText}"
+                               TextColor="{StaticResource OffBlack}"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               Margin="0,8,0,0" />
+                        <Image Source="{Binding QuestionImageUrl}"
+                               Aspect="AspectFit"
+                               HeightRequest="220"
+                               Margin="0,12,0,0"
+                               IsVisible="{Binding HasQuestionImage}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Answers -->
+                <VerticalStackLayout Spacing="10" Margin="0,16,0,0"
+                                     BindableLayout.ItemsSource="{Binding Answers}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ExamAnswerItem">
+                            <Border BackgroundColor="{Binding BackgroundColor}"
+                                    Stroke="{Binding BorderColor}"
+                                    StrokeThickness="{Binding BorderThickness}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="16,14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectAnswerCommand, Source={RelativeSource AncestorType={x:Type vm:ExamSessionViewModel}}}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Letter}"
+                                           TextColor="{StaticResource Primary}"
+                                           FontSize="15"
+                                           FontAttributes="Bold" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Text}"
+                                           TextColor="{StaticResource OffBlack}"
+                                           FontSize="15" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding UnsavedWarningText}"
+                       TextColor="Red"
+                       FontSize="13"
+                       Margin="0,12,0,0"
+                       IsVisible="{Binding ShowUnsavedWarning}" />
+                <Label Text="{Binding Error}"
+                       TextColor="Red"
+                       FontSize="13"
+                       Margin="0,12,0,0"
+                       IsVisible="{Binding HasError}" />
+
+                <!-- Controls -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,18,0,0">
+                    <Button Grid.Column="0"
+                            Text="{x:Static lang:AppResources.PreviousQuestion}"
+                            Style="{StaticResource OutlineDarkButton}"
+                            Command="{Binding PreviousCommand}"
+                            IsEnabled="{Binding CanGoPrevious}" />
+                    <Button Grid.Column="1"
+                            Text="{x:Static lang:AppResources.NextQuestionArrow}"
+                            Style="{StaticResource OutlineDarkButton}"
+                            Command="{Binding NextCommand}"
+                            IsEnabled="{Binding CanGoNext}" />
+                </Grid>
+                <Button Text="{x:Static lang:AppResources.FinishExam}"
+                        Command="{Binding ConfirmFinishCommand}"
+                        CornerRadius="10"
+                        Margin="0,10,0,0" />
+            </VerticalStackLayout>
+
+            <!-- ===== Result ===== -->
+            <VerticalStackLayout Spacing="0" IsVisible="{Binding ShowResult}">
+                <Border BackgroundColor="{Binding VerdictBackground}"
+                        Stroke="Transparent"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <Label Text="{Binding VerdictText}"
+                           TextColor="{Binding VerdictTextColor}"
+                           FontSize="26"
+                           FontAttributes="Bold"
+                           CharacterSpacing="2"
+                           HorizontalTextAlignment="Center" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" Margin="0,14,0,0">
+                    <Border Grid.Column="0" Style="{StaticResource StatCard}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding CorrectText}" Style="{StaticResource StatValue}" TextColor="#1E7A76" />
+                            <Label Text="{x:Static lang:AppResources.AciertosLabel}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource StatCard}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding WrongText}" Style="{StaticResource StatValue}" TextColor="#D64545" />
+                            <Label Text="{x:Static lang:AppResources.FallosLabel}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource StatCard}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding UnansweredText}" Style="{StaticResource StatValue}" />
+                            <Label Text="{x:Static lang:AppResources.SinResponderLabel}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="3" Style="{StaticResource StatCard}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding TotalErrorsText}" Style="{StaticResource StatValue}" TextColor="{Binding TotalErrorsColor}" />
+                            <Label Text="{x:Static lang:AppResources.ErrorsTotalLabel}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Errores por tema -->
+                <Label Text="{x:Static lang:AppResources.ErrorsByTopic}" Style="{StaticResource SectionHeading}" Margin="0,24,0,4" />
+                <Label Text="{x:Static lang:AppResources.TopicErrorsNote}"
+                       TextColor="{StaticResource Gray400}"
+                       FontSize="13"
+                       Margin="0,0,0,10" />
+                <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding TopicResults}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:TopicResultItem">
+                            <Border BackgroundColor="{Binding Background}"
+                                    Stroke="{Binding Border}"
+                                    StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="14,9">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Name}"
+                                           TextColor="{Binding TextColor}"
+                                           FontAttributes="{Binding FontAttributes}"
+                                           FontSize="14" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Detail}"
+                                           TextColor="{Binding TextColor}"
+                                           FontAttributes="{Binding FontAttributes}"
+                                           FontSize="14"
+                                           HorizontalTextAlignment="End" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Review: failed questions, or all of them -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" Margin="0,24,0,10">
+                    <Label Grid.Column="0"
+                           Text="{Binding ReviewHeading}"
+                           Style="{StaticResource SectionHeading}"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="1"
+                            Text="{Binding ReviewToggleText}"
+                            Style="{StaticResource OutlinePrimaryButton}"
+                            Command="{Binding ToggleReviewCommand}" />
+                </Grid>
+
+                <Label Text="{x:Static lang:AppResources.NoErrors}"
+                       TextColor="{StaticResource Gray500}"
+                       FontSize="14"
+                       IsVisible="{Binding NoReviewQuestions}" />
+
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding ReviewQuestions}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ReviewQuestionItem">
+                            <Border BackgroundColor="White"
+                                    Stroke="#D8DEE6"
+                                    StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="16,14">
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Border Grid.Column="0"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                Stroke="Transparent"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="8,3"
+                                                VerticalOptions="Start">
+                                            <Label Text="{Binding PositionText}"
+                                                   TextColor="White"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold" />
+                                        </Border>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Text}"
+                                               TextColor="{StaticResource OffBlack}"
+                                               FontSize="15"
+                                               FontAttributes="Bold" />
+                                    </Grid>
+                                    <Label Text="{x:Static lang:AppResources.SinResponderLabel}"
+                                           TextColor="#B23B3B"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           Margin="0,8,0,0"
+                                           IsVisible="{Binding IsUnanswered}" />
+                                    <VerticalStackLayout Spacing="6" Margin="0,10,0,0"
+                                                         BindableLayout.ItemsSource="{Binding Answers}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:ReviewAnswerItem">
+                                                <Border BackgroundColor="{Binding Background}"
+                                                        Stroke="{Binding Border}"
+                                                        StrokeThickness="1.5"
+                                                        StrokeShape="RoundRectangle 10"
+                                                        Padding="12,10">
+                                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                                        <Label Grid.Column="0"
+                                                               Text="{Binding Letter}"
+                                                               TextColor="{StaticResource Primary}"
+                                                               FontSize="14"
+                                                               FontAttributes="Bold" />
+                                                        <Label Grid.Column="1"
+                                                               Text="{Binding Text}"
+                                                               TextColor="{StaticResource OffBlack}"
+                                                               FontSize="14" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="{x:Static lang:AppResources.BackToExams}"
+                        Command="{Binding BackToExamsCommand}"
+                        CornerRadius="10"
+                        Margin="0,24,0,0" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                       IsVisible="{Binding IsBusy}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Color="{StaticResource Accent}" />
+    </Grid>
+</ContentPage>

@@ -68,7 +68,25 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("AciertosFormat", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string AciertosLabel {
+            get {
+                return ResourceManager.GetString("AciertosLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string AciertosSub {
+            get {
+                return ResourceManager.GetString("AciertosSub", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -81,12 +99,39 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string AllQuestions {
+            get {
+                return ResourceManager.GetString("AllQuestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string AlreadyHaveAccountQuestion {
             get {
                 return ResourceManager.GetString("AlreadyHaveAccountQuestion", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string AnswersFormat {
+            get {
+                return ResourceManager.GetString("AnswersFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string AnswersNotArrivedFormat {
+            get {
+                return ResourceManager.GetString("AnswersNotArrivedFormat", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -108,6 +153,33 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string AprobadosLabel {
+            get {
+                return ResourceManager.GetString("AprobadosLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Apto {
+            get {
+                return ResourceManager.GetString("Apto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string BackToExams {
+            get {
+                return ResourceManager.GetString("BackToExams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string BackToSignIn {
             get {
                 return ResourceManager.GetString("BackToSignIn", resourceCulture);
@@ -122,7 +194,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("BackToTopics", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -131,13 +203,31 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
         internal static string CheckSpamFolderAdvice {
             get {
                 return ResourceManager.GetString("CheckSpamFolderAdvice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ChooseComunidadTagline {
+            get {
+                return ResourceManager.GetString("ChooseComunidadTagline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ChooseLicenseTagline {
+            get {
+                return ResourceManager.GetString("ChooseLicenseTagline", resourceCulture);
             }
         }
         
@@ -176,7 +266,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ComingSoon", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -185,7 +275,16 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("CompletedSuffix", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ComunidadPlaceholder {
+            get {
+                return ResourceManager.GetString("ComunidadPlaceholder", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -194,7 +293,16 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ConfirmPassword", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ContinueExam {
+            get {
+                return ResourceManager.GetString("ContinueExam", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -203,7 +311,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("CorrectFeedback", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -212,7 +320,70 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("CreateNewAccount", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string DangerZoneTitle {
+            get {
+                return ResourceManager.GetString("DangerZoneTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string DeleteAccount {
+            get {
+                return ResourceManager.GetString("DeleteAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string DeleteAccountConfirm {
+            get {
+                return ResourceManager.GetString("DeleteAccountConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string DeleteAccountWarning {
+            get {
+                return ResourceManager.GetString("DeleteAccountWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Deleting {
+            get {
+                return ResourceManager.GetString("Deleting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Deliver {
+            get {
+                return ResourceManager.GetString("Deliver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string EditName {
+            get {
+                return ResourceManager.GetString("EditName", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -252,12 +423,30 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string EmailNotVerifiedTag {
+            get {
+                return ResourceManager.GetString("EmailNotVerifiedTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string EmailPlaceholder {
             get {
                 return ResourceManager.GetString("EmailPlaceholder", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string EmailVerifiedTag {
+            get {
+                return ResourceManager.GetString("EmailVerifiedTag", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -270,9 +459,45 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string SignInLink {
+        internal static string ErrorsByTopic {
             get {
-                return ResourceManager.GetString("SignInLink", resourceCulture);
+                return ResourceManager.GetString("ErrorsByTopic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ErrorsFormat {
+            get {
+                return ResourceManager.GetString("ErrorsFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ErrorsTotalLabel {
+            get {
+                return ResourceManager.GetString("ErrorsTotalLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamDefaultTitle {
+            get {
+                return ResourceManager.GetString("ExamDefaultTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamMetaFormat {
+            get {
+                return ResourceManager.GetString("ExamMetaFormat", resourceCulture);
             }
         }
         
@@ -284,7 +509,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ExamSimulationDescription", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -293,7 +518,61 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ExamSimulationTitle", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamsHeroLabel {
+            get {
+                return ResourceManager.GetString("ExamsHeroLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamsTaglinePrefix {
+            get {
+                return ResourceManager.GetString("ExamsTaglinePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamsTaglineSuffix {
+            get {
+                return ResourceManager.GetString("ExamsTaglineSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExitAndDelete {
+            get {
+                return ResourceManager.GetString("ExitAndDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExitExamMessage {
+            get {
+                return ResourceManager.GetString("ExitExamMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExitExamTitle {
+            get {
+                return ResourceManager.GetString("ExitExamTitle", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -302,7 +581,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ExplanationLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -324,9 +603,9 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string FieldNameNotValidMessage {
+        internal static string FailedQuestions {
             get {
-                return ResourceManager.GetString("FieldNameNotValidMessage", resourceCulture);
+                return ResourceManager.GetString("FailedQuestions", resourceCulture);
             }
         }
         
@@ -338,7 +617,61 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("FallosFormat", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FallosLabel {
+            get {
+                return ResourceManager.GetString("FallosLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FieldNameNotValidMessage {
+            get {
+                return ResourceManager.GetString("FieldNameNotValidMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Figure {
+            get {
+                return ResourceManager.GetString("Figure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FinishExam {
+            get {
+                return ResourceManager.GetString("FinishExam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FinishExamMessage {
+            get {
+                return ResourceManager.GetString("FinishExamMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string FinishExamUnansweredFormat {
+            get {
+                return ResourceManager.GetString("FinishExamUnansweredFormat", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -365,13 +698,49 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("GlobalProgressLabel", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string GoToExams {
+            get {
+                return ResourceManager.GetString("GoToExams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string GoToTopics {
+            get {
+                return ResourceManager.GetString("GoToTopics", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
         internal static string GoogleAuthFailedError {
             get {
                 return ResourceManager.GetString("GoogleAuthFailedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string HelloFormat {
+            get {
+                return ResourceManager.GetString("HelloFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string HomeExamsTitle {
+            get {
+                return ResourceManager.GetString("HomeExamsTitle", resourceCulture);
             }
         }
         
@@ -387,12 +756,21 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string HomeTopicsTitle {
+            get {
+                return ResourceManager.GetString("HomeTopicsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string IncorrectFeedback {
             get {
                 return ResourceManager.GetString("IncorrectFeedback", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -419,7 +797,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("LearningModeDescription", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -428,7 +806,34 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("LearningModeTitle", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ModelFormat {
+            get {
+                return ResourceManager.GetString("ModelFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ModelUnique {
+            get {
+                return ResourceManager.GetString("ModelUnique", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -441,12 +846,30 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string NameNotValidError {
+            get {
+                return ResourceManager.GetString("NameNotValidError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string NamePlaceholder {
             get {
                 return ResourceManager.GetString("NamePlaceholder", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NameUpdated {
+            get {
+                return ResourceManager.GetString("NameUpdated", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -455,7 +878,16 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("NextQuestion", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NextQuestionArrow {
+            get {
+                return ResourceManager.GetString("NextQuestionArrow", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -468,12 +900,102 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string NoApto {
+            get {
+                return ResourceManager.GetString("NoApto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoAptosLabel {
+            get {
+                return ResourceManager.GetString("NoAptosLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoErrors {
+            get {
+                return ResourceManager.GetString("NoErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoExamsAvailable {
+            get {
+                return ResourceManager.GetString("NoExamsAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string NoQuestionsInTopic {
             get {
                 return ResourceManager.GetString("NoQuestionsInTopic", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string NoQuestionsShort {
+            get {
+                return ResourceManager.GetString("NoQuestionsShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string OfSeparator {
+            get {
+                return ResourceManager.GetString("OfSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string OfficialExamsOfFormat {
+            get {
+                return ResourceManager.GetString("OfficialExamsOfFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string OneAnswer {
+            get {
+                return ResourceManager.GetString("OneAnswer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string OneAnswerNotArrived {
+            get {
+                return ResourceManager.GetString("OneAnswerNotArrived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string OneError {
+            get {
+                return ResourceManager.GetString("OneError", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -509,7 +1031,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("PasswordPlaceholder", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -527,7 +1049,16 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PersonalDataTitle {
+            get {
+                return ResourceManager.GetString("PersonalDataTitle", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -536,7 +1067,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("PracticeByTopicTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -545,7 +1076,43 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("PracticeLikeExamTitle", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string PreviousQuestion {
+            get {
+                return ResourceManager.GetString("PreviousQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ProfileComunidadTitle {
+            get {
+                return ResourceManager.GetString("ProfileComunidadTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ProfileEmailLabel {
+            get {
+                return ResourceManager.GetString("ProfileEmailLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ProfileNameLabel {
+            get {
+                return ResourceManager.GetString("ProfileNameLabel", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -554,7 +1121,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("QuestionProgressFormat", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -563,7 +1130,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("QuestionsCountFormat", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -572,7 +1139,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("Restart", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -581,7 +1148,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("RestartTopic", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -590,7 +1157,25 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("RestartTopicConfirmMessage", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SaveName {
+            get {
+                return ResourceManager.GetString("SaveName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SavingName {
+            get {
+                return ResourceManager.GetString("SavingName", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -599,7 +1184,25 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("SelectLicenseFirst", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ShowAllQuestions {
+            get {
+                return ResourceManager.GetString("ShowAllQuestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ShowOnlyErrors {
+            get {
+                return ResourceManager.GetString("ShowOnlyErrors", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -617,7 +1220,16 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("SignInButton", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SignInLink {
+            get {
+                return ResourceManager.GetString("SignInLink", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -639,12 +1251,21 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
+        internal static string Signout {
+            get {
+                return ResourceManager.GetString("Signout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
         internal static string SignupHeading {
             get {
                 return ResourceManager.GetString("SignupHeading", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -653,7 +1274,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("SignupSubtitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -666,9 +1287,18 @@ namespace NavigationES.Client.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
-        internal static string Signout {
+        internal static string SinHacerLabel {
             get {
-                return ResourceManager.GetString("Signout", resourceCulture);
+                return ResourceManager.GetString("SinHacerLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string SinResponderLabel {
+            get {
+                return ResourceManager.GetString("SinResponderLabel", resourceCulture);
             }
         }
         
@@ -680,7 +1310,43 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("StartSimulation", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StatsSummaryFormat {
+            get {
+                return ResourceManager.GetString("StatsSummaryFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StatusApto {
+            get {
+                return ResourceManager.GetString("StatusApto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StatusEmpezado {
+            get {
+                return ResourceManager.GetString("StatusEmpezado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StatusNoApto {
+            get {
+                return ResourceManager.GetString("StatusNoApto", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -698,7 +1364,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TabProfile", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -707,7 +1373,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TabStudy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -716,7 +1382,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TabTests", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -734,7 +1400,25 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TopicCompleted", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicErrorsAllowedFormat {
+            get {
+                return ResourceManager.GetString("TopicErrorsAllowedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicErrorsNote {
+            get {
+                return ResourceManager.GetString("TopicErrorsNote", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -743,7 +1427,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TopicSelectionDescription", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -752,7 +1436,7 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TopicSelectionOverline", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
@@ -761,13 +1445,40 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("TopicSelectionTitle", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string TopicsHeroLabel {
+            get {
+                return ResourceManager.GetString("TopicsHeroLabel", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
         internal static string UnknownError {
             get {
                 return ResourceManager.GetString("UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string UnsavedOnFinishFormat {
+            get {
+                return ResourceManager.GetString("UnsavedOnFinishFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string UnsavedWarningFormat {
+            get {
+                return ResourceManager.GetString("UnsavedWarningFormat", resourceCulture);
             }
         }
         
@@ -833,13 +1544,31 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>
         internal static string YourLicenseLabel {
             get {
                 return ResourceManager.GetString("YourLicenseLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string YourProgressInFormat {
+            get {
+                return ResourceManager.GetString("YourProgressInFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string YourProgressTitle {
+            get {
+                return ResourceManager.GetString("YourProgressTitle", resourceCulture);
             }
         }
     }

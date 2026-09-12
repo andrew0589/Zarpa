@@ -21,6 +21,9 @@ namespace NavigationES.Web.Utilities
             [ErrorCodes.AppleAuthFailedError] = "Error al iniciar sesión con Apple. Inténtalo de nuevo.",
             [ErrorCodes.FacebookAuthFailedError] = "Error al iniciar sesión con Facebook. Inténtalo de nuevo.",
             [ErrorCodes.FacebookNoEmailError] = "Tu cuenta de Facebook no tiene una dirección de correo que podamos usar. Regístrate con tu correo electrónico.",
+            [ErrorCodes.NameNotValidError] = "El nombre no es válido (máximo 50 caracteres).",
+            [ErrorCodes.AdminAccountProtectedError] = "Esta acción no está disponible para cuentas de administrador.",
+            [ErrorCodes.EmailSendFailedError] = "No se ha podido enviar el correo. Inténtalo de nuevo más tarde.",
             [ErrorCodes.UnknownError] = Unknown,
         };
 

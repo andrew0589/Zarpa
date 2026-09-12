@@ -12,6 +12,7 @@ namespace NavigationES.Web.Auth
     public class WebAuthStateProvider(IJSRuntime js) : AuthenticationStateProvider
     {
         private const string StorageKey = "navigationes-auth";
+        public const string AdminRole = "admin";
         private readonly IJSRuntime _js = js;
         private bool _initialized;
 
@@ -102,13 +103,19 @@ namespace NavigationES.Web.Auth
             if (User is null || string.IsNullOrWhiteSpace(Token))
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-            var identity = new ClaimsIdentity(
-                [
-                    new Claim(ClaimTypes.NameIdentifier, User.Id.ToString()),
-                    new Claim(ClaimTypes.Name, User.Name),
-                    new Claim(ClaimTypes.Email, User.Email),
-                ],
-                authenticationType: "navigationes");
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, User.Id.ToString()),
+                new(ClaimTypes.Name, User.Name),
+                new(ClaimTypes.Email, User.Email),
+            };
+
+            // Drives the Usuarios tab and [Authorize(Roles = AdminRole)] — UI only;
+            // the API re-checks IsAdmin in the database on every admin call.
+            if (User.IsAdmin)
+                claims.Add(new Claim(ClaimTypes.Role, AdminRole));
+
+            var identity = new ClaimsIdentity(claims, authenticationType: "navigationes");
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }

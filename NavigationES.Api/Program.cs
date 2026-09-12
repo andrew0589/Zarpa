@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using NavigationES.Api.Auth;
 using NavigationES.Api.Data;
 using NavigationES.Api.Data.Repositories;
 using NavigationES.Api.Endpoints;
@@ -44,6 +45,7 @@ builder.Services.AddTransient<ExamSessionService>();
 builder.Services.AddTransient<PracticeSessionService>();
 builder.Services.AddTransient<QuestionImportService>();
 builder.Services.AddTransient<ExamImportService>();
+builder.Services.AddTransient<AdminUserService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -146,6 +148,10 @@ if (corsOrigins.Length > 0)
 app.UseAuthentication();
 app.UseAuthorization();
 
+// "Last used" tracker: stamps Users.LastActiveAt/LastActiveClient for any request
+// that arrived with a valid JWT (throttled to one write per 10 minutes per user).
+app.UseMiddleware<UserActivityMiddleware>();
+
 app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
 
 app.MapAuthEndpoints();
@@ -155,5 +161,7 @@ app.MapLicenseEndpoints();
 app.MapComunidadEndpoints();
 app.MapExamEndpoints();
 app.MapSessionEndpoints();
+// Usuarios tab: JWT + IsAdmin (checked in the database on every call).
+app.MapAdminUserEndpoints();
 
 app.Run();

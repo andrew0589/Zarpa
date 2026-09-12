@@ -39,6 +39,10 @@ namespace NavigationES.Api.Endpoints
             app.MapDelete("/api/account", async (ClaimsPrincipal principal, AuthService authService) =>
                 TypedResults.Ok(await authService.DeleteAccountAsync(principal.GetUserId())));
 
+            // Renames the signed-in user; answers with a refreshed session (user + token).
+            app.MapPut("/api/account/name", async (UpdateNameRequestDto dto, ClaimsPrincipal principal, AuthService authService) =>
+                TypedResults.Ok(await authService.UpdateNameAsync(principal.GetUserId(), dto)));
+
             // Opened in the system browser by WebAuthenticator (or navigated to by the
             // website with ?client=web); sends the user to Google's consent page. The
             // redirect_uri is this API's /callback below and must match one of the
@@ -145,7 +149,9 @@ namespace NavigationES.Api.Endpoints
                 $"&userId={auth.user.Id}" +
                 $"&name={Uri.EscapeDataString(auth.user.Name)}" +
                 $"&email={Uri.EscapeDataString(auth.user.Email)}" +
-                $"&verified={(auth.user.IsEmailVerified ? "true" : "false")}";
+                $"&verified={(auth.user.IsEmailVerified ? "true" : "false")}" +
+                // Only present for administrators — shows the web its Usuarios tab.
+                (auth.user.IsAdmin ? "&admin=true" : string.Empty);
 
             // Web gets the data in the URL fragment, not the query — the fragment never
             // leaves the browser, so the token stays out of server logs and Referer headers.

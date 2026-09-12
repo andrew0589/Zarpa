@@ -52,6 +52,22 @@ flow OAuth server-driven prin WebAuthenticator, tabela UserLogins, JWT).
 - Android emulator: `10.0.2.2:7136` automat; iOS fizic: IP-ul LAN al PC-ului, același Wi-Fi
 - Login social nu merge contra API-ului local pe iOS (providerii refuză IP LAN ca redirect) — doar email/parolă local
 
+## Administrare (tab-ul „Usuarios” din web) și tracker de activitate
+- Drepturile de admin stau în coloana `Users.IsAdmin`; nu există UI de promovare, se dau din SQL:
+  `UPDATE Users SET IsAdmin = 1 WHERE Email = 'tu@email';` — apoi utilizatorul se re-loghează
+  (flag-ul vine în `LoggedInUser.IsAdmin` la signin/social login și afișează tab-ul).
+- Endpoint-urile `/api/admin/users/*` cer JWT **și** verifică `IsAdmin` în DB la fiecare apel
+  (`AdminUserEndpointFilter`) — revocarea e imediată, nu la expirarea token-ului.
+  Sunt separate de `/api/admin/*` (import cu `X-Admin-Key`, pentru scripturi).
+- Acțiuni din tab: vaciar historial (șterge toate `TestSessions` ale userului, teme + simulări,
+  contul rămâne), enviar aviso (email în spaniolă: contul se șterge dacă nu e folosit o lună;
+  se marchează `InactivityWarningSentAt` și tab-ul arată countdown-ul), eliminar (același flux
+  ca „Eliminar cuenta” din Perfil). Conturile admin nu pot fi șterse/avertizate din tab.
+- Tracker „ultima utilizare”: `UserActivityMiddleware` scrie `Users.LastActiveAt` +
+  `LastActiveClient` la orice request autentificat, cel mult o dată la 10 minute per user
+  și client. Clientul vine din header-ul `X-Client`: web → `web`, MAUI → `android`/`ios`/
+  `windows`; build-uri vechi de app (fără header) apar ca `app`.
+
 ## Note
 - Pe Windows butoanele de social login sunt ascunse (WebAuthenticator nu e implementat în MAUI Windows)
 - Validarea SSL în client e făcută corect (bypass doar pe localhost în DEBUG) — NU copia `return true` din Church Runner

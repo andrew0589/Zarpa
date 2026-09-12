@@ -17,6 +17,8 @@ public static class ErrorCodes
     public const string FacebookAuthFailedError = "FacebookAuthFailedError";
     // Facebook account has no email we can link by (permission denied or phone-only account).
     public const string FacebookNoEmailError = "FacebookNoEmailError";
+    // Profile rename: the new display name is empty or longer than the column allows (50).
+    public const string NameNotValidError = "NameNotValidError";
     #endregion
 
     #region Password reset
@@ -29,5 +31,13 @@ public static class ErrorCodes
     public const string PasswordHasSpacesError = "PasswordHasSpacesError";
     public const string PasswordMissingLetterError = "PasswordMissingLetterError";
     public const string PasswordMissingSymbolError = "PasswordMissingSymbolError";
+    #endregion
+
+    #region Admin (Usuarios tab)
+    // Delete and the inactivity warning are refused for administrator accounts,
+    // your own included — flip IsAdmin in the database first.
+    public const string AdminAccountProtectedError = "AdminAccountProtectedError";
+    // The SMTP send failed; nothing was recorded for the user.
+    public const string EmailSendFailedError = "EmailSendFailedError";
     #endregion
 }

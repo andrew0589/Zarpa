@@ -244,7 +244,7 @@
     <value>Selección de temas</value>
   </data>
   <data name="TopicSelectionTitle" xml:space="preserve">
-    <value>Selecciona un Tema</value>
+    <value>Selecciona un tema</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</value>
@@ -272,5 +272,248 @@
   </data>
   <data name="YourLicenseLabel" xml:space="preserve">
     <value>Tu titulación</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Cargando…</value>
+  </data>
+  <data name="ProfileComunidadTitle" xml:space="preserve">
+    <value>Tu comunidad autónoma</value>
+  </data>
+  <data name="ComunidadPlaceholder" xml:space="preserve">
+    <value>Seleccionar una autonomía</value>
+  </data>
+  <data name="PersonalDataTitle" xml:space="preserve">
+    <value>Datos personales</value>
+  </data>
+  <data name="ProfileNameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="ProfileEmailLabel" xml:space="preserve">
+    <value>Correo</value>
+  </data>
+  <data name="EmailVerifiedTag" xml:space="preserve">
+    <value>✓ Correo verificado</value>
+  </data>
+  <data name="EmailNotVerifiedTag" xml:space="preserve">
+    <value>Correo sin verificar</value>
+  </data>
+  <data name="DangerZoneTitle" xml:space="preserve">
+    <value>Zona de peligro</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Eliminar cuenta</value>
+  </data>
+  <data name="DeleteAccountWarning" xml:space="preserve">
+    <value>Se eliminará tu cuenta y todo tu progreso (tests, exámenes y estadísticas) de forma permanente. Esta acción no se puede deshacer.</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Sí, eliminar mi cuenta</value>
+  </data>
+  <data name="Deleting" xml:space="preserve">
+    <value>Eliminando…</value>
+  </data>
+  <data name="YourProgressTitle" xml:space="preserve">
+    <value>Tu progreso</value>
+  </data>
+  <data name="AciertosLabel" xml:space="preserve">
+    <value>Aciertos</value>
+  </data>
+  <data name="FallosLabel" xml:space="preserve">
+    <value>Fallos</value>
+  </data>
+  <data name="SinResponderLabel" xml:space="preserve">
+    <value>Sin responder</value>
+  </data>
+  <data name="AciertosSub" xml:space="preserve">
+    <value>aciertos</value>
+  </data>
+  <data name="StatsSummaryFormat" xml:space="preserve">
+    <value>Realizadas {0} de {1} preguntas</value>
+  </data>
+  <data name="NoQuestionsShort" xml:space="preserve">
+    <value>Sin preguntas</value>
+  </data>
+  <data name="ExamsTaglinePrefix" xml:space="preserve">
+    <value>Exámenes oficiales de </value>
+  </data>
+  <data name="ExamsTaglineSuffix" xml:space="preserve">
+    <value>. Se filtran por tu titulación y tu comunidad — se cambian en Perfil.</value>
+  </data>
+  <data name="NoExamsAvailable" xml:space="preserve">
+    <value>Todavía no hay exámenes disponibles para esta selección.</value>
+  </data>
+  <data name="ModelFormat" xml:space="preserve">
+    <value>Modelo {0}</value>
+  </data>
+  <data name="ModelUnique" xml:space="preserve">
+    <value>único</value>
+  </data>
+  <data name="StatusApto" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="StatusNoApto" xml:space="preserve">
+    <value>No apto</value>
+  </data>
+  <data name="StatusEmpezado" xml:space="preserve">
+    <value>Empezado</value>
+  </data>
+  <data name="ExamMetaFormat" xml:space="preserve">
+    <value>{0} · {1} preguntas</value>
+  </data>
+  <data name="BackToExams" xml:space="preserve">
+    <value>Volver a los exámenes</value>
+  </data>
+  <data name="ExamDefaultTitle" xml:space="preserve">
+    <value>Simulación de examen</value>
+  </data>
+  <data name="ExitExamTitle" xml:space="preserve">
+    <value>Salir del examen</value>
+  </data>
+  <data name="ExitExamMessage" xml:space="preserve">
+    <value>¿Seguro que quieres salir? Este intento se borrará y no quedará guardado.</value>
+  </data>
+  <data name="ExitAndDelete" xml:space="preserve">
+    <value>Salir y borrar</value>
+  </data>
+  <data name="ContinueExam" xml:space="preserve">
+    <value>Continuar el examen</value>
+  </data>
+  <data name="FinishExam" xml:space="preserve">
+    <value>Finalizar examen</value>
+  </data>
+  <data name="FinishExamUnansweredFormat" xml:space="preserve">
+    <value>Tienes {0} preguntas sin responder — contarán como errores. ¿Quieres entregar el examen?</value>
+  </data>
+  <data name="FinishExamMessage" xml:space="preserve">
+    <value>¿Quieres entregar el examen y ver la corrección?</value>
+  </data>
+  <data name="UnsavedOnFinishFormat" xml:space="preserve">
+    <value>Atención: {0} al servidor. Se intentará enviarlas de nuevo al entregar; si no lo consiguen, contarán como sin responder.</value>
+  </data>
+  <data name="Deliver" xml:space="preserve">
+    <value>Entregar</value>
+  </data>
+  <data name="UnsavedWarningFormat" xml:space="preserve">
+    <value>Sin conexión con el servidor: {0} sin guardar. Se reintentará solo — no cierres esta página.</value>
+  </data>
+  <data name="OneAnswer" xml:space="preserve">
+    <value>1 respuesta</value>
+  </data>
+  <data name="AnswersFormat" xml:space="preserve">
+    <value>{0} respuestas</value>
+  </data>
+  <data name="OneAnswerNotArrived" xml:space="preserve">
+    <value>1 respuesta no ha llegado</value>
+  </data>
+  <data name="AnswersNotArrivedFormat" xml:space="preserve">
+    <value>{0} respuestas no han llegado</value>
+  </data>
+  <data name="PreviousQuestion" xml:space="preserve">
+    <value>← Anterior</value>
+  </data>
+  <data name="NextQuestionArrow" xml:space="preserve">
+    <value>Siguiente →</value>
+  </data>
+  <data name="Apto" xml:space="preserve">
+    <value>APTO</value>
+  </data>
+  <data name="NoApto" xml:space="preserve">
+    <value>NO APTO</value>
+  </data>
+  <data name="ErrorsTotalLabel" xml:space="preserve">
+    <value>Errores totales</value>
+  </data>
+  <data name="ErrorsByTopic" xml:space="preserve">
+    <value>Errores por tema</value>
+  </data>
+  <data name="TopicErrorsNote" xml:space="preserve">
+    <value>Solo Balizamiento, RIPA y Carta de navegación tienen límite propio de errores — en el resto, los errores cuentan únicamente para el total.</value>
+  </data>
+  <data name="TopicErrorsAllowedFormat" xml:space="preserve">
+    <value>{0} de {1} errores permitidos</value>
+  </data>
+  <data name="OneError" xml:space="preserve">
+    <value>1 error</value>
+  </data>
+  <data name="ErrorsFormat" xml:space="preserve">
+    <value>{0} errores</value>
+  </data>
+  <data name="AllQuestions" xml:space="preserve">
+    <value>Todas las preguntas</value>
+  </data>
+  <data name="FailedQuestions" xml:space="preserve">
+    <value>Preguntas falladas</value>
+  </data>
+  <data name="ShowOnlyErrors" xml:space="preserve">
+    <value>Ver solo los errores</value>
+  </data>
+  <data name="ShowAllQuestions" xml:space="preserve">
+    <value>Ver todas las preguntas</value>
+  </data>
+  <data name="NoErrors" xml:space="preserve">
+    <value>¡Ningún error!</value>
+  </data>
+  <data name="Figure" xml:space="preserve">
+    <value>Figura</value>
+  </data>
+  <data name="HelloFormat" xml:space="preserve">
+    <value>Hola, {0}</value>
+  </data>
+  <data name="ChooseLicenseTagline" xml:space="preserve">
+    <value>Elige tu titulación para empezar a practicar.</value>
+  </data>
+  <data name="ChooseComunidadTagline" xml:space="preserve">
+    <value>Elige tu comunidad autónoma para las simulaciones de examen.</value>
+  </data>
+  <data name="YourProgressInFormat" xml:space="preserve">
+    <value>Tu progreso en {0}</value>
+  </data>
+  <data name="HomeTopicsTitle" xml:space="preserve">
+    <value>Práctica por temas</value>
+  </data>
+  <data name="HomeExamsTitle" xml:space="preserve">
+    <value>Simulación de examen</value>
+  </data>
+  <data name="TopicsHeroLabel" xml:space="preserve">
+    <value>aciertos del temario</value>
+  </data>
+  <data name="ExamsHeroLabel" xml:space="preserve">
+    <value>exámenes aprobados</value>
+  </data>
+  <data name="OfSeparator" xml:space="preserve">
+    <value> de </value>
+  </data>
+  <data name="AprobadosLabel" xml:space="preserve">
+    <value>Aprobados</value>
+  </data>
+  <data name="NoAptosLabel" xml:space="preserve">
+    <value>No aptos</value>
+  </data>
+  <data name="SinHacerLabel" xml:space="preserve">
+    <value>Sin hacer</value>
+  </data>
+  <data name="OfficialExamsOfFormat" xml:space="preserve">
+    <value>Exámenes oficiales de {0}</value>
+  </data>
+  <data name="GoToTopics" xml:space="preserve">
+    <value>Ir a Temas</value>
+  </data>
+  <data name="GoToExams" xml:space="preserve">
+    <value>Ir a Examen</value>
+  </data>
+  <data name="EditName" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SavingName" xml:space="preserve">
+    <value>Guardando…</value>
+  </data>
+  <data name="NameNotValidError" xml:space="preserve">
+    <value>El nombre no es válido (máximo 50 caracteres).</value>
+  </data>
+  <data name="NameUpdated" xml:space="preserve">
+    <value>Nombre actualizado.</value>
   </data>
 </root>
