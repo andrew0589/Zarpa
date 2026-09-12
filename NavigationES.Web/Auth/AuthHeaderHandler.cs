@@ -20,6 +20,10 @@ namespace NavigationES.Web.Auth
             if (!string.IsNullOrWhiteSpace(_auth.Token))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _auth.Token);
 
+            // Tells the API which client is calling — recorded as the user's "last used
+            // from" by its UserActivityMiddleware (the MAUI app sends its platform).
+            request.Headers.TryAddWithoutValidation("X-Client", "web");
+
             var response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)

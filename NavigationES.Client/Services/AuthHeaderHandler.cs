@@ -12,6 +12,13 @@ namespace NavigationES.Client.Services
     /// </summary>
     public class AuthHeaderHandler : DelegatingHandler
     {
+        // Values the API knows (UserActivityMiddleware); anything else is filed as "app".
+        private static readonly string ClientName =
+            DeviceInfo.Current.Platform == DevicePlatform.Android ? "android"
+            : DeviceInfo.Current.Platform == DevicePlatform.iOS ? "ios"
+            : DeviceInfo.Current.Platform == DevicePlatform.WinUI ? "windows"
+            : "app";
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Resolved per call: the handler outlives sign-in/sign-out, and
@@ -21,6 +28,10 @@ namespace NavigationES.Client.Services
 
             if (!string.IsNullOrWhiteSpace(token))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Tells the API which client is calling — recorded as the user's "last used
+            // from" by its UserActivityMiddleware (the website sends "web").
+            request.Headers.TryAddWithoutValidation("X-Client", ClientName);
 
             var response = await base.SendAsync(request, cancellationToken);
 

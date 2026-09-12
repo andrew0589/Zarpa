@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using NavigationES.Api.Auth;
 using NavigationES.Api.Data;
 using NavigationES.Api.Data.Entities;
 using NavigationES.Api.Utilities.Email;
@@ -9,9 +11,10 @@ using NavigationES.Shared.Dtos;
 
 namespace NavigationES.Api.Services
 {
-    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService, AppleAuthService appleAuthService)
+    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService, AppleAuthService appleAuthService, IMemoryCache cache)
     {
         private readonly NavigationESDbContext _context = context;
+        private readonly IMemoryCache _cache = cache;
         private readonly TokenService _tokenService = tokenService;
         private readonly PasswordService _passwordService = passwordService;
         private readonly IConfiguration _configuration = configuration;
@@ -191,7 +194,7 @@ namespace NavigationES.Api.Services
 
         private ResultWithDataDto<AuthResponseDto> GenerateAuthResponse(UserEntity user)
         {
-            var loggedInUser = new LoggedInUser(user.ID, user.Name, user.Email, user.IsEmailVerified);
+            var loggedInUser = new LoggedInUser(user.ID, user.Name, user.Email, user.IsEmailVerified, user.IsAdmin);
             var token = _tokenService.GenerateJwt(loggedInUser);
 
             var authResponse = new AuthResponseDto(loggedInUser, token);
@@ -464,6 +467,10 @@ namespace NavigationES.Api.Services
             {
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
+
+                // Any device still holding this account's token gets 401 on its next
+                // call (UserActivityMiddleware) instead of after the throttle window.
+                UserActivityMiddleware.Forget(_cache, userId);
                 return ResultDto.Success();
             }
             catch (Exception ex)

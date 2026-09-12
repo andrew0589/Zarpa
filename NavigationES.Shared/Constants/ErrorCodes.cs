@@ -32,4 +32,12 @@ public static class ErrorCodes
     public const string PasswordMissingLetterError = "PasswordMissingLetterError";
     public const string PasswordMissingSymbolError = "PasswordMissingSymbolError";
     #endregion
+
+    #region Admin (Usuarios tab)
+    // Delete and the inactivity warning are refused for administrator accounts,
+    // your own included — flip IsAdmin in the database first.
+    public const string AdminAccountProtectedError = "AdminAccountProtectedError";
+    // The SMTP send failed; nothing was recorded for the user.
+    public const string EmailSendFailedError = "EmailSendFailedError";
+    #endregion
 }

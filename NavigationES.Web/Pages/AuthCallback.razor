@@ -46,7 +46,8 @@ else
             userId,
             values["name"] ?? string.Empty,
             values["email"] ?? string.Empty,
-            values["verified"] == "true");
+            values["verified"] == "true",
+            values["admin"] == "true");
 
         await Auth.SigninAsync(new AuthResponseDto(user, token));
 

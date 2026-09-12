@@ -149,7 +149,9 @@ namespace NavigationES.Api.Endpoints
                 $"&userId={auth.user.Id}" +
                 $"&name={Uri.EscapeDataString(auth.user.Name)}" +
                 $"&email={Uri.EscapeDataString(auth.user.Email)}" +
-                $"&verified={(auth.user.IsEmailVerified ? "true" : "false")}";
+                $"&verified={(auth.user.IsEmailVerified ? "true" : "false")}" +
+                // Only present for administrators — shows the web its Usuarios tab.
+                (auth.user.IsAdmin ? "&admin=true" : string.Empty);
 
             // Web gets the data in the URL fragment, not the query — the fragment never
             // leaves the browser, so the token stays out of server logs and Referer headers.

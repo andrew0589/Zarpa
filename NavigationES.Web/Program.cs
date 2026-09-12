@@ -61,6 +61,10 @@ static void ConfigureRefit(IServiceCollection services, string apiBaseUrl)
         .ConfigureHttpClient(SetHttpClient)
         .AddHttpMessageHandler<AuthHeaderHandler>();
 
+    services.AddRefitGeneratedClient<IAdminApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
     services.AddRefitGeneratedClient<IExamsApi>(refitSettings)
         .ConfigureHttpClient(SetHttpClient)
         .AddHttpMessageHandler<AuthHeaderHandler>();

@@ -18,6 +18,10 @@
                         <NavLink href="examen">Examen</NavLink>
                         <NavLink href="estudiar">Estudiar</NavLink>
                         <NavLink href="perfil">Perfil</NavLink>
+                        @if (context.User.IsInRole(WebAuthStateProvider.AdminRole))
+                        {
+                            <NavLink href="admin/usuarios">Usuarios</NavLink>
+                        }
                         <div class="nav-user-mobile">
                             <span class="user-name">@context.User.Identity?.Name</span>
                             <button class="btn-outline" @onclick="SignoutAsync">Cerrar sesión</button>

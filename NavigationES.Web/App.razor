@@ -3,7 +3,16 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <RedirectToSignin />
+                    @* Signed in but the page needs a role the account lacks (admin
+                       pages) → say so; not signed in at all → sign-in page. *@
+                    @if (context.User.Identity?.IsAuthenticated == true)
+                    {
+                        <NoAccess />
+                    }
+                    else
+                    {
+                        <RedirectToSignin />
+                    }
                 </NotAuthorized>
                 <Authorizing>
                     <p class="page-loading">Cargando…</p>
