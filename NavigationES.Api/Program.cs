@@ -47,6 +47,7 @@ builder.Services.AddTransient<QuestionImportService>();
 builder.Services.AddTransient<ExamImportService>();
 builder.Services.AddTransient<AdminUserService>();
 builder.Services.AddTransient<AdminContentService>();
+builder.Services.AddTransient<AdminComunidadService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -165,5 +166,6 @@ app.MapSessionEndpoints();
 // Usuarios tab: JWT + IsAdmin (checked in the database on every call).
 app.MapAdminUserEndpoints();
 app.MapAdminContentEndpoints();
+app.MapAdminComunidadEndpoints();
 
 app.Run();

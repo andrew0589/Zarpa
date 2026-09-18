@@ -21,7 +21,8 @@
                         @if (context.User.IsInRole(WebAuthStateProvider.AdminRole))
                         {
                             <NavLink href="admin/usuarios">Usuarios</NavLink>
-                        <NavLink href="admin/contenido">Contenido</NavLink>
+                            <NavLink href="admin/contenido">Contenido</NavLink>
+                            <NavLink href="admin/convocatorias">Convocatorias</NavLink>
                         }
                         <div class="nav-user-mobile">
                             <span class="user-name">@context.User.Identity?.Name</span>

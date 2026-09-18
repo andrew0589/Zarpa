@@ -40,4 +40,11 @@ public static class ErrorCodes
     // The SMTP send failed; nothing was recorded for the user.
     public const string EmailSendFailedError = "EmailSendFailedError";
     #endregion
+
+    #region Admin (Convocatorias tab)
+    // The comunidad id in the URL matches no seeded community.
+    public const string ComunidadNotFoundError = "ComunidadNotFoundError";
+    // The convocatoria site is not an absolute http(s) URL or exceeds the column (500).
+    public const string ConvocatoriaUrlNotValidError = "ConvocatoriaUrlNotValidError";
+    #endregion
 }

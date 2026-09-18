@@ -24,6 +24,8 @@ namespace NavigationES.Web.Utilities
             [ErrorCodes.NameNotValidError] = "El nombre no es válido (máximo 50 caracteres).",
             [ErrorCodes.AdminAccountProtectedError] = "Esta acción no está disponible para cuentas de administrador.",
             [ErrorCodes.EmailSendFailedError] = "No se ha podido enviar el correo. Inténtalo de nuevo más tarde.",
+            [ErrorCodes.ComunidadNotFoundError] = "La comunidad autónoma no existe.",
+            [ErrorCodes.ConvocatoriaUrlNotValidError] = "La dirección web no es válida: debe empezar por http:// o https:// (máximo 500 caracteres).",
             [ErrorCodes.UnknownError] = Unknown,
         };
 

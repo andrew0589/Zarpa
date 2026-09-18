@@ -26,5 +26,14 @@ namespace NavigationES.ApiClient
         // The Contenido tab: question bank per topic and license, exam simulations per comunidad.
         [Get("/api/admin/content")]
         Task<AdminContentDto> GetContentAsync();
+
+        // The Convocatorias tab: per comunidad, the last imported sitting, the
+        // convocatoria site and the next sitting expected.
+        [Get("/api/admin/comunidades")]
+        Task<List<AdminComunidadExamDto>> GetComunidadesAsync();
+
+        // Saves the hand-kept fields (site, next date, done) of one comunidad.
+        [Put("/api/admin/comunidades/{id}")]
+        Task<ResultDto> UpdateComunidadAsync(long id, [Body] AdminComunidadUpdateDto request);
     }
 }

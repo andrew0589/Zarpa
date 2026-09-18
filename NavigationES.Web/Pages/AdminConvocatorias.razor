@@ -1,0 +1,270 @@
+@page "/admin/convocatorias"
+@attribute [Authorize(Roles = WebAuthStateProvider.AdminRole)]
+@inject IAdminApi AdminApi
+
+<PageTitle>Convocatorias — NavigationES</PageTitle>
+
+<div class="admin-page">
+    <h1>Convocatorias</h1>
+    <p class="tagline">
+        @if (_rows is null)
+        {
+            <text>Cargando…</text>
+        }
+        else
+        {
+            <text>@WithExams @(WithExams == 1 ? "comunidad" : "comunidades") con exámenes · @Pending @(Pending == 1 ? "convocatoria pendiente" : "convocatorias pendientes")</text>
+        }
+    </p>
+
+    <section class="retro-card admin-card">
+        <p class="admin-hint">
+            <strong>Último examen</strong> = la convocatoria más reciente ya importada (mes y año del examen,
+            con el PDF de origen de cada modelo). <strong>Sitio web</strong> = dónde publica la comunidad sus
+            convocatorias y exámenes. <strong>Próximo examen</strong> = la fecha de la siguiente convocatoria
+            oficial, apuntada a mano; marca <strong>Hecho</strong> cuando sus exámenes ya estén descargados e
+            importados. Los cambios se guardan al instante.
+        </p>
+
+        @if (_message is not null)
+        {
+            <p class="admin-message" role="status">@_message</p>
+        }
+        @if (_error is not null)
+        {
+            <p class="error" role="alert">@_error</p>
+        }
+
+        @if (_rows is null)
+        {
+            @if (_error is null)
+            {
+                <p class="page-loading">Cargando…</p>
+            }
+        }
+        else
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table admin-table-convocatorias">
+                    <thead>
+                        <tr>
+                            <th>Comunidad</th>
+                            <th>Último examen importado</th>
+                            <th>Por titulación</th>
+                            <th>Sitio web</th>
+                            <th>Próximo examen</th>
+                            <th class="admin-center">Hecho</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in _rows)
+                        {
+                            var status = Status(r);
+                            <tr class="@(r.ExamCount == 0 ? "is-empty" : null)">
+                                <td>
+                                    <div class="admin-user-name">@r.Name</div>
+                                    <span class="admin-small admin-block">@r.ExamCount @(r.ExamCount == 1 ? "examen" : "exámenes")</span>
+                                </td>
+                                <td>
+                                    @if (r.LastExam is null)
+                                    {
+                                        <span class="admin-dash">—</span>
+                                    }
+                                    else
+                                    {
+                                        <strong>@MonthName(r.LastExam.Month) @r.LastExam.Year</strong>
+                                        <ul class="admin-files">
+                                            @foreach (var p in r.LastExam.Papers)
+                                            {
+                                                <li>
+                                                    <strong>@p.LicenseCode@(p.Model is null ? null : $" {p.Model}")</strong>
+                                                    · @p.QuestionCount preg.
+                                                    @if (p.SourceFile is not null)
+                                                    {
+                                                        <text>· @p.SourceFile</text>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </td>
+                                <td class="admin-muted">
+                                    @if (r.LastByLicense.Count == 0)
+                                    {
+                                        <span class="admin-dash">—</span>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var l in r.LastByLicense)
+                                        {
+                                            <div><strong>@l.LicenseCode</strong> @MonthName(l.Month) @l.Year <span class="admin-small">(@l.ExamCount)</span></div>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    <input class="admin-field admin-url" type="url" placeholder="https://…"
+                                           @bind="r.ConvocatoriaUrl" @bind:after="() => SaveAsync(r)"
+                                           disabled="@r.Saving" aria-label="Sitio web de @r.Name" />
+                                    @if (r.SavedUrl is not null)
+                                    {
+                                        <a class="admin-small admin-block" href="@r.SavedUrl" target="_blank" rel="noopener">@Host(r.SavedUrl) ↗</a>
+                                    }
+                                </td>
+                                <td>
+                                    <input class="admin-field" type="date" @bind="r.NextExamDate" @bind:after="() => SaveAsync(r)"
+                                           disabled="@r.Saving" aria-label="Próximo examen de @r.Name" />
+                                </td>
+                                <td class="admin-center">
+                                    <input class="admin-check" type="checkbox" @bind="r.NextExamDone" @bind:after="() => SaveAsync(r)"
+                                           disabled="@r.Saving" aria-label="Hecho: @r.Name" />
+                                </td>
+                                <td><span class="status-chip @status.Css">@status.Label</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
+
+@code {
+    // The DTO is immutable; the row keeps the editable values (plus what the server
+    // last confirmed, to roll back a failed save) for @bind.
+    private sealed class Row
+    {
+        public required long Id { get; init; }
+        public required string Name { get; init; }
+        public required int ExamCount { get; init; }
+        public required AdminLastExamDto? LastExam { get; init; }
+        public required List<AdminLicenseLastExamDto> LastByLicense { get; init; }
+        public string? ConvocatoriaUrl { get; set; }
+        public DateOnly? NextExamDate { get; set; }
+        public bool NextExamDone { get; set; }
+        public string? SavedUrl { get; set; }
+        public DateOnly? SavedDate { get; set; }
+        public bool SavedDone { get; set; }
+        public bool Saving { get; set; }
+    }
+
+    private static readonly string[] Months =
+    [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    ];
+
+    private List<Row>? _rows;
+    private string? _message;
+    private string? _error;
+
+    private int WithExams => _rows?.Count(r => r.ExamCount > 0) ?? 0;
+    private int Pending => _rows?.Count(r => r.NextExamDate is not null && !r.NextExamDone) ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var dtos = await AdminApi.GetComunidadesAsync();
+            _rows = dtos.Select(c => new Row
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ExamCount = c.ExamCount,
+                LastExam = c.LastExam,
+                LastByLicense = c.LastByLicense,
+                ConvocatoriaUrl = c.ConvocatoriaUrl,
+                NextExamDate = c.NextExamDate,
+                NextExamDone = c.NextExamDone,
+                SavedUrl = c.ConvocatoriaUrl,
+                SavedDate = c.NextExamDate,
+                SavedDone = c.NextExamDone,
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            // A 401 already redirected to /signin; a 403 means the admin flag was
+            // revoked since sign-in — either way there is nothing to show here.
+            _error = ErrorMessages.Translate(null);
+        }
+    }
+
+    // Fires on every change of the site, the date or the tick; a failed save puts
+    // the controls back to what the server holds.
+    private async Task SaveAsync(Row r)
+    {
+        if (r.Saving) return;
+
+        r.Saving = true;
+        _message = null;
+        _error = null;
+        try
+        {
+            var result = await AdminApi.UpdateComunidadAsync(r.Id, new AdminComunidadUpdateDto(r.NextExamDate, r.NextExamDone, r.ConvocatoriaUrl));
+            if (result.IsSuccess)
+            {
+                // The server stores the trimmed URL and a blank one as null — mirror that.
+                r.ConvocatoriaUrl = string.IsNullOrWhiteSpace(r.ConvocatoriaUrl) ? null : r.ConvocatoriaUrl.Trim();
+                r.SavedUrl = r.ConvocatoriaUrl;
+                r.SavedDate = r.NextExamDate;
+                r.SavedDone = r.NextExamDone;
+                _message = $"{r.Name}: guardado.";
+            }
+            else
+            {
+                _error = $"{r.Name}: {ErrorMessages.Translate(result.ErrorMessage)}";
+                Revert(r);
+            }
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+            Revert(r);
+        }
+        finally
+        {
+            r.Saving = false;
+        }
+    }
+
+    private static void Revert(Row r)
+    {
+        r.ConvocatoriaUrl = r.SavedUrl;
+        r.NextExamDate = r.SavedDate;
+        r.NextExamDone = r.SavedDone;
+    }
+
+    private static string MonthName(int month) =>
+        month is >= 1 and <= 12 ? Months[month - 1] : month.ToString();
+
+    // Link text: just the domain ("caib.es"), the full URL stays in the input.
+    private static string Host(string url)
+    {
+        try
+        {
+            var host = new Uri(url).Host;
+            return host.StartsWith("www.", StringComparison.OrdinalIgnoreCase) ? host[4..] : host;
+        }
+        catch (UriFormatException)
+        {
+            return "Abrir";
+        }
+    }
+
+    // Where the next sitting stands today: not planned, still ahead, due, or done.
+    private static (string Label, string Css) Status(Row r)
+    {
+        if (r.NextExamDate is null)
+            return ("Sin fecha", "empezado");
+        if (r.NextExamDone)
+            return ("Hecho", "apto");
+
+        var days = r.NextExamDate.Value.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber;
+        if (days > 1) return ($"Faltan {days} días", "empezado");
+        if (days == 1) return ("Mañana", "warn");
+        if (days == 0) return ("Hoy", "warn");
+
+        var late = -days;
+        return ($"Pendiente desde hace {late} {(late == 1 ? "día" : "días")}", "noapto");
+    }
+}

@@ -1792,3 +1792,60 @@ h1 {
 .admin-table tr.is-empty .admin-user-name {
     color: var(--gray-400);
 }
+
+/* Admin — Convocatorias tab (AdminConvocatorias.razor): last imported sitting vs.
+   convocatoria site and next expected sitting per comunidad; the site, the date
+   and the tick save on change. */
+.admin-table.admin-table-convocatorias {
+    min-width: 1100px;
+}
+
+.admin-center,
+.admin-table th.admin-center {
+    text-align: center;
+}
+
+.admin-files {
+    list-style: none;
+    margin: 0.3rem 0 0 0;
+    padding: 0;
+    font-size: 0.78rem;
+    color: var(--gray-600);
+}
+
+    .admin-files li {
+        word-break: break-all;
+    }
+
+.admin-field {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    border: 1.5px solid var(--card-border);
+    border-radius: 8px;
+    background: white;
+    color: var(--off-black);
+}
+
+    .admin-field:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+.admin-url {
+    width: 100%;
+    min-width: 220px;
+}
+
+.admin-check {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.admin-field:disabled,
+.admin-check:disabled {
+    opacity: 0.6;
+    cursor: default;
+}

@@ -1,0 +1,128 @@
+using Xunit;
+using NavigationES.Api.Services;
+using NavigationES.Shared.Constants;
+using static NavigationES.Api.Services.AdminComunidadService;
+
+namespace NavigationES.Api.Tests
+{
+    // The pure parts behind the Convocatorias tab: which sitting counts as the last
+    // one, which papers belong to it, how far each license lags behind, and what
+    // the convocatoria site accepts.
+    public class AdminComunidadTests
+    {
+        private const long Baleares = 9;
+
+        // Seeded license ids: PNB 1, PER 2, PY 3, CY 4.
+        private static ExamPaper Paper(long licenseId, string license, int year, int month, string? model = null, string? file = null, int questions = 45) =>
+            new(Baleares, licenseId, license, year, month, model, file, questions);
+
+        [Fact]
+        public void Build_WithoutPapers_HasNoLastExam()
+        {
+            var row = Build(Baleares, "Islas Baleares", "https://caib.es", new DateOnly(2026, 10, 3), false, []);
+
+            Assert.Equal(0, row.ExamCount);
+            Assert.Null(row.LastExam);
+            Assert.Empty(row.LastByLicense);
+            Assert.Equal("https://caib.es", row.ConvocatoriaUrl);
+            Assert.Equal(new DateOnly(2026, 10, 3), row.NextExamDate);
+            Assert.False(row.NextExamDone);
+        }
+
+        [Fact]
+        public void Build_PicksTheLatestSittingByYearThenMonth()
+        {
+            // December 2025 must lose to June 2026 although 12 > 6.
+            var papers = new[]
+            {
+                Paper(2, "PER", 2025, 12, "A", "dec-a.pdf"),
+                Paper(2, "PER", 2026, 6, "B", "jun-per-b.pdf", 44),
+                Paper(1, "PNB", 2026, 6, "A", "jun-pnb-a.pdf", 27),
+                Paper(2, "PER", 2026, 6, "A", "jun-per-a.pdf"),
+            };
+
+            var row = Build(Baleares, "Islas Baleares", null, null, false, papers);
+
+            Assert.Equal(4, row.ExamCount);
+            Assert.NotNull(row.LastExam);
+            Assert.Equal(2026, row.LastExam.Year);
+            Assert.Equal(6, row.LastExam.Month);
+
+            // Only the June papers, in license order (PNB before PER) then by model.
+            Assert.Equal(
+                ["jun-pnb-a.pdf", "jun-per-a.pdf", "jun-per-b.pdf"],
+                row.LastExam.Papers.Select(p => p.SourceFile).ToList());
+            Assert.Equal(27, row.LastExam.Papers[0].QuestionCount);
+            Assert.Equal("A", row.LastExam.Papers[1].Model);
+        }
+
+        [Fact]
+        public void Build_ReportsEachLicensesOwnLatestSitting()
+        {
+            // CY stopped at December 2025 while PER already has June 2026 — the
+            // per-license line is what shows the lag.
+            var papers = new[]
+            {
+                Paper(4, "CY", 2025, 12, "A"),
+                Paper(4, "CY", 2025, 12, "B"),
+                Paper(4, "CY", 2025, 6, "A"),
+                Paper(2, "PER", 2026, 6, "A"),
+            };
+
+            var row = Build(Baleares, "Islas Baleares", null, null, false, papers);
+
+            Assert.Equal(2, row.LastByLicense.Count);
+            Assert.Equal("PER", row.LastByLicense[0].LicenseCode);
+            Assert.Equal((2026, 6, 1), (row.LastByLicense[0].Year, row.LastByLicense[0].Month, row.LastByLicense[0].ExamCount));
+            Assert.Equal("CY", row.LastByLicense[1].LicenseCode);
+            Assert.Equal((2025, 12, 2), (row.LastByLicense[1].Year, row.LastByLicense[1].Month, row.LastByLicense[1].ExamCount));
+
+            // The community-level "last" is PER's June, and CY does not appear in it.
+            Assert.Single(row.LastExam!.Papers);
+            Assert.Equal("PER", row.LastExam.Papers[0].LicenseCode);
+        }
+
+        [Fact]
+        public void Build_PassesTheHandKeptFieldsThroughUnchanged()
+        {
+            var row = Build(Baleares, "Islas Baleares", "https://www.caib.es/sites/transportmaritim/es/", new DateOnly(2026, 12, 12), true, [Paper(2, "PER", 2026, 6)]);
+
+            Assert.Equal("https://www.caib.es/sites/transportmaritim/es/", row.ConvocatoriaUrl);
+            Assert.Equal(new DateOnly(2026, 12, 12), row.NextExamDate);
+            Assert.True(row.NextExamDone);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void NormalizeUrl_TreatsBlankAsNoLink(string? raw)
+        {
+            Assert.Equal((null, null), NormalizeUrl(raw));
+        }
+
+        [Fact]
+        public void NormalizeUrl_TrimsAndKeepsAbsoluteHttpUrls()
+        {
+            Assert.Equal(("https://www.caib.es/sites/transportmaritim/es/", null), NormalizeUrl("  https://www.caib.es/sites/transportmaritim/es/  "));
+            Assert.Equal(("http://nautica.gencat.cat", null), NormalizeUrl("http://nautica.gencat.cat"));
+        }
+
+        [Theory]
+        [InlineData("caib.es")]                    // no scheme
+        [InlineData("ftp://caib.es/examenes")]     // not http(s)
+        [InlineData("javascript:alert(1)")]        // would run in the link
+        [InlineData("https://")]                   // no host
+        public void NormalizeUrl_RejectsAnythingButHttpLinks(string raw)
+        {
+            Assert.Equal((null, ErrorCodes.ConvocatoriaUrlNotValidError), NormalizeUrl(raw));
+        }
+
+        [Fact]
+        public void NormalizeUrl_RejectsUrlsLongerThanTheColumn()
+        {
+            var tooLong = "https://caib.es/" + new string('a', UrlMaxLength);
+            Assert.Equal((null, ErrorCodes.ConvocatoriaUrlNotValidError), NormalizeUrl(tooLong));
+        }
+    }
+}
