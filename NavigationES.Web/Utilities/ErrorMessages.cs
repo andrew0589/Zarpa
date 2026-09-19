@@ -26,6 +26,7 @@ namespace NavigationES.Web.Utilities
             [ErrorCodes.EmailSendFailedError] = "No se ha podido enviar el correo. Inténtalo de nuevo más tarde.",
             [ErrorCodes.ComunidadNotFoundError] = "La comunidad autónoma no existe.",
             [ErrorCodes.ConvocatoriaUrlNotValidError] = "La dirección web no es válida: debe empezar por http:// o https:// (máximo 500 caracteres).",
+            [ErrorCodes.ConvocatoriaNotesTooLongError] = "Las notas son demasiado largas (máximo 4000 caracteres).",
             [ErrorCodes.UnknownError] = Unknown,
         };
 

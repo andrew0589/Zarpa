@@ -2,8 +2,8 @@ namespace NavigationES.Shared.Dtos
 {
     // The web's Convocatorias tab (administrators only): for every comunidad autónoma,
     // the most recent sitting whose papers are imported, the site where the next
-    // convocatoria is published, and the next sitting the administrator is waiting
-    // for, with a tick once that one has been imported too.
+    // convocatoria is published, the next sitting the administrator is waiting for,
+    // and free notes about it.
 
     // One paper of the latest imported sitting; SourceFile is the PDF it came from.
     public record AdminLastExamPaperDto(string LicenseCode, string? Model, string? SourceFile, int QuestionCount);
@@ -26,9 +26,19 @@ namespace NavigationES.Shared.Dtos
         // Where the community publishes convocatorias and exam papers; null = not set.
         string? ConvocatoriaUrl,
         DateOnly? NextExamDate,
-        bool NextExamDone);
+        // Free text the administrator keeps about this community; null = nothing written.
+        string? Notes);
 
     // PUT /api/admin/comunidades/{id} — the three hand-kept fields, stored as sent:
-    // a null date or a blank URL clears that field.
-    public record AdminComunidadUpdateDto(DateOnly? NextExamDate, bool NextExamDone, string? ConvocatoriaUrl);
+    // a null date or a blank URL/note clears that field.
+    public record AdminComunidadUpdateDto(DateOnly? NextExamDate, string? Notes, string? ConvocatoriaUrl);
+
+    // The column limits the server enforces, shared so the form can stop the
+    // administrator before a save is refused (and their typing rolled back).
+    // They mirror [MaxLength] on ComunidadAutonomaEntity.
+    public static class AdminComunidadLimits
+    {
+        public const int UrlMaxLength = 500;
+        public const int NotesMaxLength = 4000;
+    }
 }

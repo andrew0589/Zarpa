@@ -15,12 +15,14 @@ namespace NavigationES.Api.Data.Entities
         // Bookkeeping for the web's Convocatorias tab, all typed in by hand (no
         // community publishes a machine-readable calendar): where the community
         // publishes its convocatorias and exam papers, the next official sitting
-        // the administrator is waiting for, and whether its papers are imported.
+        // the administrator is waiting for, and free notes about it (what is still
+        // missing, whom to ask, how the papers arrive).
         [MaxLength(500)]
         public string? ConvocatoriaUrl { get; set; }
 
         public DateOnly? NextExamDate { get; set; }
 
-        public bool NextExamDone { get; set; }
+        [MaxLength(4000)]
+        public string? Notes { get; set; }
     }
 }

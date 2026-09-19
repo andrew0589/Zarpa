@@ -46,5 +46,7 @@ public static class ErrorCodes
     public const string ComunidadNotFoundError = "ComunidadNotFoundError";
     // The convocatoria site is not an absolute http(s) URL or exceeds the column (500).
     public const string ConvocatoriaUrlNotValidError = "ConvocatoriaUrlNotValidError";
+    // The notes exceed the column (4000).
+    public const string ConvocatoriaNotesTooLongError = "ConvocatoriaNotesTooLongError";
     #endregion
 }

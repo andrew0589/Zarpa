@@ -13,7 +13,7 @@
         }
         else
         {
-            <text>@WithExams @(WithExams == 1 ? "comunidad" : "comunidades") con exámenes · @Pending @(Pending == 1 ? "convocatoria pendiente" : "convocatorias pendientes")</text>
+            <text>@WithExams @(WithExams == 1 ? "comunidad" : "comunidades") con exámenes · @Pending @(Pending == 1 ? "convocatoria pendiente" : "convocatorias pendientes") de importar</text>
         }
     </p>
 
@@ -22,8 +22,9 @@
             <strong>Último examen</strong> = la convocatoria más reciente ya importada (mes y año del examen,
             con el PDF de origen de cada modelo). <strong>Sitio web</strong> = dónde publica la comunidad sus
             convocatorias y exámenes. <strong>Próximo examen</strong> = la fecha de la siguiente convocatoria
-            oficial, apuntada a mano; marca <strong>Hecho</strong> cuando sus exámenes ya estén descargados e
-            importados. Los cambios se guardan al instante.
+            oficial, apuntada a mano; cuando sus exámenes ya estén descargados e importados, adelanta la fecha
+            a la convocatoria siguiente. En <strong>Notas</strong> caben todos los detalles de la comunidad: qué
+            falta, a quién pedirlo, cómo llegan los exámenes. Los cambios se guardan al instante.
         </p>
 
         @if (_message is not null)
@@ -53,7 +54,6 @@
                             <th>Por titulación</th>
                             <th>Sitio web</th>
                             <th>Próximo examen</th>
-                            <th class="admin-center">Hecho</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
@@ -115,11 +115,19 @@
                                     <input class="admin-field" type="date" @bind="r.NextExamDate" @bind:after="() => SaveAsync(r)"
                                            disabled="@r.Saving" aria-label="Próximo examen de @r.Name" />
                                 </td>
-                                <td class="admin-center">
-                                    <input class="admin-check" type="checkbox" @bind="r.NextExamDone" @bind:after="() => SaveAsync(r)"
-                                           disabled="@r.Saving" aria-label="Hecho: @r.Name" />
-                                </td>
                                 <td><span class="status-chip @status.Css">@status.Label</span></td>
+                            </tr>
+                            @* The notes get a row of their own, the full width of the table:
+                               they are prose about the community, not another cell value. *@
+                            <tr class="admin-notes-row">
+                                <td colspan="6">
+                                    <label class="admin-notes-label" for="notes-@r.Id">Notas</label>
+                                    <textarea class="admin-field admin-notes" id="notes-@r.Id" rows="4"
+                                              maxlength="@AdminComunidadLimits.NotesMaxLength"
+                                              placeholder="Detalles de @r.Name: qué falta, a quién pedirlo, cómo llegan los exámenes…"
+                                              @bind="r.Notes" @bind:after="() => SaveAsync(r)"
+                                              disabled="@r.Saving"></textarea>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -141,10 +149,10 @@
         public required List<AdminLicenseLastExamDto> LastByLicense { get; init; }
         public string? ConvocatoriaUrl { get; set; }
         public DateOnly? NextExamDate { get; set; }
-        public bool NextExamDone { get; set; }
+        public string? Notes { get; set; }
         public string? SavedUrl { get; set; }
         public DateOnly? SavedDate { get; set; }
-        public bool SavedDone { get; set; }
+        public string? SavedNotes { get; set; }
         public bool Saving { get; set; }
     }
 
@@ -159,7 +167,11 @@
     private string? _error;
 
     private int WithExams => _rows?.Count(r => r.ExamCount > 0) ?? 0;
-    private int Pending => _rows?.Count(r => r.NextExamDate is not null && !r.NextExamDone) ?? 0;
+
+    // A noted sitting whose date has arrived: its papers are what there is to do.
+    // Once they are imported the administrator moves the date to the next sitting.
+    private int Pending => _rows?.Count(r =>
+        r.NextExamDate is not null && r.NextExamDate.Value <= DateOnly.FromDateTime(DateTime.Today)) ?? 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -175,10 +187,10 @@
                 LastByLicense = c.LastByLicense,
                 ConvocatoriaUrl = c.ConvocatoriaUrl,
                 NextExamDate = c.NextExamDate,
-                NextExamDone = c.NextExamDone,
+                Notes = c.Notes,
                 SavedUrl = c.ConvocatoriaUrl,
                 SavedDate = c.NextExamDate,
-                SavedDone = c.NextExamDone,
+                SavedNotes = c.Notes,
             }).ToList();
         }
         catch (Exception)
@@ -189,7 +201,7 @@
         }
     }
 
-    // Fires on every change of the site, the date or the tick; a failed save puts
+    // Fires on every change of the site, the date or the notes; a failed save puts
     // the controls back to what the server holds.
     private async Task SaveAsync(Row r)
     {
@@ -200,14 +212,15 @@
         _error = null;
         try
         {
-            var result = await AdminApi.UpdateComunidadAsync(r.Id, new AdminComunidadUpdateDto(r.NextExamDate, r.NextExamDone, r.ConvocatoriaUrl));
+            var result = await AdminApi.UpdateComunidadAsync(r.Id, new AdminComunidadUpdateDto(r.NextExamDate, r.Notes, r.ConvocatoriaUrl));
             if (result.IsSuccess)
             {
-                // The server stores the trimmed URL and a blank one as null — mirror that.
+                // The server trims both texts and stores a blank one as null — mirror that.
                 r.ConvocatoriaUrl = string.IsNullOrWhiteSpace(r.ConvocatoriaUrl) ? null : r.ConvocatoriaUrl.Trim();
+                r.Notes = string.IsNullOrWhiteSpace(r.Notes) ? null : r.Notes.Trim();
                 r.SavedUrl = r.ConvocatoriaUrl;
                 r.SavedDate = r.NextExamDate;
-                r.SavedDone = r.NextExamDone;
+                r.SavedNotes = r.Notes;
                 _message = $"{r.Name}: guardado.";
             }
             else
@@ -231,7 +244,7 @@
     {
         r.ConvocatoriaUrl = r.SavedUrl;
         r.NextExamDate = r.SavedDate;
-        r.NextExamDone = r.SavedDone;
+        r.Notes = r.SavedNotes;
     }
 
     private static string MonthName(int month) =>
@@ -251,13 +264,12 @@
         }
     }
 
-    // Where the next sitting stands today: not planned, still ahead, due, or done.
+    // Where the next sitting stands today: not planned, still ahead, or already held
+    // (its papers still to import — once they are in, the date moves on).
     private static (string Label, string Css) Status(Row r)
     {
         if (r.NextExamDate is null)
             return ("Sin fecha", "empezado");
-        if (r.NextExamDone)
-            return ("Hecho", "apto");
 
         var days = r.NextExamDate.Value.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber;
         if (days > 1) return ($"Faltan {days} días", "empezado");

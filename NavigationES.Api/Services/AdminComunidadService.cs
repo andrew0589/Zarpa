@@ -8,12 +8,13 @@ namespace NavigationES.Api.Services
     // Behind the web's Convocatorias tab: per comunidad autónoma, the most recent
     // sitting whose papers are in the database, plus three hand-kept fields — the
     // site publishing the convocatorias, the next sitting the administrator is
-    // waiting for and whether it is done. Only those three are ever written; the
+    // waiting for and free notes about it. Only those three are ever written; the
     // "last" side is derived from Exams.
     public class AdminComunidadService(NavigationESDbContext context)
     {
-        // Matches [MaxLength] on ComunidadAutonomaEntity.ConvocatoriaUrl.
-        public const int UrlMaxLength = 500;
+        // The column limits, kept in Shared so the web form knows them too.
+        public const int UrlMaxLength = AdminComunidadLimits.UrlMaxLength;
+        public const int NotesMaxLength = AdminComunidadLimits.NotesMaxLength;
 
         private readonly NavigationESDbContext _context = context;
 
@@ -32,7 +33,7 @@ namespace NavigationES.Api.Services
         {
             var comunidades = await _context.ComunidadesAutonomas.AsNoTracking()
                 .OrderBy(c => c.Name)
-                .Select(c => new { c.ID, c.Name, c.ConvocatoriaUrl, c.NextExamDate, c.NextExamDone })
+                .Select(c => new { c.ID, c.Name, c.ConvocatoriaUrl, c.NextExamDate, c.Notes })
                 .ToListAsync();
 
             // A few hundred rows in total, so the per-community grouping happens in memory.
@@ -55,15 +56,19 @@ namespace NavigationES.Api.Services
                 .ToLookup(p => p.ComunidadId);
 
             return comunidades
-                .Select(c => Build(c.ID, c.Name, c.ConvocatoriaUrl, c.NextExamDate, c.NextExamDone, byComunidad[c.ID]))
+                .Select(c => Build(c.ID, c.Name, c.ConvocatoriaUrl, c.NextExamDate, c.Notes, byComunidad[c.ID]))
                 .ToList();
         }
 
         public async Task<ResultDto> UpdateAsync(long comunidadId, AdminComunidadUpdateDto request)
         {
-            var (url, error) = NormalizeUrl(request.ConvocatoriaUrl);
-            if (error is not null)
-                return ResultDto.Failure(error);
+            var (url, urlError) = NormalizeUrl(request.ConvocatoriaUrl);
+            if (urlError is not null)
+                return ResultDto.Failure(urlError);
+
+            var (notes, notesError) = NormalizeNotes(request.Notes);
+            if (notesError is not null)
+                return ResultDto.Failure(notesError);
 
             var comunidad = await _context.ComunidadesAutonomas.FirstOrDefaultAsync(c => c.ID == comunidadId);
             if (comunidad is null)
@@ -71,7 +76,7 @@ namespace NavigationES.Api.Services
 
             comunidad.ConvocatoriaUrl = url;
             comunidad.NextExamDate = request.NextExamDate;
-            comunidad.NextExamDone = request.NextExamDone;
+            comunidad.Notes = notes;
             await _context.SaveChangesAsync();
 
             return ResultDto.Success();
@@ -92,15 +97,28 @@ namespace NavigationES.Api.Services
             return valid ? (url, null) : (null, ErrorCodes.ConvocatoriaUrlNotValidError);
         }
 
+        // Trims the ends and treats blank as "nothing written"; the line breaks the
+        // administrator typed inside stay as they are. Error is null when it fits.
+        public static (string? Notes, string? Error) NormalizeNotes(string? raw)
+        {
+            var notes = raw?.Trim();
+            if (string.IsNullOrEmpty(notes))
+                return (null, null);
+
+            return notes.Length <= NotesMaxLength
+                ? (notes, null)
+                : (null, ErrorCodes.ConvocatoriaNotesTooLongError);
+        }
+
         // Pure: one tab row from the community's papers. Sittings are ordered by
         // (Year, Month), so December 2025 comes before June 2026. Public and static
         // so the rules are unit-tested without a database.
         public static AdminComunidadExamDto Build(
-            long id, string name, string? convocatoriaUrl, DateOnly? nextExamDate, bool nextExamDone, IEnumerable<ExamPaper> papers)
+            long id, string name, string? convocatoriaUrl, DateOnly? nextExamDate, string? notes, IEnumerable<ExamPaper> papers)
         {
             var list = papers.ToList();
             if (list.Count == 0)
-                return new AdminComunidadExamDto(id, name, 0, null, [], convocatoriaUrl, nextExamDate, nextExamDone);
+                return new AdminComunidadExamDto(id, name, 0, null, [], convocatoriaUrl, nextExamDate, notes);
 
             var latest = list.Max(p => (p.Year, p.Month));
             var latestPapers = list
@@ -123,7 +141,7 @@ namespace NavigationES.Api.Services
                 id, name, list.Count,
                 new AdminLastExamDto(latest.Year, latest.Month, latestPapers),
                 byLicense,
-                convocatoriaUrl, nextExamDate, nextExamDone);
+                convocatoriaUrl, nextExamDate, notes);
         }
     }
 }

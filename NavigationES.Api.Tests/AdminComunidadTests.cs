@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 using NavigationES.Api.Services;
 using NavigationES.Shared.Constants;
 using static NavigationES.Api.Services.AdminComunidadService;
@@ -7,7 +7,7 @@ namespace NavigationES.Api.Tests
 {
     // The pure parts behind the Convocatorias tab: which sitting counts as the last
     // one, which papers belong to it, how far each license lags behind, and what
-    // the convocatoria site accepts.
+    // the convocatoria site and the notes accept.
     public class AdminComunidadTests
     {
         private const long Baleares = 9;
@@ -19,14 +19,14 @@ namespace NavigationES.Api.Tests
         [Fact]
         public void Build_WithoutPapers_HasNoLastExam()
         {
-            var row = Build(Baleares, "Islas Baleares", "https://caib.es", new DateOnly(2026, 10, 3), false, []);
+            var row = Build(Baleares, "Islas Baleares", "https://caib.es", new DateOnly(2026, 10, 3), "Falta CY.", []);
 
             Assert.Equal(0, row.ExamCount);
             Assert.Null(row.LastExam);
             Assert.Empty(row.LastByLicense);
             Assert.Equal("https://caib.es", row.ConvocatoriaUrl);
             Assert.Equal(new DateOnly(2026, 10, 3), row.NextExamDate);
-            Assert.False(row.NextExamDone);
+            Assert.Equal("Falta CY.", row.Notes);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace NavigationES.Api.Tests
                 Paper(2, "PER", 2026, 6, "A", "jun-per-a.pdf"),
             };
 
-            var row = Build(Baleares, "Islas Baleares", null, null, false, papers);
+            var row = Build(Baleares, "Islas Baleares", null, null, null, papers);
 
             Assert.Equal(4, row.ExamCount);
             Assert.NotNull(row.LastExam);
@@ -69,7 +69,7 @@ namespace NavigationES.Api.Tests
                 Paper(2, "PER", 2026, 6, "A"),
             };
 
-            var row = Build(Baleares, "Islas Baleares", null, null, false, papers);
+            var row = Build(Baleares, "Islas Baleares", null, null, null, papers);
 
             Assert.Equal(2, row.LastByLicense.Count);
             Assert.Equal("PER", row.LastByLicense[0].LicenseCode);
@@ -85,11 +85,12 @@ namespace NavigationES.Api.Tests
         [Fact]
         public void Build_PassesTheHandKeptFieldsThroughUnchanged()
         {
-            var row = Build(Baleares, "Islas Baleares", "https://www.caib.es/sites/transportmaritim/es/", new DateOnly(2026, 12, 12), true, [Paper(2, "PER", 2026, 6)]);
+            var notes = "Plantilla publicada;\nfaltan los enunciados de CY.";
+            var row = Build(Baleares, "Islas Baleares", "https://www.caib.es/sites/transportmaritim/es/", new DateOnly(2026, 12, 12), notes, [Paper(2, "PER", 2026, 6)]);
 
             Assert.Equal("https://www.caib.es/sites/transportmaritim/es/", row.ConvocatoriaUrl);
             Assert.Equal(new DateOnly(2026, 12, 12), row.NextExamDate);
-            Assert.True(row.NextExamDone);
+            Assert.Equal(notes, row.Notes);
         }
 
         [Theory]
@@ -123,6 +124,33 @@ namespace NavigationES.Api.Tests
         {
             var tooLong = "https://caib.es/" + new string('a', UrlMaxLength);
             Assert.Equal((null, ErrorCodes.ConvocatoriaUrlNotValidError), NormalizeUrl(tooLong));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        [InlineData("\n\n")]
+        public void NormalizeNotes_TreatsBlankAsNothingWritten(string? raw)
+        {
+            Assert.Equal((null, null), NormalizeNotes(raw));
+        }
+
+        [Fact]
+        public void NormalizeNotes_TrimsTheEndsAndKeepsTheLineBreaksInside()
+        {
+            // What the administrator typed as separate lines has to come back as
+            // separate lines; only the stray whitespace around it goes.
+            Assert.Equal(
+                ("Plantilla publicada.\n\nFaltan los enunciados de CY:\n- pedirlos por email.", null),
+                NormalizeNotes("  Plantilla publicada.\n\nFaltan los enunciados de CY:\n- pedirlos por email.\n "));
+        }
+
+        [Fact]
+        public void NormalizeNotes_RejectsNotesLongerThanTheColumn()
+        {
+            Assert.Equal((new string('a', NotesMaxLength), null), NormalizeNotes(new string('a', NotesMaxLength)));
+            Assert.Equal((null, ErrorCodes.ConvocatoriaNotesTooLongError), NormalizeNotes(new string('a', NotesMaxLength + 1)));
         }
     }
 }

@@ -1794,15 +1794,39 @@ h1 {
 }
 
 /* Admin — Convocatorias tab (AdminConvocatorias.razor): last imported sitting vs.
-   convocatoria site and next expected sitting per comunidad; the site, the date
-   and the tick save on change. */
+   convocatoria site and next expected sitting per comunidad, with a full-width
+   notes row under each one; the site, the date and the notes save on change. */
 .admin-table.admin-table-convocatorias {
     min-width: 1100px;
 }
 
-.admin-center,
-.admin-table th.admin-center {
-    text-align: center;
+    /* The community row and its notes read as one block: no rule between them,
+       one rule under the pair. */
+    .admin-table.admin-table-convocatorias tbody tr:not(.admin-notes-row) td {
+        border-bottom: none;
+        padding-bottom: 0.4rem;
+    }
+
+.admin-notes-row td {
+    padding-top: 0;
+}
+
+.admin-notes-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gray-400);
+    margin-bottom: 0.25rem;
+}
+
+.admin-notes {
+    display: block;
+    width: 100%;
+    resize: vertical;
+    min-height: 4.5rem;
+    line-height: 1.5;
 }
 
 .admin-files {
@@ -1837,15 +1861,7 @@ h1 {
     min-width: 220px;
 }
 
-.admin-check {
-    width: 1.25rem;
-    height: 1.25rem;
-    accent-color: var(--accent);
-    cursor: pointer;
-}
-
-.admin-field:disabled,
-.admin-check:disabled {
+.admin-field:disabled {
     opacity: 0.6;
     cursor: default;
 }
