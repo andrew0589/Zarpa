@@ -82,7 +82,10 @@
                                                                FontSize="12"
                                                                FontAttributes="Bold" />
                                                     </Border>
+                                                    <!-- Hidden on an undated paper: it is named "Test 1"
+                                                         above and carries no model letter. -->
                                                     <Border Grid.Row="1" Grid.Column="0"
+                                                            IsVisible="{Binding HasModel}"
                                                             BackgroundColor="{StaticResource Primary}"
                                                             Stroke="Transparent"
                                                             StrokeShape="RoundRectangle 8"

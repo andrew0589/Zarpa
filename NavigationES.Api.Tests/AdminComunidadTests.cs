@@ -13,8 +13,12 @@ namespace NavigationES.Api.Tests
         private const long Baleares = 9;
 
         // Seeded license ids: PNB 1, PER 2, PY 3, CY 4.
-        private static ExamPaper Paper(long licenseId, string license, int year, int month, string? model = null, string? file = null, int questions = 45) =>
+        private static ExamPaper Paper(long licenseId, string license, int? year, int? month, string? model = null, string? file = null, int questions = 45) =>
             new(Baleares, licenseId, license, year, month, model, file, questions);
+
+        // A third-party reprint: numbered, but nobody knows which sitting it was.
+        private static ExamPaper Undated(long licenseId, string license, string model) =>
+            Paper(licenseId, license, null, null, model);
 
         [Fact]
         public void Build_WithoutPapers_HasNoLastExam()
@@ -80,6 +84,37 @@ namespace NavigationES.Api.Tests
             // The community-level "last" is PER's June, and CY does not appear in it.
             Assert.Single(row.LastExam!.Papers);
             Assert.Equal("PER", row.LastExam.Papers[0].LicenseCode);
+        }
+
+        [Fact]
+        public void Build_CountsUndatedPapersButNeverLetsThemBeTheLastSitting()
+        {
+            // The reprints are in the database and sittable, so they belong in the
+            // count — but "último examen importado" has to stay June 2026.
+            var papers = new[]
+            {
+                Paper(2, "PER", 2026, 6, "A", "jun-per-a.pdf"),
+                Undated(2, "PER", "1"),
+                Undated(2, "PER", "2"),
+            };
+
+            var row = Build(Baleares, "Islas Baleares", null, null, null, papers);
+
+            Assert.Equal(3, row.ExamCount);
+            Assert.Equal((2026, 6), (row.LastExam!.Year, row.LastExam.Month));
+            Assert.Single(row.LastExam.Papers);
+            Assert.Equal("jun-per-a.pdf", row.LastExam.Papers[0].SourceFile);
+            Assert.Equal((2026, 6, 1), (row.LastByLicense[0].Year, row.LastByLicense[0].Month, row.LastByLicense[0].ExamCount));
+        }
+
+        [Fact]
+        public void Build_WithOnlyUndatedPapers_ReportsTheCountAndNoLastSitting()
+        {
+            var row = Build(Baleares, "Islas Baleares", null, null, null, [Undated(2, "PER", "1"), Undated(2, "PER", "2")]);
+
+            Assert.Equal(2, row.ExamCount);
+            Assert.Null(row.LastExam);
+            Assert.Empty(row.LastByLicense);
         }
 
         [Fact]

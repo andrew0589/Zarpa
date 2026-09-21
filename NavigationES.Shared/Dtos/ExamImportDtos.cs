@@ -2,11 +2,13 @@ namespace NavigationES.Shared.Dtos
 {
     // One full official exam paper, questions in the order of the sheet. Comunidad is
     // the community's seeded name ("Islas Baleares"), Categoria the license code ("PER").
+    // Year and Month are omitted together when the paper reached us without a date;
+    // Model then carries the reprint's number ("1", "2", …) instead of a model letter.
     public record ExamImportDto(
         string Comunidad,
         string Categoria,
-        int Year,
-        int Month,
+        int? Year,
+        int? Month,
         string? Model,
         string? SourceFile,
         List<QuestionImportDto> Questions);

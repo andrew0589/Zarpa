@@ -35,9 +35,13 @@ namespace NavigationES.Api.Services
             if (license is null)
                 errors.Add($"Unknown categoria \"{dto.Categoria}\" — expected a license code (PNB/PER/PY/CY).");
 
-            if (dto.Month is < 1 or > 12)
+            // A paper is either dated or not; half a date is a mistake in the source
+            // file, not a paper we can place in the picker.
+            if (dto.Year is null != dto.Month is null)
+                errors.Add("year and month must be given together, or both omitted for an undated paper.");
+            if (dto.Month is not null and (< 1 or > 12))
                 errors.Add($"month must be 1–12, got {dto.Month}.");
-            if (dto.Year is < 2000 or > 2100)
+            if (dto.Year is not null and (< 2000 or > 2100))
                 errors.Add($"year looks wrong: {dto.Year}.");
             if (dto.Questions is not { Count: > 0 })
                 errors.Add("questions is empty.");

@@ -833,7 +833,25 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("ModelUnique", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamsNoDate {
+            get {
+                return ResourceManager.GetString("ExamsNoDate", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string ExamTestFormat {
+            get {
+                return ResourceManager.GetString("ExamTestFormat", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string.
         /// </summary>

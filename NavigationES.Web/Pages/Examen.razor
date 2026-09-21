@@ -32,13 +32,20 @@ else
 
     @foreach (var year in _byYear)
     {
-        <h2 class="year-header">@year.Key</h2>
+        <h2 class="year-header">@GroupHeader(year.Key)</h2>
         <div class="exam-list">
             @foreach (var exam in year)
             {
                 <button class="exam-card" @onclick="() => OpenExam(exam)">
-                    <span class="exam-month">@MonthName(exam.Month) @exam.Year</span>
-                    <span class="exam-model-cell"><span class="exam-model">Modelo @(exam.Model ?? "único")</span></span>
+                    <span class="exam-month">@ExamName(exam)</span>
+                    @* An undated paper is named by its own number, so there is no
+                       model letter to show beside it. *@
+                    <span class="exam-model-cell">
+                        @if (exam.Year is not null)
+                        {
+                            <span class="exam-model">Modelo @(exam.Model ?? "único")</span>
+                        }
+                    </span>
                     <span class="exam-status">
                         @if (exam.Passed)
                         {
@@ -70,16 +77,25 @@ else
 
     private string _licenseCode = string.Empty;
     private string? _comunidadName;
-    private List<IGrouping<int, ExamListItemDto>> _byYear = [];
+    private List<IGrouping<int?, ExamListItemDto>> _byYear = [];
     private bool _loaded;
     private bool _loadFailed;
 
     private static string MonthName(int month) =>
         month is >= 1 and <= 12 ? Months[month - 1] : month.ToString();
 
+    // Undated papers share one group, headed "Sin fecha" instead of a year.
+    private static string GroupHeader(int? year) => year?.ToString() ?? "Sin fecha";
+
+    // "Enero 2024" for a real sitting, "Test 1" for an undated reprint.
+    private static string ExamName(ExamListItemDto exam) =>
+        exam is { Year: int y, Month: int m } ? $"{MonthName(m)} {y}" : $"Test {exam.Model}";
+
     private void OpenExam(ExamListItemDto exam)
     {
-        var titulo = $"{MonthName(exam.Month)} {exam.Year} · Modelo {exam.Model ?? "único"}";
+        var titulo = exam.Year is null
+            ? ExamName(exam)
+            : $"{ExamName(exam)} · Modelo {exam.Model ?? "único"}";
         Navigation.NavigateTo($"examen/{exam.Id}?titulo={Uri.EscapeDataString(titulo)}");
     }
 
@@ -107,6 +123,7 @@ else
             }
 
             var exams = await ExamsApi.GetExamsAsync(license.Id);
+            // Newest year first; the null key (undated) sorts last on its own.
             _byYear = [.. exams.GroupBy(e => e.Year).OrderByDescending(g => g.Key)];
         }
         catch (Exception)

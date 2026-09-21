@@ -27,8 +27,14 @@ namespace NavigationES.Api.Data.Repositories
             return await _context.Exams
                 .Where(e => e.LicenseID == licenseId
                     && (comunidadId == null || e.ComunidadAutonomaID == comunidadId))
+                // Newest sitting first. SQL Server sorts NULL lowest, so descending
+                // puts the undated papers last on its own — which is where they belong.
+                // Within a sitting, Model is text, so "10" would land between "1" and
+                // "2": length first keeps the numbered reprints in their own order and
+                // leaves the single-letter models ("A", "B") exactly as they were.
                 .OrderByDescending(e => e.Year)
                 .ThenByDescending(e => e.Month)
+                .ThenBy(e => e.Model!.Length)
                 .ThenBy(e => e.Model)
                 .Select(e => new ExamListItemDto(
                     e.ID,

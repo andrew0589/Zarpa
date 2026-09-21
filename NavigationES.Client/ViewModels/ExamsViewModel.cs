@@ -129,24 +129,27 @@ namespace NavigationES.Client.ViewModels
         }
     }
 
-    public class ExamYearGroup(int year, List<ExamListItem> exams)
+    // One year of papers, or — for the null key — the undated reprints, last.
+    public class ExamYearGroup(int? year, List<ExamListItem> exams)
     {
-        public string YearText { get; } = year.ToString();
+        public string YearText { get; } = year?.ToString() ?? AppResources.ExamsNoDate;
         public List<ExamListItem> Exams { get; } = exams;
     }
 
     public class ExamListItem
     {
         public long Id { get; }
-        // "Enero 2024"
+        // "Enero 2024", or "Test 1" for a paper that reached us without a date.
         public string MonthYear { get; }
-        // "Modelo A" / "Modelo único"
+        // "Modelo A" / "Modelo único"; empty on an undated paper, which is named by
+        // its own number and has no model letter beside it.
         public string ModelText { get; }
         // "Islas Baleares · 45 preguntas"
         public string Meta { get; }
-        // Title of the session page: "Enero 2024 · Modelo A"
+        // Title of the session page: "Enero 2024 · Modelo A", or just "Test 1".
         public string SessionTitle { get; }
 
+        public bool HasModel { get; }
         public bool HasStatus { get; }
         public string StatusText { get; } = string.Empty;
         public Color StatusBackground { get; } = Colors.Transparent;
@@ -155,10 +158,15 @@ namespace NavigationES.Client.ViewModels
         public ExamListItem(ExamListItemDto dto)
         {
             Id = dto.Id;
-            MonthYear = $"{ExamsViewModel.MonthName(dto.Month)} {dto.Year}";
-            ModelText = string.Format(AppResources.ModelFormat, dto.Model ?? AppResources.ModelUnique);
+            HasModel = dto is { Year: not null, Month: not null };
+            MonthYear = HasModel
+                ? $"{ExamsViewModel.MonthName(dto.Month!.Value)} {dto.Year}"
+                : string.Format(AppResources.ExamTestFormat, dto.Model);
+            ModelText = HasModel
+                ? string.Format(AppResources.ModelFormat, dto.Model ?? AppResources.ModelUnique)
+                : string.Empty;
             Meta = string.Format(AppResources.ExamMetaFormat, dto.ComunidadName, dto.QuestionCount);
-            SessionTitle = $"{MonthYear} · {ModelText}";
+            SessionTitle = HasModel ? $"{MonthYear} · {ModelText}" : MonthYear;
 
             if (dto.Passed)
             {

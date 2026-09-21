@@ -23,8 +23,9 @@ namespace NavigationES.Api.Services
             long ComunidadId,
             long LicenseId,
             string LicenseCode,
-            int Year,
-            int Month,
+            // Both null for an undated paper.
+            int? Year,
+            int? Month,
             string? Model,
             string? SourceFile,
             int QuestionCount);
@@ -113,33 +114,38 @@ namespace NavigationES.Api.Services
         // Pure: one tab row from the community's papers. Sittings are ordered by
         // (Year, Month), so December 2025 comes before June 2026. Public and static
         // so the rules are unit-tested without a database.
+        //
+        // Undated papers (third-party reprints) still count in ExamCount — they are
+        // in the database and the user can sit them — but they can never be "the last
+        // imported sitting", so every "last" here is computed from the dated ones.
         public static AdminComunidadExamDto Build(
             long id, string name, string? convocatoriaUrl, DateOnly? nextExamDate, string? notes, IEnumerable<ExamPaper> papers)
         {
             var list = papers.ToList();
-            if (list.Count == 0)
-                return new AdminComunidadExamDto(id, name, 0, null, [], convocatoriaUrl, nextExamDate, notes);
+            var dated = list.Where(p => p.Year is not null && p.Month is not null).ToList();
+            if (dated.Count == 0)
+                return new AdminComunidadExamDto(id, name, list.Count, null, [], convocatoriaUrl, nextExamDate, notes);
 
-            var latest = list.Max(p => (p.Year, p.Month));
-            var latestPapers = list
+            var latest = dated.Max(p => (p.Year, p.Month));
+            var latestPapers = dated
                 .Where(p => (p.Year, p.Month) == latest)
                 .OrderBy(p => p.LicenseId).ThenBy(p => p.Model).ThenBy(p => p.SourceFile)
                 .Select(p => new AdminLastExamPaperDto(p.LicenseCode, p.Model, p.SourceFile, p.QuestionCount))
                 .ToList();
 
-            var byLicense = list
+            var byLicense = dated
                 .GroupBy(p => new { p.LicenseId, p.LicenseCode })
                 .OrderBy(g => g.Key.LicenseId)
                 .Select(g =>
                 {
                     var last = g.Max(p => (p.Year, p.Month));
-                    return new AdminLicenseLastExamDto(g.Key.LicenseCode, last.Year, last.Month, g.Count(p => (p.Year, p.Month) == last));
+                    return new AdminLicenseLastExamDto(g.Key.LicenseCode, last.Year!.Value, last.Month!.Value, g.Count(p => (p.Year, p.Month) == last));
                 })
                 .ToList();
 
             return new AdminComunidadExamDto(
                 id, name, list.Count,
-                new AdminLastExamDto(latest.Year, latest.Month, latestPapers),
+                new AdminLastExamDto(latest.Year!.Value, latest.Month!.Value, latestPapers),
                 byLicense,
                 convocatoriaUrl, nextExamDate, notes);
         }

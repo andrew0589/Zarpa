@@ -16,13 +16,17 @@ namespace NavigationES.Api.Data.Entities
         public long LicenseID { get; set; }
         public LicenseEntity License { get; set; }
 
-        public int Year { get; set; }
+        // When the sitting was held. Both null together for papers that reached us
+        // without a date — third-party reprints of real exams, numbered but undated.
+        // They sort to the end of the picker and show "Sin fecha" instead of a month.
+        public int? Year { get; set; }
 
         // 1–12.
-        public int Month { get; set; }
+        public int? Month { get; set; }
 
         // The paper's model letter within the sitting ("A", "B", …); null when the
-        // sitting had a single paper.
+        // sitting had a single paper. On an undated paper it carries the reprint's
+        // own number ("1", "2", …), shown as "Test 1".
         [MaxLength(10)]
         public string? Model { get; set; }
 

@@ -28,7 +28,9 @@ namespace NavigationES.Shared.Dtos
         int InactiveQuestionCount,
         List<AdminTopicLicenseDto> Licenses);
 
-    public record AdminComunidadLicenseDto(long LicenseId, int ExamCount, int QuestionCount, int FirstYear, int LastYear);
+    // FirstYear/LastYear are null when every paper of this comunidad+license is undated
+    // (SQL's MIN/MAX skip the nulls, so a mixed set still reports the dated span).
+    public record AdminComunidadLicenseDto(long LicenseId, int ExamCount, int QuestionCount, int? FirstYear, int? LastYear);
 
     public record AdminComunidadDto(long Id, string Name, List<AdminComunidadLicenseDto> Licenses);
 

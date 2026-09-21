@@ -348,6 +348,12 @@
   <data name="ModelUnique" xml:space="preserve">
     <value>único</value>
   </data>
+  <data name="ExamsNoDate" xml:space="preserve">
+    <value>Sin fecha</value>
+  </data>
+  <data name="ExamTestFormat" xml:space="preserve">
+    <value>Test {0}</value>
+  </data>
   <data name="StatusApto" xml:space="preserve">
     <value>Aprobado</value>
   </data>

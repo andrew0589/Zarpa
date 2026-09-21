@@ -31,88 +31,86 @@
             <section class="retro-card admin-card">
                 <h2 class="admin-subtitle">Temas por titulación</h2>
                 <p class="admin-hint">
-                    Banco = preguntas activas del tema. En cada titulación, cuántas preguntas del tema
-                    entran en un examen y el máximo de errores permitido en él.
+                    Cada titulación con los temas que examina: Banco = preguntas activas del tema,
+                    En examen = cuántas entran en un examen y cuántos errores se toleran en ellas.
+                    Un tema compartido aparece en todas las titulaciones que lo examinan.
                 </p>
-                <div class="admin-table-wrap">
-                    <table class="admin-table admin-table-stats">
-                        <thead>
-                            <tr>
-                                <th>Tema</th>
-                                <th class="admin-num">Banco</th>
-                                @foreach (var l in _content.Licenses)
-                                {
-                                    <th class="admin-num" title="@l.Name">@l.Code</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var t in _content.Topics)
-                            {
-                                <tr>
-                                    <td><div class="admin-user-name">@(t.Number). @t.Name</div></td>
-                                    <td class="admin-num">
-                                        <strong>@t.ActiveQuestionCount</strong>
-                                        @if (t.InactiveQuestionCount > 0)
+                @foreach (var l in _content.Licenses)
+                {
+                    var rows = TopicsOf(l);
+                    var inactive = rows.Sum(r => r.Topic.InactiveQuestionCount);
+                    <div class="admin-license-block">
+                        <div class="admin-license-head">
+                            <h3 class="admin-license-code">@l.Code</h3>
+                            <span class="admin-license-name">@l.Name</span>
+                            <span class="admin-license-meta">@(rows.Count == 0 ? "Sin temas configurados todavía" : ExamRules(l))</span>
+                        </div>
+                        @if (rows.Count > 0)
+                        {
+                            <div class="admin-table-wrap">
+                                <table class="admin-table admin-table-stats admin-table-topics">
+                                    <thead>
+                                        <tr>
+                                            <th>Tema</th>
+                                            <th class="admin-num">Banco</th>
+                                            <th class="admin-num">En examen</th>
+                                            <th class="admin-num">Máx. errores</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in rows)
                                         {
-                                            <span class="admin-small admin-block">+@t.InactiveQuestionCount inactivas</span>
+                                            <tr class="@(row.Topic.ActiveQuestionCount == 0 ? "is-empty" : null)">
+                                                <td><div class="admin-user-name">@(row.Topic.Number). @row.Topic.Name</div></td>
+                                                <td class="admin-num">
+                                                    <strong>@row.Topic.ActiveQuestionCount</strong>
+                                                    @if (row.Topic.InactiveQuestionCount > 0)
+                                                    {
+                                                        <span class="admin-small admin-block">+@row.Topic.InactiveQuestionCount inactivas</span>
+                                                    }
+                                                </td>
+                                                <td class="admin-num"><strong>@row.Blueprint.QuestionsInExam</strong></td>
+                                                <td class="admin-num">
+                                                    @if (row.Blueprint.MaxErrors is null)
+                                                    {
+                                                        <span class="admin-dash">—</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @row.Blueprint.MaxErrors
+                                                    }
+                                                </td>
+                                            </tr>
                                         }
-                                    </td>
-                                    @foreach (var l in _content.Licenses)
-                                    {
-                                        var cell = t.Licenses.FirstOrDefault(x => x.LicenseId == l.Id);
-                                        <td class="admin-num">
-                                            @if (cell is null)
-                                            {
-                                                <span class="admin-dash">—</span>
-                                            }
-                                            else
-                                            {
-                                                <strong>@cell.QuestionsInExam</strong>
-                                                @if (cell.MaxErrors is not null)
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td>@l.TopicCount @(l.TopicCount == 1 ? "tema" : "temas")</td>
+                                            <td class="admin-num">
+                                                @l.BankQuestionCount
+                                                @if (inactive > 0)
                                                 {
-                                                    <span class="admin-small admin-block">máx. @cell.MaxErrors @(cell.MaxErrors == 1 ? "error" : "errores")</span>
+                                                    <span class="admin-small admin-block">+@inactive inactivas</span>
                                                 }
-                                            }
-                                        </td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td>Temas</td>
-                                <td class="admin-num">@_content.Topics.Count</td>
-                                @foreach (var l in _content.Licenses)
-                                {
-                                    <td class="admin-num">@l.TopicCount</td>
-                                }
-                            </tr>
-                            <tr>
-                                <td>Preguntas por examen</td>
-                                <td class="admin-num"><span class="admin-dash">—</span></td>
-                                @foreach (var l in _content.Licenses)
-                                {
-                                    <td class="admin-num">
-                                        @l.QuestionsInExam
-                                        @if (l.MaxTotalErrors is not null)
-                                        {
-                                            <span class="admin-small admin-block">máx. @l.MaxTotalErrors errores</span>
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                            <tr>
-                                <td>Preguntas en el banco</td>
-                                <td class="admin-num">@TotalBank</td>
-                                @foreach (var l in _content.Licenses)
-                                {
-                                    <td class="admin-num">@l.BankQuestionCount</td>
-                                }
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                                            </td>
+                                            <td class="admin-num">@l.QuestionsInExam</td>
+                                            <td class="admin-num">
+                                                @if (l.MaxTotalErrors is null)
+                                                {
+                                                    <span class="admin-dash">—</span>
+                                                }
+                                                else
+                                                {
+                                                    @l.MaxTotalErrors
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                }
             </section>
 
             <section class="retro-card admin-card">
@@ -197,6 +195,33 @@
         }
     }
 
+    // The topics one titulación examines, in syllabus order, each with its blueprint
+    // row. A topic several titulaciones share is listed under each of them — the same
+    // bank, but a different number of questions and error limit in every exam.
+    private List<(AdminTopicDto Topic, AdminTopicLicenseDto Blueprint)> TopicsOf(AdminLicenseDto license)
+    {
+        var rows = new List<(AdminTopicDto, AdminTopicLicenseDto)>();
+        foreach (var topic in _content!.Topics)
+        {
+            var blueprint = topic.Licenses.FirstOrDefault(x => x.LicenseId == license.Id);
+            if (blueprint is not null)
+                rows.Add((topic, blueprint));
+        }
+        return rows;
+    }
+
+    // "11 temas · 45 preguntas por examen · máx. 13 errores" — the license's exam
+    // rules; the error limit is missing while the official rules are not configured.
+    private static string ExamRules(AdminLicenseDto l)
+    {
+        var rules = $"{l.TopicCount} {(l.TopicCount == 1 ? "tema" : "temas")} · {l.QuestionsInExam} preguntas por examen";
+        return l.MaxTotalErrors is null ? rules : $"{rules} · máx. {l.MaxTotalErrors} errores";
+    }
+
     // "2023" for a single year, "2019–2025" for a range.
-    private static string Years(int first, int last) => first == last ? first.ToString() : $"{first}–{last}";
+    // Null on both ends means every paper here arrived without a date.
+    private static string Years(int? first, int? last) =>
+        first is null || last is null ? "sin fecha"
+        : first == last ? first.ToString()!
+        : $"{first}–{last}";
 }

@@ -1777,6 +1777,44 @@ h1 {
         background: #F7FAFD;
     }
 
+/* Temas por titulación: one block per titulación — its exam rules in the heading,
+   only its own temas in the table. The four columns fit where the old matrix could
+   not, so these tables are allowed to be narrower than the other stat tables. */
+.admin-license-block + .admin-license-block {
+    margin-top: 1.5rem;
+    padding-top: 1.3rem;
+    border-top: 1.5px solid var(--card-border);
+}
+
+.admin-license-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.admin-license-code {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--off-black);
+}
+
+.admin-license-name {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.admin-license-meta {
+    flex-basis: 100%;
+    color: var(--gray-400);
+    font-size: 0.82rem;
+}
+
+.admin-table.admin-table-topics {
+    min-width: 380px;
+}
+
 .admin-num,
 .admin-table th.admin-num {
     text-align: right;
