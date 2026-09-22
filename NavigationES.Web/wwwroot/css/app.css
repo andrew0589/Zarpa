@@ -1838,15 +1838,31 @@ h1 {
     min-width: 1100px;
 }
 
-    /* The community row and its notes read as one block: no rule between them,
-       one rule under the pair. */
+    /* Each comunidad is its own row group (tbody.admin-comunidad): the data row
+       and its notes read as one block — no rule between them, a heavier rule and
+       some air where the next comunidad starts, and every other block tinted so
+       the boundary is obvious even where the notes run long. */
     .admin-table.admin-table-convocatorias tbody tr:not(.admin-notes-row) td {
         border-bottom: none;
         padding-bottom: 0.4rem;
     }
 
+    .admin-table.admin-table-convocatorias .admin-comunidad tr:first-child td {
+        border-top: 2px solid var(--card-border);
+        padding-top: 0.9rem;
+    }
+
+    .admin-table.admin-table-convocatorias .admin-comunidad:nth-of-type(even) td {
+        background: #F7FAFD;
+    }
+
+    .admin-table.admin-table-convocatorias .admin-comunidad .admin-user-name {
+        font-size: 1rem;
+    }
+
 .admin-notes-row td {
     padding-top: 0;
+    padding-bottom: 1rem;
 }
 
 .admin-notes-label {

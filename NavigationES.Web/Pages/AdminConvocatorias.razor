@@ -57,10 +57,12 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var r in _rows)
-                        {
-                            var status = Status(r);
+                    @* One row group per comunidad — its data row plus its notes row — so
+                       the table can rule off and tint each comunidad as one block. *@
+                    @foreach (var r in _rows)
+                    {
+                        var status = Status(r);
+                        <tbody class="admin-comunidad">
                             <tr class="@(r.ExamCount == 0 ? "is-empty" : null)">
                                 <td>
                                     <div class="admin-user-name">@r.Name</div>
@@ -129,8 +131,8 @@
                                               disabled="@r.Saving"></textarea>
                                 </td>
                             </tr>
-                        }
-                    </tbody>
+                        </tbody>
+                    }
                 </table>
             </div>
         }
