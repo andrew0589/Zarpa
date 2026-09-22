@@ -1840,8 +1840,9 @@ h1 {
 
     /* Each comunidad is its own row group (tbody.admin-comunidad): the data row
        and its notes read as one block — no rule between them, a heavier rule and
-       some air where the next comunidad starts, and every other block tinted so
-       the boundary is obvious even where the notes run long. */
+       some air where the next comunidad starts, and the blocks alternating between
+       two light tints — a cool blue and a warm sand, so neighbours never share a
+       colour and the boundary is obvious even where the notes run long. */
     .admin-table.admin-table-convocatorias tbody tr:not(.admin-notes-row) td {
         border-bottom: none;
         padding-bottom: 0.4rem;
@@ -1852,8 +1853,12 @@ h1 {
         padding-top: 0.9rem;
     }
 
+    .admin-table.admin-table-convocatorias .admin-comunidad:nth-of-type(odd) td {
+        background: #EAF3FA;
+    }
+
     .admin-table.admin-table-convocatorias .admin-comunidad:nth-of-type(even) td {
-        background: #F7FAFD;
+        background: #FBF5E9;
     }
 
     .admin-table.admin-table-convocatorias .admin-comunidad .admin-user-name {
