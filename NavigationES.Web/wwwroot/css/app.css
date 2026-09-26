@@ -1885,6 +1885,7 @@ body:has(.admin-card-bleed) {
 
     .admin-table.admin-table-convocatorias .admin-comunidad .admin-user-name {
         font-size: 1rem;
+        color: #B23B3B;
     }
 
 .admin-notes-row td {
