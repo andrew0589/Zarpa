@@ -21,7 +21,7 @@ else if (_loadFailed)
 else
 {
     <p class="tagline">
-        Exámenes oficiales de <strong>@_licenseCode</strong>@(_comunidadName is null ? null : $" — {_comunidadName}").
+        Exámenes oficiales de <strong>@_licenseCode</strong>@if (_comunidadName is not null) {<text> — <ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName</text>}.
         Se filtran por tu titulación y tu comunidad — se cambian en <a href="perfil">Perfil</a>.
     </p>
 
@@ -76,6 +76,7 @@ else
     ];
 
     private string _licenseCode = string.Empty;
+    private long? _comunidadId;
     private string? _comunidadName;
     private List<IGrouping<int?, ExamListItemDto>> _byYear = [];
     private bool _loaded;
@@ -115,11 +116,11 @@ else
             }
             _licenseCode = license.Code;
 
-            var comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
-            if (comunidadId is not null)
+            _comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
+            if (_comunidadId is not null)
             {
                 var comunidades = await ComunidadesApi.GetComunidadesAsync();
-                _comunidadName = comunidades.FirstOrDefault(c => c.Id == comunidadId)?.Name;
+                _comunidadName = comunidades.FirstOrDefault(c => c.Id == _comunidadId)?.Name;
             }
 
             var exams = await ExamsApi.GetExamsAsync(license.Id);

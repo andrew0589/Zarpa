@@ -65,7 +65,7 @@
                         <tbody class="admin-comunidad">
                             <tr class="@(r.ExamCount == 0 ? "is-empty" : null)">
                                 <td>
-                                    <div class="admin-user-name">@r.Name</div>
+                                    <div class="admin-user-name"><ComunidadFlag ComunidadId="r.Id" Class="inline" />@r.Name</div>
                                     <span class="admin-small admin-block">@r.ExamCount @(r.ExamCount == 1 ? "examen" : "exámenes")</span>
                                 </td>
                                 <td>

@@ -27,9 +27,9 @@ namespace NavigationES.Client.ViewModels
         private readonly SelectedLicenseService _selectedLicense = selectedLicense;
 
         public ObservableCollection<LicenseOptionItem> Licenses { get; } = [];
-        public ObservableCollection<ComunidadDto> Comunidades { get; } = [];
+        public ObservableCollection<ComunidadOptionItem> Comunidades { get; } = [];
 
-        [ObservableProperty] private ComunidadDto? _selectedComunidad;
+        [ObservableProperty] private ComunidadOptionItem? _selectedComunidad;
 
         [ObservableProperty] private string _initial = "?";
         [ObservableProperty] private string? _userName;
@@ -127,7 +127,7 @@ namespace NavigationES.Client.ViewModels
                     {
                         Comunidades.Clear();
                         foreach (var comunidad in comunidades)
-                            Comunidades.Add(comunidad);
+                            Comunidades.Add(new ComunidadOptionItem(comunidad));
                     }
 
                     SelectedComunidad = Comunidades.FirstOrDefault(c => c.Id == selectedComunidadId);
@@ -180,16 +180,24 @@ namespace NavigationES.Client.ViewModels
             }
         }
 
-        partial void OnSelectedComunidadChanged(ComunidadDto? oldValue, ComunidadDto? newValue)
+        // Tap on a flag card; the change handler below persists it.
+        [RelayCommand]
+        private void SelectComunidad(ComunidadOptionItem option) => SelectedComunidad = option;
+
+        partial void OnSelectedComunidadChanged(ComunidadOptionItem? oldValue, ComunidadOptionItem? newValue)
         {
-            // The Picker resets its selection to null while its items are swapped;
-            // only a real user choice reaches the server.
+            // The highlight follows every change — user taps, loads and rollbacks.
+            foreach (var comunidad in Comunidades)
+                comunidad.IsSelected = comunidad.Id == newValue?.Id;
+
+            // Loads and rollbacks set the value from code; only a real user choice
+            // reaches the server.
             if (_syncingComunidad || newValue is null || newValue.Id == oldValue?.Id) return;
 
             _ = PersistComunidadAsync(newValue, oldValue);
         }
 
-        private async Task PersistComunidadAsync(ComunidadDto comunidad, ComunidadDto? previous)
+        private async Task PersistComunidadAsync(ComunidadOptionItem comunidad, ComunidadOptionItem? previous)
         {
             try
             {

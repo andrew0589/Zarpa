@@ -39,12 +39,17 @@ namespace NavigationES.Client.ViewModels
         [ObservableProperty] private bool _showDashboard;
 
         public ObservableCollection<LicenseOptionItem> Licenses { get; } = [];
-        public ObservableCollection<ComunidadDto> Comunidades { get; } = [];
+        public ObservableCollection<ComunidadOptionItem> Comunidades { get; } = [];
 
-        [ObservableProperty] private ComunidadDto? _selectedComunidad;
+        [ObservableProperty] private ComunidadOptionItem? _selectedComunidad;
 
         // Dashboard — Práctica por temas
         [ObservableProperty] private string _progressTagline = string.Empty;
+        // Flag image beside the tagline; null hides it.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasComunidadFlag))]
+        private string? _comunidadFlag;
+        public bool HasComunidadFlag => ComunidadFlag is not null;
         [ObservableProperty] private string _temasPercentText = "0%";
         [ObservableProperty] private double _temasProgress;
         [ObservableProperty] private int _temasCorrect;
@@ -130,7 +135,7 @@ namespace NavigationES.Client.ViewModels
                     {
                         Comunidades.Clear();
                         foreach (var comunidad in comunidades)
-                            Comunidades.Add(comunidad);
+                            Comunidades.Add(new ComunidadOptionItem(comunidad));
                     }
 
                     SelectedComunidad = Comunidades.FirstOrDefault(c => c.Id == comunidadId);
@@ -142,6 +147,7 @@ namespace NavigationES.Client.ViewModels
 
                 _hasComunidad = comunidadId is not null;
                 _comunidadName = SelectedComunidad?.Name;
+                ComunidadFlag = SelectedComunidad?.Flag;
 
                 if (_license is not null && _hasComunidad)
                     await LoadProgressAsync();
@@ -231,16 +237,24 @@ namespace NavigationES.Client.ViewModels
             }
         }
 
-        partial void OnSelectedComunidadChanged(ComunidadDto? oldValue, ComunidadDto? newValue)
+        // Tap on a flag card; the change handler below persists it.
+        [RelayCommand]
+        private void SelectComunidad(ComunidadOptionItem option) => SelectedComunidad = option;
+
+        partial void OnSelectedComunidadChanged(ComunidadOptionItem? oldValue, ComunidadOptionItem? newValue)
         {
-            // The Picker resets its selection to null while its items are swapped;
-            // only a real user choice reaches the server.
+            // The highlight follows every change — user taps, loads and rollbacks.
+            foreach (var comunidad in Comunidades)
+                comunidad.IsSelected = comunidad.Id == newValue?.Id;
+
+            // Loads and rollbacks set the value from code; only a real user choice
+            // reaches the server.
             if (_syncingComunidad || newValue is null || newValue.Id == oldValue?.Id) return;
 
             _ = PersistComunidadAsync(newValue, oldValue);
         }
 
-        private async Task PersistComunidadAsync(ComunidadDto comunidad, ComunidadDto? previous)
+        private async Task PersistComunidadAsync(ComunidadOptionItem comunidad, ComunidadOptionItem? previous)
         {
             try
             {
@@ -248,6 +262,7 @@ namespace NavigationES.Client.ViewModels
 
                 _hasComunidad = true;
                 _comunidadName = comunidad.Name;
+                ComunidadFlag = comunidad.Flag;
 
                 await AfterSelectionAsync();
             }

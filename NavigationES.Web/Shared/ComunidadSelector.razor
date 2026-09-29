@@ -1,7 +1,8 @@
 @inject IComunidadesApi ComunidadesApi
 
-@* Dropdown with the account's autonomous community: loads the current selection,
-   change persists it server-side. Used on the first-run home page and in Perfil. *@
+@* Flag cards for the account's autonomous community: loads the current selection,
+   click selects optimistically and persists it server-side. Used on the first-run
+   home page and in Perfil. *@
 
 @if (_comunidades is null)
 {
@@ -13,13 +14,20 @@ else if (_loadFailed)
 }
 else
 {
-    <select class="comunidad-select" @onchange="OnChangeAsync">
-        <option value="" disabled selected="@(_selectedId is null)">Seleccionar una autonomía</option>
+    <div class="comunidad-grid">
         @foreach (var comunidad in _comunidades)
         {
-            <option value="@comunidad.Id" selected="@(comunidad.Id == _selectedId)">@comunidad.Name</option>
+            <button class="comunidad-card @(comunidad.Id == _selectedId ? "selected" : null)"
+                    @onclick="() => SelectAsync(comunidad)">
+                <ComunidadFlag ComunidadId="comunidad.Id" />
+                <span class="comunidad-name">@comunidad.Name</span>
+                @if (comunidad.Id == _selectedId)
+                {
+                    <span class="license-check">✓</span>
+                }
+            </button>
         }
-    </select>
+    </div>
 }
 
 @code {
@@ -46,18 +54,17 @@ else
         }
     }
 
-    private async Task OnChangeAsync(ChangeEventArgs e)
+    private async Task SelectAsync(ComunidadDto comunidad)
     {
-        if (!long.TryParse(e.Value?.ToString(), out var comunidadId)) return;
-        if (comunidadId == _selectedId) return;
+        if (comunidad.Id == _selectedId) return;
 
         var previous = _selectedId;
-        _selectedId = comunidadId;
+        _selectedId = comunidad.Id;
 
         try
         {
-            await ComunidadesApi.SelectComunidadAsync(new SelectComunidadRequestDto(comunidadId));
-            await OnSelected.InvokeAsync(_comunidades!.First(c => c.Id == comunidadId));
+            await ComunidadesApi.SelectComunidadAsync(new SelectComunidadRequestDto(comunidad.Id));
+            await OnSelected.InvokeAsync(comunidad);
         }
         catch (Exception)
         {

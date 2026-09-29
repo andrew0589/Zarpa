@@ -611,21 +611,70 @@ h1 {
     gap: 1.75rem;
 }
 
-.comunidad-select {
-    width: 100%;
-    padding: 0.65rem 0.85rem;
-    font: inherit;
-    color: var(--off-black);
+/* Community flag: every file is 3:2, so a height alone sizes it. */
+.comunidad-flag {
+    height: 1.5rem;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(16, 42, 67, 0.12);
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+    /* Inline next to a name in running text (taglines, headers). */
+    .comunidad-flag.inline {
+        height: 1em;
+        margin: 0 0.3em 0.15em 0.1em;
+        border-radius: 2px;
+    }
+
+.comunidad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 0.6rem;
+}
+
+.comunidad-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     background: white;
     border: 1.5px solid var(--card-border);
     border-radius: 10px;
-    outline: none;
+    padding: 0.6rem 0.8rem;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: var(--off-black);
     cursor: pointer;
+    transition: border-color 0.15s ease;
 }
 
-    .comunidad-select:focus {
-        border-color: var(--accent);
+    .comunidad-card:hover {
+        border-color: var(--gray-400);
     }
+
+    .comunidad-card.selected {
+        border-color: var(--accent);
+        background: #EAF6F5;
+    }
+
+    .comunidad-card .license-check {
+        width: 1.3rem;
+        height: 1.3rem;
+        font-size: 0.75rem;
+    }
+
+.comunidad-name {
+    font-size: 0.92rem;
+    line-height: 1.25;
+}
+
+/* Perfil's left column is narrow — two cards per row at most. */
+.perfil-grid .comunidad-grid {
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
 
 /* Personal data (right column) */
 .retro-avatar {

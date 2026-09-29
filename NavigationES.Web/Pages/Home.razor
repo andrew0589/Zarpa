@@ -30,7 +30,13 @@ else if (!_hasComunidad)
 }
 else
 {
-    <p class="tagline">Tu progreso en @_selectedLicense.Code@(_comunidadName is null ? null : $" — {_comunidadName}")</p>
+    <p class="tagline">
+        Tu progreso en @_selectedLicense.Code
+        @if (_comunidadName is not null)
+        {
+            <text> — </text><ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName
+        }
+    </p>
 
     <div class="inicio-grid">
         <section class="retro-card inicio-card">
@@ -71,7 +77,11 @@ else
             </ul>
 
             <p class="stats-summary">
-                Exámenes oficiales de <strong>@_selectedLicense.Code</strong>@(_comunidadName is null ? null : $" · {_comunidadName}")
+                Exámenes oficiales de <strong>@_selectedLicense.Code</strong>
+                @if (_comunidadName is not null)
+                {
+                    <text> · </text><ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName
+                }
             </p>
 
             <a class="btn-primary btn-link inicio-cta" href="examen">Ir a Examen</a>
@@ -83,6 +93,7 @@ else
 @code {
     private LicenseDto? _selectedLicense;
     private bool _hasComunidad;
+    private long? _comunidadId;
     private string? _comunidadName;
     private bool _loaded;
 
@@ -146,9 +157,9 @@ else
         _examsPending = _examsTotal - _examsPassed - _examsFailed;
         _examsPercent = _examsTotal == 0 ? 0 : (int)Math.Round(100.0 * _examsPassed / _examsTotal);
 
-        var comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
-        if (comunidadId is not null)
-            _comunidadName = (await ComunidadesApi.GetComunidadesAsync()).FirstOrDefault(c => c.Id == comunidadId)?.Name;
+        _comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
+        if (_comunidadId is not null)
+            _comunidadName = (await ComunidadesApi.GetComunidadesAsync()).FirstOrDefault(c => c.Id == _comunidadId)?.Name;
     }
 
     private async Task OnLicenseChosenAsync(LicenseDto license)

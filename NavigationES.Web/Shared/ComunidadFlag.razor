@@ -1,0 +1,12 @@
+@* The community's flag, sized by the surrounding CSS (.comunidad-flag). Renders
+   nothing for a community without a flag file. *@
+
+@if (ComunidadFlags.WebPath(ComunidadId) is { } src)
+{
+    <img class="comunidad-flag @Class" src="@src" alt="" aria-hidden="true" />
+}
+
+@code {
+    [Parameter] public long? ComunidadId { get; set; }
+    [Parameter] public string? Class { get; set; }
+}

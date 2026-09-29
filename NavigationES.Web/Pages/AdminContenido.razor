@@ -136,7 +136,7 @@
                             {
                                 var total = c.Licenses.Sum(x => x.ExamCount);
                                 <tr class="@(total == 0 ? "is-empty" : null)">
-                                    <td><div class="admin-user-name">@c.Name</div></td>
+                                    <td><div class="admin-user-name"><ComunidadFlag ComunidadId="c.Id" Class="inline" />@c.Name</div></td>
                                     @foreach (var l in _content.Licenses)
                                     {
                                         var cell = c.Licenses.FirstOrDefault(x => x.LicenseId == l.Id);

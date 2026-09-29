@@ -6,6 +6,7 @@ using NavigationES.Client.Pages;
 using NavigationES.Client.Resources.Languages;
 using NavigationES.Client.Services;
 using NavigationES.Client.Utilities;
+using NavigationES.Shared.Constants;
 using NavigationES.Shared.Dtos;
 
 namespace NavigationES.Client.ViewModels
@@ -34,6 +35,11 @@ namespace NavigationES.Client.ViewModels
         [ObservableProperty] private string _licenseCode = string.Empty;
         // " — Islas Baleares", or empty while no comunidad is chosen.
         [ObservableProperty] private string _comunidadSuffix = string.Empty;
+        // Flag image beside the tagline; null hides it.
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasComunidadFlag))]
+        private string? _comunidadFlag;
+        public bool HasComunidadFlag => ComunidadFlag is not null;
         [ObservableProperty] private bool _showList;
         [ObservableProperty] private bool _loadFailed;
         [ObservableProperty] private bool _isEmpty;
@@ -90,6 +96,7 @@ namespace NavigationES.Client.ViewModels
                 if (comunidadId is not null)
                     comunidadName = (await _comunidadesApi.GetComunidadesAsync()).FirstOrDefault(c => c.Id == comunidadId)?.Name;
                 ComunidadSuffix = comunidadName is null ? string.Empty : $" — {comunidadName}";
+                ComunidadFlag = comunidadName is null ? null : ComunidadFlags.FileName(comunidadId);
 
                 var exams = await _examsApi.GetExamsAsync(license.Id);
 

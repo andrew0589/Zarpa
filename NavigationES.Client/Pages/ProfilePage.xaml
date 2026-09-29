@@ -4,7 +4,6 @@
              xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
              xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
              xmlns:controls="clr-namespace:NavigationES.Client.Controls"
-             xmlns:dtos="clr-namespace:NavigationES.Shared.Dtos;assembly=NavigationES.Shared"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="NavigationES.Client.Pages.ProfilePage"
              Title="{x:Static lang:AppResources.TabProfile}"
@@ -207,21 +206,54 @@
                 <VerticalStackLayout Spacing="0">
                     <Label Text="{x:Static lang:AppResources.ProfileComunidadTitle}" Style="{StaticResource RetroTitle}" />
                     <controls:DashedRule Style="{StaticResource RetroRule}" />
-                    <Border BackgroundColor="White"
-                            Stroke="#D8DEE6"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 10"
-                            Padding="10,0"
-                            MinimumHeightRequest="48">
-                        <Picker Title="{x:Static lang:AppResources.ComunidadPlaceholder}"
-                                ItemsSource="{Binding Comunidades}"
-                                ItemDisplayBinding="{Binding Name, x:DataType=dtos:ComunidadDto}"
-                                SelectedItem="{Binding SelectedComunidad}"
-                                TextColor="{StaticResource OffBlack}"
-                                TitleColor="{StaticResource Gray400}"
-                                FontSize="15"
-                                VerticalOptions="Center" />
-                    </Border>
+                    <!-- Flag cards, two per row: tap selects and persists it on the account. -->
+                    <FlexLayout Wrap="Wrap"
+                                Direction="Row"
+                                JustifyContent="Start"
+                                AlignItems="Stretch"
+                                AlignContent="Start"
+                                Margin="-4"
+                                BindableLayout.ItemsSource="{Binding Comunidades}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ComunidadOptionItem">
+                                <Grid FlexLayout.Basis="50%" Padding="4">
+                                    <Border BackgroundColor="White"
+                                            Stroke="#D8DEE6"
+                                            StrokeThickness="1.5"
+                                            StrokeShape="RoundRectangle 10"
+                                            Padding="10,8"
+                                            MinimumHeightRequest="52">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="#EAF6F5" />
+                                                <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding SelectComunidadCommand, Source={RelativeSource AncestorType={x:Type vm:ProfileViewModel}}}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                            <Image Grid.Column="0"
+                                                   Source="{Binding Flag}"
+                                                   IsVisible="{Binding HasFlag}"
+                                                   WidthRequest="33"
+                                                   HeightRequest="22"
+                                                   Aspect="AspectFill"
+                                                   VerticalOptions="Center" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Name}"
+                                                   TextColor="{StaticResource OffBlack}"
+                                                   FontSize="13"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
                 </VerticalStackLayout>
             </Border>
 
