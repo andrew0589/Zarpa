@@ -88,12 +88,12 @@
             }
             else
             {
-                _error = "Código no válido o caducado. Revisa los datos e inténtalo de nuevo.";
+                _error = ErrorMessages.Translate(result.ErrorMessage);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _error = ErrorMessages.Translate(null);
+            _error = ErrorMessages.FromException(ex);
         }
         finally
         {

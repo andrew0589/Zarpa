@@ -2,6 +2,8 @@
 @inject IAuthApi AuthApi
 @inject WebAuthStateProvider Auth
 @inject NavigationManager Navigation
+@inject RecaptchaClient Recaptcha
+@using NavigationES.Shared.Validation
 
 <PageTitle>Registro — NavigationES</PageTitle>
 
@@ -85,6 +87,12 @@
     private string? _error;
     private bool _busy;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await Recaptcha.PreloadAsync();
+    }
+
     // Same rules as the app's AuthViewModel.ValidateSignupForm.
     private bool ValidateForm()
     {
@@ -98,10 +106,8 @@
 
         if (string.IsNullOrWhiteSpace(_password))
             _passwordError = "¡Contraseña incorrecta!";
-        else if (_password.Length < 6)
-            _passwordError = "La contraseña es demasiado corta";
-        else if (_password.Contains(' '))
-            _passwordError = "La contraseña no debe contener espacios";
+        else if (PasswordRules.Validate(_password) is { } passwordErrorCode)
+            _passwordError = ErrorMessages.Translate(passwordErrorCode);
 
         if (_password != _confirmPassword)
             _confirmError = "Las contraseñas no coinciden";
@@ -123,7 +129,8 @@
         _busy = true;
         try
         {
-            var result = await AuthApi.SignupAsync(new SignupRequestDto(_name.Trim(), _email.Trim(), _password));
+            var captchaToken = await Recaptcha.GetTokenAsync("signup");
+            var result = await AuthApi.SignupAsync(new SignupRequestDto(_name.Trim(), _email.Trim(), _password), captchaToken);
 
             if (result.IsSuccess)
             {
@@ -137,9 +144,9 @@
                 _error = ErrorMessages.Translate(result.ErrorCode);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _error = ErrorMessages.Translate(null);
+            _error = ErrorMessages.FromException(ex);
         }
         finally
         {

@@ -103,9 +103,9 @@
                 _error = ErrorMessages.Translate(result.ErrorCode);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _error = ErrorMessages.Translate(null);
+            _error = ErrorMessages.FromException(ex);
         }
         finally
         {

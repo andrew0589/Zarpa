@@ -12,26 +12,40 @@ namespace NavigationES.Api.Endpoints
         {
             // Authentication endpoints are the only ones reachable without a token —
             // everything else is covered by the fallback authorization policy.
+            // All of them are rate limited per IP (AuthRateLimits); the two that send
+            // an email also ask the website for a reCAPTCHA token (RecaptchaEndpointFilter).
             app.MapPost("/api/signup", async (SignupRequestDto dto, AuthService authService) =>
-            TypedResults.Ok(await authService.SignupAsync(dto))).AllowAnonymous();
+            TypedResults.Ok(await authService.SignupAsync(dto)))
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.SendsEmail)
+                .AddEndpointFilter(new RecaptchaEndpointFilter("signup"));
 
             app.MapPost("/api/signin", async (SigninRequestDto dto, AuthService authService) =>
-            TypedResults.Ok(await authService.SigninAsync(dto))).AllowAnonymous();
+            TypedResults.Ok(await authService.SigninAsync(dto)))
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.Signin);
 
             app.MapPost("/api/forgotPassword", async (ForgotPasswordRequestDto dto, AuthService authService) =>
             {
                 return TypedResults.Ok(await authService.ForgotPasswordAsync(dto));
-            }).AllowAnonymous();
+            })
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.SendsEmail)
+                .AddEndpointFilter(new RecaptchaEndpointFilter("forgot_password"));
 
             app.MapPost("/api/resetPassword", async (ResetPasswordRequestDto dto, AuthService authService) =>
             {
                 return TypedResults.Ok(await authService.ResetPasswordAsync(dto));
-            }).AllowAnonymous();
+            })
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.Signin);
 
             app.MapPost("/api/checkValidationCode", async (ValidationRequestDto validation, AuthService authService) =>
             {
                 return TypedResults.Ok(await authService.ValidateCodeAsync(validation));
-            }).AllowAnonymous();
+            })
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.VerificationCode);
 
             // The one authenticated endpoint in this file (no AllowAnonymous — the
             // fallback policy applies): deletes the signed-in user's own account and,

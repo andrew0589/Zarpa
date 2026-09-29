@@ -63,6 +63,11 @@ namespace NavigationES.Client.ViewModels.Boarding
                     IsBusy = false;
                 }
             }
+            catch (Refit.ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await UserMessageHelper.ShowErrorAsync(BackendTranslator.Translate(NavigationES.Shared.Constants.ErrorCodes.TooManyRequestsError));
+                IsBusy = false;
+            }
             catch (Exception ex)
             {
                 await UserMessageHelper.ShowErrorAsync(ex.Message);

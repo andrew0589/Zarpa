@@ -19,6 +19,22 @@ public static class ErrorCodes
     public const string FacebookNoEmailError = "FacebookNoEmailError";
     // Profile rename: the new display name is empty or longer than the column allows (50).
     public const string NameNotValidError = "NameNotValidError";
+    // Signup: the address is blank, has no '@', contains spaces or exceeds the column (100).
+    public const string EmailNotValidError = "EmailNotValidError";
+    // The per-IP rate limit on the anonymous auth endpoints was hit (HTTP 429).
+    public const string TooManyRequestsError = "TooManyRequestsError";
+    // The website's reCAPTCHA token was missing, invalid or scored as a bot.
+    public const string CaptchaFailedError = "CaptchaFailedError";
+    #endregion
+
+    #region Email verification code
+    // Wrong code (or name/email that match no pending signup).
+    public const string VerificationCodeInvalidError = "VerificationCodeInvalidError";
+    // The code is past its 15-minute lifetime.
+    public const string VerificationCodeExpiredError = "VerificationCodeExpiredError";
+    // Too many wrong codes: this one is burnt, the user has to sign up again for a new one.
+    public const string VerificationAttemptsExceededError = "VerificationAttemptsExceededError";
+    public const string EmailAlreadyVerifiedError = "EmailAlreadyVerifiedError";
     #endregion
 
     #region Password reset

@@ -24,6 +24,10 @@ if (string.IsNullOrWhiteSpace(apiBaseUrl))
 
 builder.Services.AddSingleton(new ApiOptions(apiBaseUrl));
 
+// Public reCAPTCHA v3 key (appsettings.json, from RECAPTCHA_SITE_KEY); blank = off.
+var recaptchaSiteKey = builder.Configuration["RecaptchaSiteKey"];
+builder.Services.AddScoped(sp => new RecaptchaClient(sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>(), recaptchaSiteKey));
+
 builder.Services.AddAuthorizationCore();
 // One instance behind both faces: components inject WebAuthStateProvider to
 // sign in/out, Blazor's [Authorize] machinery sees it as AuthenticationStateProvider.

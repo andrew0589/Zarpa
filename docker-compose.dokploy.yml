@@ -40,6 +40,10 @@ services:
       # Guards /api/admin/* (question and exam import). Fails closed if unset.
       - AdminSettings__ApiKey=${ADMIN_API_KEY}
 
+      # reCAPTCHA v3 on the website's signup/forgot-password. Blank = check off
+      # (fails open, so signups keep working until the keys exist).
+      - Recaptcha__SecretKey=${RECAPTCHA_SECRET_KEY}
+
       - Authentication__Google__ClientId=${GOOGLE_CLIENT_ID}
       - Authentication__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - Authentication__Apple__ServicesId=${APPLE_SERVICES_ID}
@@ -85,6 +89,8 @@ services:
     environment:
       # Baked into wwwroot/appsettings.json at container start, not at build time.
       - API_BASE_URL=https://api.navigationes.eu/
+      # Public half of the reCAPTCHA v3 pair; blank = no reCAPTCHA on the forms.
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
     depends_on:
       - api
     networks:

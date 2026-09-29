@@ -32,6 +32,10 @@ namespace NavigationES.Api.Data.Entities
 
         public DateTime? EmailVerificationExpiry { get; set; }
 
+        // Wrong codes entered against the current EmailVerificationCode; at
+        // VerificationCodeHelper.MaxAttempts the code is cleared and a new signup is needed.
+        public int EmailVerificationAttempts { get; set; }
+
         public bool IsEmailVerified { get; set; } = false;
 
         // The qualification (PNB/PER/PY/CY) the user prepares for, chosen on the Tests

@@ -9,6 +9,8 @@ using NavigationES.Client.Services.Environment;
 using NavigationES.Client.Utilities;
 using NavigationES.Shared.Constants;
 using NavigationES.Shared.Dtos;
+using NavigationES.Shared.Validation;
+using Refit;
 
 namespace NavigationES.Client.ViewModels
 {
@@ -64,6 +66,10 @@ namespace NavigationES.Client.ViewModels
                     await UserMessageHelper.ShowErrorAsync(message ?? AppResources.SignupUnknownError);
                 }
             }
+            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await UserMessageHelper.ShowErrorAsync(BackendTranslator.Translate(ErrorCodes.TooManyRequestsError));
+            }
             catch (Exception ex)
             {
                 await UserMessageHelper.ShowErrorAsync(ex.Message);
@@ -103,6 +109,10 @@ namespace NavigationES.Client.ViewModels
                     var message = BackendTranslator.Translate(result.ErrorCode);
                     await UserMessageHelper.ShowErrorAsync(message ?? AppResources.SigninUnknownError);
                 }
+            }
+            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await UserMessageHelper.ShowErrorAsync(BackendTranslator.Translate(ErrorCodes.TooManyRequestsError));
             }
             catch (Exception ex)
             {
@@ -251,15 +261,10 @@ namespace NavigationES.Client.ViewModels
                 ShowPasswordError = true;
                 hasErrors = true;
             }
-            else if (Password.Length < 6)
+            else if (PasswordRules.Validate(Password) is { } passwordErrorCode)
             {
-                PasswordErrorMessage = AppResources.PasswordTooShort;
-                ShowPasswordError = true;
-                hasErrors = true;
-            }
-            else if (Password.Contains(' '))
-            {
-                PasswordErrorMessage = AppResources.PasswordContainsSpaces;
+                // Same policy the API enforces; the error code doubles as the resource key.
+                PasswordErrorMessage = BackendTranslator.Translate(passwordErrorCode);
                 ShowPasswordError = true;
                 hasErrors = true;
             }

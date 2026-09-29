@@ -73,6 +73,10 @@ namespace NavigationES.Client.ViewModels
                     await UserMessageHelper.ShowErrorAsync(message);
                 }
             }
+            catch (ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                await UserMessageHelper.ShowErrorAsync(BackendTranslator.Translate(NavigationES.Shared.Constants.ErrorCodes.TooManyRequestsError));
+            }
             catch (ApiException apiEx)
             {
                 await UserMessageHelper.ShowErrorAsync(apiEx.Content ?? apiEx.Message);

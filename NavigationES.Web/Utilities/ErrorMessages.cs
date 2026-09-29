@@ -22,6 +22,17 @@ namespace NavigationES.Web.Utilities
             [ErrorCodes.FacebookAuthFailedError] = "Error al iniciar sesión con Facebook. Inténtalo de nuevo.",
             [ErrorCodes.FacebookNoEmailError] = "Tu cuenta de Facebook no tiene una dirección de correo que podamos usar. Regístrate con tu correo electrónico.",
             [ErrorCodes.NameNotValidError] = "El nombre no es válido (máximo 50 caracteres).",
+            [ErrorCodes.EmailNotValidError] = "¡Por favor, agrega un correo electrónico válido!",
+            [ErrorCodes.PasswordTooShortError] = "La contraseña es demasiado corta (mínimo 6 caracteres).",
+            [ErrorCodes.PasswordHasSpacesError] = "La contraseña no debe contener espacios.",
+            [ErrorCodes.PasswordMissingLetterError] = "La contraseña debe contener al menos una letra.",
+            [ErrorCodes.PasswordMissingSymbolError] = "La contraseña debe contener al menos un símbolo (!@#$%^&*…).",
+            [ErrorCodes.TooManyRequestsError] = "Demasiados intentos. Espera unos minutos y vuelve a intentarlo.",
+            [ErrorCodes.CaptchaFailedError] = "No hemos podido comprobar que no eres un robot. Recarga la página e inténtalo de nuevo.",
+            [ErrorCodes.VerificationCodeInvalidError] = "Código no válido. Revisa los datos e inténtalo de nuevo.",
+            [ErrorCodes.VerificationCodeExpiredError] = "El código ha caducado. Regístrate de nuevo para recibir uno nuevo.",
+            [ErrorCodes.VerificationAttemptsExceededError] = "Demasiados códigos incorrectos. Regístrate de nuevo para recibir un código nuevo.",
+            [ErrorCodes.EmailAlreadyVerifiedError] = "Tu correo electrónico ya está validado.",
             [ErrorCodes.AdminAccountProtectedError] = "Esta acción no está disponible para cuentas de administrador.",
             [ErrorCodes.EmailSendFailedError] = "No se ha podido enviar el correo. Inténtalo de nuevo más tarde.",
             [ErrorCodes.ComunidadNotFoundError] = "La comunidad autónoma no existe.",
@@ -33,6 +44,13 @@ namespace NavigationES.Web.Utilities
         public static string Translate(string? errorCode) =>
             errorCode is not null && _messages.TryGetValue(errorCode.Trim(), out var message)
                 ? message
+                : Unknown;
+
+        // For catch blocks around API calls: the auth endpoints' rate limit answers
+        // HTTP 429, which Refit raises as an exception rather than a result.
+        public static string FromException(Exception ex) =>
+            ex is Refit.ApiException { StatusCode: System.Net.HttpStatusCode.TooManyRequests }
+                ? Translate(ErrorCodes.TooManyRequestsError)
                 : Unknown;
     }
 }

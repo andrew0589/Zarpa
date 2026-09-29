@@ -522,4 +522,34 @@
   <data name="NameUpdated" xml:space="preserve">
     <value>Nombre actualizado.</value>
   </data>
+  <data name="EmailNotValidError" xml:space="preserve">
+    <value>¡Por favor, agrega un correo electrónico válido!</value>
+  </data>
+  <data name="PasswordTooShortError" xml:space="preserve">
+    <value>La contraseña es demasiado corta (mínimo 6 caracteres).</value>
+  </data>
+  <data name="PasswordHasSpacesError" xml:space="preserve">
+    <value>La contraseña no debe contener espacios.</value>
+  </data>
+  <data name="PasswordMissingLetterError" xml:space="preserve">
+    <value>La contraseña debe contener al menos una letra.</value>
+  </data>
+  <data name="PasswordMissingSymbolError" xml:space="preserve">
+    <value>La contraseña debe contener al menos un símbolo (!@#$%^&amp;*…).</value>
+  </data>
+  <data name="TooManyRequestsError" xml:space="preserve">
+    <value>Demasiados intentos. Espera unos minutos y vuelve a intentarlo.</value>
+  </data>
+  <data name="VerificationCodeInvalidError" xml:space="preserve">
+    <value>Código no válido. Revisa los datos e inténtalo de nuevo.</value>
+  </data>
+  <data name="VerificationCodeExpiredError" xml:space="preserve">
+    <value>El código ha caducado. Regístrate de nuevo para recibir uno nuevo.</value>
+  </data>
+  <data name="VerificationAttemptsExceededError" xml:space="preserve">
+    <value>Demasiados códigos incorrectos. Regístrate de nuevo para recibir un código nuevo.</value>
+  </data>
+  <data name="EmailAlreadyVerifiedError" xml:space="preserve">
+    <value>Tu correo electrónico ya está validado.</value>
+  </data>
 </root>

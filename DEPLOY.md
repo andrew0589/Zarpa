@@ -170,6 +170,38 @@ Pentru Facebook în Live Mode mai trebuie și URL-urile legale, care există dej
 
 ---
 
+## Pasul 8 — reCAPTCHA și limitele pe autentificare
+
+**Limitele pe IP** sunt active imediat, fără configurare (`AuthRateLimits.cs`):
+
+| Endpoint | Limită pe IP |
+|---|---|
+| `/api/signup`, `/api/forgotPassword` (trimit email; buget comun) | 5 / 15 min |
+| `/api/checkValidationCode` | 10 / 15 min |
+| `/api/signin`, `/api/resetPassword` | 10 / min |
+
+Peste limită răspunsul e `429` cu `Retry-After`. În plus, un cod de verificare acceptă
+5 încercări greșite (apoi utilizatorul se înregistrează din nou), expiră în 15 minute,
+iar `/api/forgotPassword` trimite cel mult un email la 2 minute pe aceeași adresă.
+IP-ul vine din `X-Forwarded-For` doar dacă cererea sosește de la o adresă privată
+(Traefik pe `dokploy-network`). Dacă pui vreodată Cloudflare în fața API-ului, toți
+utilizatorii ar apărea cu IP-urile Cloudflare: atunci trebuie folosit `CF-Connecting-IP`.
+
+**reCAPTCHA v3** (doar pe site; aplicația e scutită):
+
+1. <https://www.google.com/recaptcha/admin> → *Create* → tip **Score based (v3)**,
+   domenii `navigationes.eu` și `www.navigationes.eu`.
+2. În *Environment*: `RECAPTCHA_SITE_KEY=<site key>` și `RECAPTCHA_SECRET_KEY=<secret key>`.
+3. Redeploy. Logul `navigationes-web` trebuie să spună `reCAPTCHA site key set`, iar
+   `curl https://navigationes.eu/appsettings.json` trebuie să arate cheia.
+
+Până nu există `RECAPTCHA_SECRET_KEY`, API-ul nu verifică nimic. Dacă Google nu răspunde,
+cererea trece mai departe și rămân doar limitele pe IP. Refuzurile apar în logul API-ului
+ca `reCAPTCHA rejected` / `reCAPTCHA failed` (cu scorul). Pragul implicit e 0.5;
+se poate schimba cu `Recaptcha__MinScore`.
+
+---
+
 ## Update-uri ulterioare
 
 `git push` pe `main` → **Redeploy** în Dokploy. Dacă activezi webhook-ul din

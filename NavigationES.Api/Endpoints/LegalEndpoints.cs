@@ -34,7 +34,7 @@ namespace NavigationES.Api.Endpoints
             </head>
             <body>
                 <h1>Privacy Policy</h1>
-                <p class="muted">NavigationES &middot; Last updated: August 14, 2026</p>
+                <p class="muted">NavigationES &middot; Last updated: September 26, 2026</p>
 
                 <p>NavigationES ("we", "us") is a mobile application that helps you prepare for the Spanish
                 recreational boating exams (PNB, PER, Patrón de Yate and Capitán de Yate) with
@@ -67,6 +67,12 @@ namespace NavigationES.Api.Endpoints
                 <ul>
                     <li>Only you — your practice results and progress are private to your account.</li>
                     <li>Our service providers, only as needed to run the service (hosting).</li>
+                    <li>Google, when you sign up or request a password reset on the website: those
+                        forms use Google reCAPTCHA to tell people from automated abuse, which sends
+                        Google your IP address and information about your browser and how you use
+                        the page. Google's <a href="https://policies.google.com/privacy">Privacy
+                        Policy</a> and <a href="https://policies.google.com/terms">Terms of
+                        Service</a> apply to that check. The mobile app does not use reCAPTCHA.</li>
                     <li>Authorities, only where the law requires it.</li>
                 </ul>
 

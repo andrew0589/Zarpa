@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using NavigationES.Api.Auth;
@@ -8,6 +10,7 @@ using NavigationES.Api.Utilities.Verification;
 using NavigationES.Shared.Constants;
 using NavigationES.Shared.Constants.Email;
 using NavigationES.Shared.Dtos;
+using NavigationES.Shared.Validation;
 
 namespace NavigationES.Api.Services
 {
@@ -23,7 +26,22 @@ namespace NavigationES.Api.Services
 
         public async Task<ResultWithDataDto<AuthResponseDto>> SignupAsync(SignupRequestDto dto)
         {
-            var normalizedEmail = EmailNormalizer.Normalize(dto.Email);
+            // The forms check all of this first; these guard direct calls to the API,
+            // which used to accept any password and let an over-long name or email
+            // fail in the database (reported back as "email already exists").
+            var name = dto.Name?.Trim() ?? string.Empty;
+            if (name.Length is 0 or > 50)
+                return ResultWithDataDto<AuthResponseDto>.Failure(ErrorCodes.NameNotValidError);
+
+            var email = dto.Email?.Trim() ?? string.Empty;
+            if (email.Length is 0 or > 100 || !email.Contains('@') || email.Contains(' '))
+                return ResultWithDataDto<AuthResponseDto>.Failure(ErrorCodes.EmailNotValidError);
+
+            var passwordError = PasswordRules.Validate(dto.Password);
+            if (passwordError is not null)
+                return ResultWithDataDto<AuthResponseDto>.Failure(passwordError);
+
+            var normalizedEmail = EmailNormalizer.Normalize(email);
 
             var userAlreadyInDB = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
             if (userAlreadyInDB != null)
@@ -41,9 +59,9 @@ namespace NavigationES.Api.Services
 
             var user = new UserEntity
             {
-                Email = dto.Email.Trim(),
+                Email = email,
                 NormalizedEmail = normalizedEmail,
-                Name = dto.Name
+                Name = name
             };
 
             (user.Salt, user.Hash) = _passwordService.GenerateSaltAndHash(dto.Password);
@@ -58,7 +76,7 @@ namespace NavigationES.Api.Services
                 await _context.SaveChangesAsync();
 
                 var subject = EmailSubjects.EmailVerification;
-                var body = EmailTemplates.BuildVerificationBody(user.Name, user.EmailVerificationCode, 15);
+                var body = EmailTemplates.BuildVerificationBody(user.Name, user.EmailVerificationCode, VerificationCodeHelper.ExpiryMinutes);
 
                 await _emailService.SendEmailAsync(user.Email, subject, body, true);
 
@@ -223,6 +241,12 @@ namespace NavigationES.Api.Services
             var existingToken = await _context.PasswordResetTokens
                 .FirstOrDefaultAsync(x => x.UserID == user.ID && !x.IsUsed);
 
+            // One email per address every two minutes: the per-IP limit alone would let
+            // a caller rotating IPs flood a single inbox. Answering success keeps a
+            // double-tap from showing an error; the earlier link is still valid.
+            if (existingToken != null && existingToken.CreatedAt > DateTime.UtcNow.AddMinutes(-2))
+                return ResultDto.Success();
+
             if (existingToken != null)
             {
                 // Update existing token
@@ -336,17 +360,9 @@ namespace NavigationES.Api.Services
             // The reset page checks these too, but it is the only caller — a request
             // sent straight to the endpoint must not be able to set a weaker password
             // than the sign-up form accepts.
-            if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
-                return ResultDto.Failure(ErrorCodes.PasswordTooShortError);
-
-            if (dto.NewPassword.Contains(' '))
-                return ResultDto.Failure(ErrorCodes.PasswordHasSpacesError);
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(dto.NewPassword, @"[a-zA-Z]"))
-                return ResultDto.Failure(ErrorCodes.PasswordMissingLetterError);
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(dto.NewPassword, @"[!@#$%^&*\-_=+\[\]{};:'"",.<>?/\\|`~]"))
-                return ResultDto.Failure(ErrorCodes.PasswordMissingSymbolError);
+            var passwordError = PasswordRules.Validate(dto.NewPassword);
+            if (passwordError is not null)
+                return ResultDto.Failure(passwordError);
 
             // Get user and update password
             var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == resetToken.UserID);
@@ -373,31 +389,54 @@ namespace NavigationES.Api.Services
 
         public async Task<ResultDto> ValidateCodeAsync(ValidationRequestDto validation)
         {
-            if (validation == null)
-                return ResultDto.Failure("Invalid request.");
-
-            if (string.IsNullOrWhiteSpace(validation.Email) ||
+            if (validation == null ||
+                string.IsNullOrWhiteSpace(validation.Email) ||
                 string.IsNullOrWhiteSpace(validation.Name) ||
                 string.IsNullOrWhiteSpace(validation.ValidationCode))
             {
-                return ResultDto.Failure("Name, Email, and Verification Code are all required.");
+                return ResultDto.Failure(ErrorCodes.VerificationCodeInvalidError);
             }
 
+            // Failures answer with ErrorCodes values (not prose): both clients translate
+            // ErrorMessage through their error-code tables.
             var normalizedEmail = EmailNormalizer.Normalize(validation.Email);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail && u.Name == validation.Name && u.EmailVerificationCode == validation.ValidationCode);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail && u.Name == validation.Name);
 
             if (user == null)
-                return ResultDto.Failure("Invalid verification details. Please check your information and try again.");
+                return ResultDto.Failure(ErrorCodes.VerificationCodeInvalidError);
 
             if (user.IsEmailVerified)
-                return ResultDto.Failure("Your email is already verified.");
+                return ResultDto.Failure(ErrorCodes.EmailAlreadyVerifiedError);
+
+            if (user.EmailVerificationCode == null)
+                return ResultDto.Failure(ErrorCodes.VerificationCodeInvalidError);
+
+            // Claim one attempt atomically before comparing, so parallel guesses cannot
+            // all slip in under the cap between a read and a write.
+            var claimed = await _context.Users
+                .Where(u => u.ID == user.ID && u.EmailVerificationAttempts < VerificationCodeHelper.MaxAttempts)
+                .ExecuteUpdateAsync(s => s.SetProperty(u => u.EmailVerificationAttempts, u => u.EmailVerificationAttempts + 1));
+
+            if (claimed == 0)
+                return ResultDto.Failure(ErrorCodes.VerificationAttemptsExceededError);
 
             if (user.EmailVerificationExpiry == null || user.EmailVerificationExpiry < DateTime.UtcNow)
-                return ResultDto.Failure("Verification code has expired. Please request a new one.");
+                return ResultDto.Failure(ErrorCodes.VerificationCodeExpiredError);
+
+            if (!CryptographicOperations.FixedTimeEquals(
+                    Encoding.UTF8.GetBytes(validation.ValidationCode.Trim()),
+                    Encoding.UTF8.GetBytes(user.EmailVerificationCode)))
+            {
+                // The attempt just claimed was the last one.
+                return ResultDto.Failure(user.EmailVerificationAttempts + 1 >= VerificationCodeHelper.MaxAttempts
+                    ? ErrorCodes.VerificationAttemptsExceededError
+                    : ErrorCodes.VerificationCodeInvalidError);
+            }
 
             user.IsEmailVerified = true;
             user.EmailVerificationCode = null;
             user.EmailVerificationExpiry = null;
+            user.EmailVerificationAttempts = 0;
 
             try
             {
@@ -414,7 +453,7 @@ namespace NavigationES.Api.Services
             {
                 // Log internal error for debugging
                 Console.WriteLine($"Email verification failed: {ex.Message}");
-                return ResultDto.Failure("An error occurred while verifying your email. Please try again later.");
+                return ResultDto.Failure(ErrorCodes.UnknownError);
             }
         }
 

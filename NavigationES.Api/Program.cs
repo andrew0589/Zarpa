@@ -22,10 +22,19 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                              ForwardedHeaders.XForwardedProto |
                              ForwardedHeaders.XForwardedHost;
-    // Clear known networks and proxies to allow all
+    // Trust X-Forwarded-* only from private addresses — Traefik on dokploy-network
+    // (and loopback in dev). Trusting everyone let any caller pick its own client IP,
+    // which the per-IP rate limits (AuthRateLimits) must not allow.
     options.KnownIPNetworks.Clear();
     options.KnownProxies.Clear();
+    options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("10.0.0.0/8"));
+    options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("172.16.0.0/12"));
+    options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("192.168.0.0/16"));
+    options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("127.0.0.0/8"));
+    options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("::1/128"));
 });
+
+builder.Services.AddAuthRateLimiting();
 
 var connectionString = builder.Configuration.GetConnectionString("NavigationESDb");
 
@@ -63,6 +72,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<GoogleAuthService>();
 builder.Services.AddHttpClient<AppleAuthService>();
 builder.Services.AddHttpClient<FacebookAuthService>();
+builder.Services.AddHttpClient<RecaptchaService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // CORS: only the browser-based client (NavigationES.Web) needs it — native apps are exempt
@@ -146,6 +156,10 @@ if (corsOrigins.Length > 0)
 {
     app.UseCors();
 }
+
+// After forwarded headers (the partition key is the real client IP) and after CORS
+// (a 429 without CORS headers reaches the web page as an opaque network error).
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
