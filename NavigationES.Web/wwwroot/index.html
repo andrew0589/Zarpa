@@ -4,7 +4,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NavigationES</title>
+    <title>NavigationES — Test PNB, PER, Patrón y Capitán de Yate</title>
+    <meta name="description" content="Prepara el examen de PNB, PER, Patrón de Yate y Capitán de Yate con preguntas por temas y simulacros de exámenes oficiales de las comunidades autónomas." />
+    <link rel="canonical" href="https://navigationes.eu/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NavigationES" />
+    <meta property="og:title" content="NavigationES — Test PNB, PER, Patrón y Capitán de Yate" />
+    <meta property="og:description" content="Preguntas por temas y simulacros de exámenes oficiales para tus titulaciones náuticas." />
+    <meta property="og:url" content="https://navigationes.eu/" />
+    <meta property="og:image" content="https://navigationes.eu/icon-192.png" />
     <base href="/" />
     <link rel="preload" id="webassembly" />
     <link rel="stylesheet" href="css/app.css" />
@@ -19,6 +27,13 @@
             <circle r="40%" cx="50%" cy="50%" />
         </svg>
         <div class="loading-progress-text"></div>
+        <!-- Static copy for crawlers and the first paint; Blazor replaces #app on start. -->
+        <div class="loading-intro">
+            <h1>NavigationES</h1>
+            <p>Prepara el examen teórico de PNB, PER, Patrón de Yate y Capitán de Yate:
+               preguntas por temas y simulacros de exámenes oficiales de las comunidades autónomas.</p>
+            <noscript><p>NavigationES necesita JavaScript para funcionar.</p></noscript>
+        </div>
     </div>
 
     <div id="blazor-error-ui">

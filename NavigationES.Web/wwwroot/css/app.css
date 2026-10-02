@@ -1633,6 +1633,24 @@ h1 {
         content: var(--blazor-load-percentage-text, "Cargando");
     }
 
+/* Static intro under the spinner in index.html — what crawlers and the first
+   paint see before Blazor replaces #app. */
+.loading-intro {
+    position: absolute;
+    inset: calc(20vh + 10rem) 0 auto 0;
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: 0 16px;
+    text-align: center;
+    color: #555;
+}
+
+    .loading-intro h1 {
+        font-size: 1.4rem;
+        margin: 0 0 0.5rem;
+        color: #2AA5A0;
+    }
+
 /* Admin — Usuarios tab (AdminUsuarios.razor). Breaks out of the 560px .content
    column and spans the whole viewport (minus a small gutter) so the table has
    room; it still scrolls sideways on phones. */
