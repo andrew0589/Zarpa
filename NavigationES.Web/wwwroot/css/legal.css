@@ -1,0 +1,103 @@
+/* Static legal pages (aviso-legal, privacidad, terminos, cookies). Plain HTML so
+   crawlers and visitors without JavaScript can read them; colours mirror app.css. */
+:root {
+    --primary: #0B3D5C;
+    --accent: #2AA5A0;
+    --off-black: #1f1f1f;
+    --gray-600: #404040;
+    --page-bg: #F2F4F8;
+    --card-border: #D8DEE6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--off-black);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+}
+
+.legal-top {
+    background: var(--primary);
+    padding: 0.8rem 16px;
+}
+
+    .legal-top a {
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+    }
+
+.legal {
+    max-width: 760px;
+    margin: 1rem 8px;
+    padding: 1.5rem 16px 2rem;
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+}
+
+@media (min-width: 640px) {
+    .legal {
+        margin: 1.5rem auto;
+        padding: 2rem 2.5rem 2.5rem;
+    }
+}
+
+.legal h1 {
+    font-size: 1.6rem;
+    color: var(--primary);
+    margin: 0 0 0.25rem;
+}
+
+.legal h2 {
+    font-size: 1.15rem;
+    color: var(--primary);
+    margin: 1.8rem 0 0.4rem;
+}
+
+.legal .updated {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin: 0 0 1.2rem;
+}
+
+.legal a {
+    color: var(--primary);
+}
+
+.legal table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.legal th, .legal td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.legal .table-wrap {
+    overflow-x: auto;
+}
+
+.legal-nav {
+    max-width: 760px;
+    margin: 0 auto 2rem;
+    padding: 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+    .legal-nav a {
+        color: var(--gray-600);
+    }

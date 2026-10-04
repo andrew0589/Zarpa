@@ -50,7 +50,8 @@
 
         <label class="terms-row">
             <input type="checkbox" @bind="_termsAccepted" />
-            <span>Acepto los Términos y Condiciones</span>
+            <span>Acepto los <a href="terminos.html" target="_blank">Términos y condiciones</a>
+                y la <a href="privacidad.html" target="_blank">Política de privacidad</a></span>
         </label>
         @if (_termsError is not null)
         {

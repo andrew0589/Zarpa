@@ -270,6 +270,26 @@ h1 {
         width: 1.05rem;
         height: 1.05rem;
         accent-color: var(--accent);
+        flex-shrink: 0;
+    }
+
+    .terms-row a {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+/* Links to the static legal pages, under every page. */
+.site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem 1.2rem;
+    padding: 1.5rem 16px 2rem;
+    font-size: 0.85rem;
+}
+
+    .site-footer a {
+        color: var(--gray-600);
     }
 
 .auth-footer {
@@ -1650,6 +1670,14 @@ h1 {
         margin: 0 0 0.5rem;
         color: #2AA5A0;
     }
+
+    .loading-intro .loading-legal {
+        font-size: 0.85rem;
+    }
+
+        .loading-intro .loading-legal a {
+            color: #555;
+        }
 
 /* Admin — Usuarios tab (AdminUsuarios.razor). Breaks out of the 560px .content
    column and spans the whole viewport (minus a small gutter) so the table has

@@ -42,6 +42,15 @@
     <main class="content">
         @Body
     </main>
+
+    @* Static pages in wwwroot, not Blazor routes: target="_top" stops the router
+       from intercepting the click so the browser loads the file. *@
+    <footer class="site-footer">
+        <a href="aviso-legal.html" target="_top">Aviso legal</a>
+        <a href="privacidad.html" target="_top">Privacidad</a>
+        <a href="cookies.html" target="_top">Cookies</a>
+        <a href="terminos.html" target="_top">Términos</a>
+    </footer>
 </div>
 
 @code {
