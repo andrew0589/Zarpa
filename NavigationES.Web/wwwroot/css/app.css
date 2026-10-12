@@ -1679,6 +1679,15 @@ h1 {
             color: #555;
         }
 
+    .loading-intro .loading-links {
+        font-size: 0.85rem;
+        line-height: 1.8;
+    }
+
+        .loading-intro .loading-links a {
+            color: #555;
+        }
+
 /* Admin — Usuarios tab (AdminUsuarios.razor). Breaks out of the 560px .content
    column and spans the whole viewport (minus a small gutter) so the table has
    room; it still scrolls sideways on phones. */

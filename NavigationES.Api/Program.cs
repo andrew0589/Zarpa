@@ -57,6 +57,7 @@ builder.Services.AddTransient<ExamImportService>();
 builder.Services.AddTransient<AdminUserService>();
 builder.Services.AddTransient<AdminContentService>();
 builder.Services.AddTransient<AdminComunidadService>();
+builder.Services.AddTransient<PublicSiteService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -138,6 +139,13 @@ app.UseForwardedHeaders();
 // Question/explanation images live in wwwroot/images and are served publicly —
 // static files bypass the endpoint auth policy by design.
 app.UseStaticFiles();
+// The same images under /img for the public pages (PublicSiteEndpoints): nginx on
+// navigationes.eu proxies /img to here, because /images there is the web app's own.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "images")),
+    RequestPath = "/img",
+});
 
 // Trust the proxy headers
 app.Use((context, next) =>
@@ -172,6 +180,8 @@ app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
 
 app.MapAuthEndpoints();
 app.MapLegalEndpoints();
+// Crawlable pages of navigationes.eu (calendar, comunidades, temas, sitemap).
+app.MapPublicSiteEndpoints();
 app.MapTopicEndpoints();
 app.MapLicenseEndpoints();
 app.MapComunidadEndpoints();
