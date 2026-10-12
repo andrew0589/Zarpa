@@ -34,13 +34,13 @@ namespace NavigationES.Api.Endpoints
             </head>
             <body>
                 <h1>Privacy Policy</h1>
-                <p class="muted">NavigationES &middot; Last updated: September 26, 2026</p>
+                <p class="muted">NavigationES &middot; Last updated: October 12, 2026</p>
 
                 <p>NavigationES ("we", "us") is a mobile application that helps you prepare for the Spanish
                 recreational boating exams (PNB, PER, Patrón de Yate and Capitán de Yate) with
                 practice test exams. This page explains what personal data we collect, why, and what
                 your rights are. For any privacy question, contact us at
-                <a href="mailto:contact@navigationes.example">contact@navigationes.example</a>.</p>
+                <a href="mailto:navigationes@gmail.com">navigationes@gmail.com</a>.</p>
 
                 <h2>Data we collect</h2>
                 <ul>
@@ -51,9 +51,8 @@ namespace NavigationES.Api.Endpoints
                         We never receive your password, contacts, friends or posts.</li>
                     <li><strong>Study data</strong> — your activity in the app: the exams you practice,
                         your answers, scores and progress statistics.</li>
-                    <li><strong>Diagnostics</strong> — anonymous crash reports and usage telemetry that
-                        help us keep the app working.</li>
                 </ul>
+                <p>We do not use analytics, advertising or tracking tools.</p>
 
                 <h2>How we use your data</h2>
                 <p>Only to provide and operate the service: signing you in, saving your practice
@@ -84,7 +83,7 @@ namespace NavigationES.Api.Endpoints
                 <h2>Your rights</h2>
                 <p>Under the GDPR you can request access to, correction of, deletion of, or a copy of
                 your personal data, and you can object to its processing. Write to
-                <a href="mailto:contact@navigationes.example">contact@navigationes.example</a> and we will
+                <a href="mailto:navigationes@gmail.com">navigationes@gmail.com</a> and we will
                 respond within 30 days.</p>
 
                 <h2>Children</h2>
@@ -123,7 +122,7 @@ namespace NavigationES.Api.Endpoints
 
                 <h2>Option 2 — by email</h2>
                 <p>Send an email to
-                <a href="mailto:contact@navigationes.example">contact@navigationes.example</a> with the
+                <a href="mailto:navigationes@gmail.com">navigationes@gmail.com</a> with the
                 subject "Delete my account", from the email address your account is registered with.
                 We will delete the account and confirm within 30 days.</p>
 
