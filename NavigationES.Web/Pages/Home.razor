@@ -1,5 +1,4 @@
 @page "/"
-@attribute [Authorize]
 @inject ILicensesApi LicensesApi
 @inject IComunidadesApi ComunidadesApi
 @inject ITopicsApi TopicsApi
@@ -7,6 +6,14 @@
 @inject WebAuthStateProvider Auth
 @inject NavigationManager Navigation
 
+@* Not [Authorize]: "/" is the site's front page, so a visitor without a session
+   gets the landing instead of being bounced to /signin. *@
+@if (_anonymous)
+{
+    <Landing />
+}
+else
+{
 <PageTitle>NavigationES</PageTitle>
 
 <div class="@(_showDashboard ? "inicio-page" : null)">
@@ -89,8 +96,10 @@ else
     </div>
 }
 </div>
+}
 
 @code {
+    private bool _anonymous;
     private LicenseDto? _selectedLicense;
     private bool _hasComunidad;
     private long? _comunidadId;
@@ -113,6 +122,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        // Without a session the API calls below would 401 and redirect to /signin.
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated != true)
+        {
+            _anonymous = true;
+            return;
+        }
+
         try
         {
             var licenses = await LicensesApi.GetLicensesAsync();

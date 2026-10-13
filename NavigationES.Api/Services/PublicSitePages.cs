@@ -9,7 +9,8 @@ namespace NavigationES.Api.Services
     // Server-rendered HTML for the public pages. The web app is Blazor WebAssembly
     // behind a login, so a crawler sees one paragraph of index.html; these pages are
     // what search engines index instead. nginx on navigationes.eu proxies /examenes,
-    // /temas, /img and /sitemap.xml to the API, so every URL here is on the site's
+    // /test, /img and /sitemap.xml to the API (not /temas: that is the app's own
+    // topic list, and a reload there must still reach the SPA), so every URL here is on the site's
     // own origin (`origin`, from AppSettings:FrontendUrl).
     //
     // Pure functions of their inputs (dates included), so they are unit-tested
@@ -54,6 +55,39 @@ namespace NavigationES.Api.Services
             "/img/" + (path.StartsWith("images/", StringComparison.OrdinalIgnoreCase) ? path["images/".Length..] : path.TrimStart('/'));
 
         private static string E(string? text) => WebUtility.HtmlEncode(text ?? "");
+
+        // Google cuts titles at about 60 characters; past that the community name
+        // or the year falls off the result.
+        public const int TitleMaxLength = 60;
+
+        // The name people type in a search ("examen PER Baleares"), shorter than the
+        // official one, so the titles fit.
+        public static string ShortName(string comunidadName) => comunidadName switch
+        {
+            "Ciudad Autónoma de Ceuta" => "Ceuta",
+            "Ciudad Autónoma de Melilla" => "Melilla",
+            "Comunidad de Madrid" => "Madrid",
+            "Comunidad Valenciana" => "Valencia",
+            "Islas Baleares" => "Baleares",
+            "Islas Canarias" => "Canarias",
+            "Principado de Asturias" => "Asturias",
+            "Región de Murcia" => "Murcia",
+            _ => comunidadName,
+        };
+
+        // "Examen PER Baleares 2026: fechas y exámenes oficiales". Singular
+        // "examen" is what people search; PER is the most searched qualification.
+        public static string ComunidadTitle(ComunidadSummary c, int year) =>
+            c.ExamCount > 0
+                ? $"Examen PER {ShortName(c.Name)} {year}: fechas y exámenes oficiales"
+                : $"Examen PER {ShortName(c.Name)} {year}: fechas y preparación";
+
+        // "Test de Balizamiento: preguntas del examen PER"; long topic names drop the tail.
+        public static string TopicTitle(string topicName)
+        {
+            var full = $"Test de {topicName}: preguntas del examen PER";
+            return full.Length <= TitleMaxLength ? full : $"Test de {topicName} - examen PER";
+        }
 
         // Comunidad de Madrid holds no exams of its own: its papers are the national
         // DGMM convocatoria, sat in Madrid. Worth saying, because that is what people
@@ -122,8 +156,8 @@ namespace NavigationES.Api.Services
                 """;
 
             return Page(origin, "/examenes",
-                "Exámenes PER, PNB y Patrón de Yate por comunidad: convocatorias " + today.Year,
-                $"Calendario de exámenes náuticos {today.Year} por comunidad autónoma y {totalExams} exámenes oficiales de PNB, PER, Patrón y Capitán de Yate para practicar.",
+                $"Examen PER y PNB {today.Year}: fechas por comunidad | NavigationES",
+                $"Fechas de los exámenes de PER y PNB {today.Year} en cada comunidad y {totalExams} exámenes oficiales con respuestas para practicar.",
                 body,
                 FaqJsonLd(faq));
         }
@@ -201,7 +235,7 @@ namespace NavigationES.Api.Services
                     $"NavigationES tiene {c.ExamCount} exámenes oficiales de {c.Name} ({c.QuestionCount} preguntas) con su respuesta correcta, para hacerlos como simulacro."));
 
             return Page(origin, $"/examenes/{c.Slug}",
-                $"Exámenes {licenseNames} {c.Name}: convocatoria {today.Year} y exámenes oficiales",
+                ComunidadTitle(c, today.Year),
                 description, sb.ToString(), FaqJsonLd(faq));
         }
 
@@ -229,8 +263,8 @@ namespace NavigationES.Api.Services
             sb.Append(TopicLinks(all.Where(o => o.Id != t.Id).ToList(), "Otros temas"));
             sb.Append("<p><a href=\"/examenes\">Exámenes oficiales y convocatorias por comunidad</a></p>");
 
-            return Page(origin, $"/temas/{t.Slug}",
-                $"Test de {t.Name} — preguntas del examen PER y PNB",
+            return Page(origin, $"/test/{t.Slug}",
+                TopicTitle(t.Name),
                 $"{t.QuestionCount} preguntas de {t.Name} con respuesta y explicación para preparar el examen de PNB, PER y Patrón de Yate.",
                 sb.ToString(), null);
         }
@@ -241,7 +275,7 @@ namespace NavigationES.Api.Services
             [
                 "/", "/signup", "/examenes",
                 .. comunidades.Select(c => $"/examenes/{c.Slug}"),
-                .. topics.Select(t => $"/temas/{t.Slug}"),
+                .. topics.Select(t => $"/test/{t.Slug}"),
                 "/aviso-legal.html", "/privacidad.html", "/cookies.html", "/terminos.html",
             ];
 
@@ -255,7 +289,7 @@ namespace NavigationES.Api.Services
         }
 
         public static string NotFound(string origin) =>
-            Page(origin, "/examenes", "Página no encontrada",
+            Page(origin, "/examenes", "Página no encontrada | NavigationES",
                 "Página no encontrada.",
                 "<h1>Página no encontrada</h1><p><a href=\"/examenes\">Ver los exámenes por comunidad</a></p>", null, index: false);
 
@@ -265,7 +299,7 @@ namespace NavigationES.Api.Services
                 return "";
             var sb = new StringBuilder($"<h2>{E(title)}</h2><ul class=\"links\">");
             foreach (var t in topics)
-                sb.Append($"<li><a href=\"/temas/{t.Slug}\">{E(t.Name)}</a></li>");
+                sb.Append($"<li><a href=\"/test/{t.Slug}\">{E(t.Name)}</a></li>");
             return sb.Append("</ul>").ToString();
         }
 
@@ -332,7 +366,7 @@ namespace NavigationES.Api.Services
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
-                <title>{E(title)} | NavigationES</title>
+                <title>{E(title)}</title>
                 <meta name="description" content="{E(description)}">
                 {(index ? "" : "<meta name=\"robots\" content=\"noindex\">")}
                 <link rel="canonical" href="{E(origin + path)}">

@@ -12,16 +12,21 @@ namespace NavigationES.Api.Endpoints
         // a few times a month; an hour of caching keeps crawlers off the database.
         private const string CacheControl = "public, max-age=3600";
 
+        // HEAD too: link checkers and SEO tools probe with it, and an unmapped HEAD
+        // falls through to the JWT fallback policy and answers 401. Kestrel drops
+        // the body of a HEAD response by itself.
+        private static readonly string[] GetOrHead = [HttpMethods.Get, HttpMethods.Head];
+
         public static IEndpointRouteBuilder MapPublicSiteEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/examenes", async (HttpContext http, PublicSiteService service, IConfiguration config) =>
+            app.MapMethods("/examenes", GetOrHead, async (HttpContext http, PublicSiteService service, IConfiguration config) =>
             {
                 var comunidades = await service.GetComunidadesAsync();
                 var topics = await service.GetTopicsAsync();
                 return Html(http, PublicSitePages.Hub(Origin(config), comunidades, topics, Today()));
             }).AllowAnonymous();
 
-            app.MapGet("/examenes/{slug}", async (string slug, HttpContext http, PublicSiteService service, IConfiguration config) =>
+            app.MapMethods("/examenes/{slug}", GetOrHead, async (string slug, HttpContext http, PublicSiteService service, IConfiguration config) =>
             {
                 var comunidades = await service.GetComunidadesAsync();
                 var comunidad = comunidades.FirstOrDefault(c => c.Slug == slug.ToLowerInvariant());
@@ -32,7 +37,7 @@ namespace NavigationES.Api.Endpoints
                 return Html(http, PublicSitePages.Comunidad(Origin(config), comunidad, sample, comunidades, Today()));
             }).AllowAnonymous();
 
-            app.MapGet("/temas/{slug}", async (string slug, HttpContext http, PublicSiteService service, IConfiguration config) =>
+            app.MapMethods("/test/{slug}", GetOrHead, async (string slug, HttpContext http, PublicSiteService service, IConfiguration config) =>
             {
                 var topics = await service.GetTopicsAsync();
                 var topic = topics.FirstOrDefault(t => t.Slug == slug.ToLowerInvariant());
@@ -43,7 +48,7 @@ namespace NavigationES.Api.Endpoints
                 return Html(http, PublicSitePages.Topic(Origin(config), topic, sample, topics));
             }).AllowAnonymous();
 
-            app.MapGet("/sitemap.xml", async (HttpContext http, PublicSiteService service, IConfiguration config) =>
+            app.MapMethods("/sitemap.xml", GetOrHead, async (HttpContext http, PublicSiteService service, IConfiguration config) =>
             {
                 var comunidades = await service.GetComunidadesAsync();
                 var topics = await service.GetTopicsAsync();

@@ -411,6 +411,100 @@ h1 {
     transform: translateX(-50%);
 }
 
+/* Landing for visitors without a session (Shared/Landing.razor on "/"). Breaks
+   out of the 560px .content column like the dashboard. */
+.landing {
+    width: min(920px, calc(100vw - 2rem));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.landing-hero {
+    text-align: center;
+    padding: 1.5rem 0 1rem;
+}
+
+    .landing-hero h1 {
+        font-size: clamp(1.6rem, 4vw, 2.3rem);
+        line-height: 1.2;
+        color: var(--primary);
+        margin-bottom: 0.8rem;
+    }
+
+.landing-lead {
+    max-width: 40rem;
+    margin: 0 auto 1.5rem;
+    font-size: 1.1rem;
+    color: var(--gray-600);
+}
+
+.landing-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+
+.landing-secondary {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.landing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin: 2rem 0;
+}
+
+    .landing-grid p {
+        margin: 0;
+        color: var(--gray-600);
+        line-height: 1.55;
+    }
+
+@media (max-width: 760px) {
+    .landing-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.landing-calendar {
+    text-align: center;
+}
+
+    .landing-calendar h2 {
+        font-size: 1.25rem;
+        margin-bottom: 0.3rem;
+    }
+
+.landing-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1rem;
+    line-height: 1.8;
+}
+
+    .landing-links a {
+        color: var(--primary);
+    }
+
+.topbar-guest {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+    .topbar-guest a:not(.btn-outline) {
+        color: white;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
 .inicio-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -35,6 +35,13 @@
                         <button class="btn-outline" @onclick="SignoutAsync">Cerrar sesión</button>
                     </div>
                 </Authorized>
+                <NotAuthorized>
+                    @* /examenes is rendered by the API, not a Blazor route: target="_top". *@
+                    <div class="topbar-guest">
+                        <a href="examenes" target="_top">Exámenes</a>
+                        <a class="btn-outline btn-link" href="signin">Entrar</a>
+                    </div>
+                </NotAuthorized>
             </AuthorizeView>
         </div>
     </header>

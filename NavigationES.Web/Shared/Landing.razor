@@ -1,0 +1,71 @@
+@* What a visitor without a session sees on "/": what NavigationES is and a way in.
+   The links to /examenes and its pages use target="_top": those pages are
+   rendered by the API (nginx proxies them), not Blazor routes, so the router must
+   not intercept the click. Keep the text in step with the static intro in
+   wwwroot/index.html, which is what crawlers read before Blazor starts. *@
+
+<PageTitle>NavigationES — Examen PER, PNB y Patrón de Yate con exámenes oficiales</PageTitle>
+
+<div class="landing">
+    <section class="landing-hero">
+        <h1>Aprueba el PER con los exámenes oficiales de tu comunidad</h1>
+        <p class="landing-lead">
+            Más de 1.400 exámenes oficiales de PNB, PER, Patrón de Yate y Capitán de Yate,
+            tal como se publicaron, y el temario completo en preguntas por temas con su explicación.
+        </p>
+        <div class="landing-actions">
+            <a class="btn-primary btn-link" href="signup">Crear cuenta</a>
+            <a class="landing-secondary" href="signin">Ya tengo cuenta</a>
+        </div>
+    </section>
+
+    <div class="landing-grid">
+        <section class="retro-card">
+            <h2 class="retro-title">Exámenes oficiales</h2>
+            <p>Los exámenes reales de once comunidades autónomas y de la convocatoria nacional, con su respuesta correcta.
+               Elige tu comunidad y practica con los que te vas a encontrar.</p>
+        </section>
+        <section class="retro-card">
+            <h2 class="retro-title">Simulación como el examen real</h2>
+            <p>Mismo número de preguntas, mismo tiempo y la misma corrección, con los límites de errores
+               de Balizamiento, RIPA y Carta de navegación.</p>
+        </section>
+        <section class="retro-card">
+            <h2 class="retro-title">Preguntas por temas</h2>
+            <p>Del temario oficial, de Nomenclatura a Carta de navegación, cada pregunta con su explicación
+               e infografías. Repite solo las que fallas.</p>
+        </section>
+    </div>
+
+    <section class="landing-calendar">
+        <h2>¿Cuándo es tu examen?</h2>
+        <p>Fechas de las próximas convocatorias y exámenes oficiales disponibles en cada comunidad:</p>
+        <p class="landing-links">
+            <a href="examenes" target="_top"><strong>Calendario de exámenes por comunidad</strong></a>
+            @foreach (var (slug, name) in Comunidades)
+            {
+                <a href="examenes/@slug" target="_top">@name</a>
+            }
+        </p>
+    </section>
+</div>
+
+@code {
+    // Slugs = PublicSitePages.Slug(name) in the API; the same list is in index.html.
+    private static readonly (string Slug, string Name)[] Comunidades =
+    [
+        ("andalucia", "Andalucía"),
+        ("cataluna", "Cataluña"),
+        ("comunidad-de-madrid", "Madrid"),
+        ("comunidad-valenciana", "C. Valenciana"),
+        ("islas-baleares", "Baleares"),
+        ("islas-canarias", "Canarias"),
+        ("galicia", "Galicia"),
+        ("region-de-murcia", "Murcia"),
+        ("principado-de-asturias", "Asturias"),
+        ("pais-vasco", "País Vasco"),
+        ("cantabria", "Cantabria"),
+        ("ciudad-autonoma-de-ceuta", "Ceuta"),
+        ("ciudad-autonoma-de-melilla", "Melilla"),
+    ];
+}

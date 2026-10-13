@@ -21,6 +21,34 @@ namespace NavigationES.Api.Tests
         public void Slug_StripsAccentsAndPunctuation(string name, string expected) =>
             Assert.Equal(expected, PublicSitePages.Slug(name));
 
+        // Every seeded community and every topic name, so a long one cannot slip past Google's cut.
+        [Theory]
+        [InlineData("Ciudad Autónoma de Melilla")]
+        [InlineData("Principado de Asturias")]
+        [InlineData("Comunidad Valenciana")]
+        [InlineData("Cantabria")]
+        public void ComunidadTitle_FitsInASearchResult(string name)
+        {
+            var withExams = new ComunidadSummary(1, name, PublicSitePages.Slug(name), null, null, 10, 450, []);
+            var without = withExams with { ExamCount = 0 };
+
+            Assert.InRange(PublicSitePages.ComunidadTitle(withExams, 2026).Length, 1, PublicSitePages.TitleMaxLength);
+            Assert.InRange(PublicSitePages.ComunidadTitle(without, 2026).Length, 1, PublicSitePages.TitleMaxLength);
+        }
+
+        [Theory]
+        [InlineData("Balizamiento")]
+        [InlineData("Elementos de amarre y fondeo")]
+        [InlineData("Teoría de navegación (CY)")]
+        [InlineData("Cálculo de navegación (CY)")]
+        public void TopicTitle_FitsInASearchResult(string name) =>
+            Assert.InRange(PublicSitePages.TopicTitle(name).Length, 1, PublicSitePages.TitleMaxLength);
+
+        [Fact]
+        public void ComunidadTitle_UsesTheNamePeopleSearch() =>
+            Assert.Equal("Examen PER Baleares 2026: fechas y exámenes oficiales",
+                PublicSitePages.ComunidadTitle(new ComunidadSummary(9, "Islas Baleares", "islas-baleares", null, null, 458, 17000, []), 2026));
+
         [Fact]
         public void FormatDate_IsSpanish() =>
             Assert.Equal("7 de noviembre de 2026", PublicSitePages.FormatDate(new DateOnly(2026, 11, 7)));
@@ -53,7 +81,7 @@ namespace NavigationES.Api.Tests
 
             Assert.Contains("<loc>https://navigationes.eu/examenes</loc>", xml);
             Assert.Contains("<loc>https://navigationes.eu/examenes/cataluna</loc>", xml);
-            Assert.Contains("<loc>https://navigationes.eu/temas/balizamiento</loc>", xml);
+            Assert.Contains("<loc>https://navigationes.eu/test/balizamiento</loc>", xml);
             Assert.Contains("<loc>https://navigationes.eu/aviso-legal.html</loc>", xml);
         }
 
