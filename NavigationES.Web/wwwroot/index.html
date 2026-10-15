@@ -63,7 +63,9 @@
         </div>
     </div>
 
-    <div id="blazor-error-ui">
+    <!-- hidden: readers that ignore CSS (crawlers, AI summaries) otherwise report this as a page error.
+         Blazor shows it with an inline display:block, which overrides the attribute. -->
+    <div id="blazor-error-ui" hidden>
         Ha ocurrido un error inesperado.
         <a href="." class="reload">Recargar</a>
         <span class="dismiss">🗙</span>
