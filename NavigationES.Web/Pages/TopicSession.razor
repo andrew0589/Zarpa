@@ -66,9 +66,17 @@ else if (_question is not null)
 
         @if (HasExplanation)
         {
-            <button class="btn-explanation" @onclick="() => _showExplanation = !_showExplanation">
-                ⓘ Explicación
-            </button>
+            @* While the explanation is open, Siguiente sits on this row so a long
+               explanation doesn't push it far down the page. *@
+            <div class="explanation-row">
+                <button class="btn-explanation" @onclick="() => _showExplanation = !_showExplanation">
+                    ⓘ Explicación
+                </button>
+                @if (_showExplanation)
+                {
+                    <button class="btn-primary btn-next-inline" @onclick="NextQuestion">Siguiente</button>
+                }
+            </div>
 
             @if (_showExplanation)
             {
@@ -87,7 +95,10 @@ else if (_question is not null)
             }
         }
 
-        <button class="btn-primary btn-next" @onclick="NextQuestion">Siguiente</button>
+        @if (!_showExplanation)
+        {
+            <button class="btn-primary btn-next" @onclick="NextQuestion">Siguiente</button>
+        }
     }
 }
 
