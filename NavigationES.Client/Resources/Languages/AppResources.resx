@@ -552,4 +552,25 @@
   <data name="EmailAlreadyVerifiedError" xml:space="preserve">
     <value>Tu correo electrónico ya está validado.</value>
   </data>
+  <data name="AccessEndedTitle" xml:space="preserve">
+    <value>Acceso finalizado</value>
+  </data>
+  <data name="AccessEndedMessage" xml:space="preserve">
+    <value>Tu periodo de prueba ha terminado y esta cuenta no tiene acceso activo.</value>
+  </data>
+  <data name="ProfileAccessLabel" xml:space="preserve">
+    <value>Acceso</value>
+  </data>
+  <data name="AccessAdmin" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
+  <data name="AccessTrialFormat" xml:space="preserve">
+    <value>Prueba gratuita hasta el {0}</value>
+  </data>
+  <data name="AccessSubscription" xml:space="preserve">
+    <value>Premium activo</value>
+  </data>
+  <data name="AccessNone" xml:space="preserve">
+    <value>Sin acceso activo</value>
+  </data>
 </root>

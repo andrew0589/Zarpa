@@ -187,6 +187,8 @@ app.MapLicenseEndpoints();
 app.MapComunidadEndpoints();
 app.MapExamEndpoints();
 app.MapSessionEndpoints();
+// Trial/subscription status for every client; Checkout, Portal and the Stripe webhook.
+app.MapBillingEndpoints();
 // Usuarios tab: JWT + IsAdmin (checked in the database on every call).
 app.MapAdminUserEndpoints();
 app.MapAdminContentEndpoints();

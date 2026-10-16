@@ -342,6 +342,11 @@
                         <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,10,0,10" />
                         <Label Text="{x:Static lang:AppResources.ProfileEmailLabel}" Style="{StaticResource DatosKey}" />
                         <Label Text="{Binding UserEmail}" Style="{StaticResource DatosValue}" LineBreakMode="CharacterWrap" />
+                        <VerticalStackLayout IsVisible="{Binding AccessText, Converter={StaticResource IsNotNullConverter}}">
+                            <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,10,0,10" />
+                            <Label Text="{x:Static lang:AppResources.ProfileAccessLabel}" Style="{StaticResource DatosKey}" />
+                            <Label Text="{Binding AccessText}" Style="{StaticResource DatosValue}" />
+                        </VerticalStackLayout>
                         <controls:DashedRule Style="{StaticResource RetroRule}" Margin="0,10,0,16" />
                     </VerticalStackLayout>
 

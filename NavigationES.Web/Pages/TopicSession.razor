@@ -10,7 +10,11 @@
 <a class="back-link" href="temas">←&nbsp;Volver a los temas</a>
 <h1>@Title</h1>
 
-@if (_loadFailed)
+@if (_paywall)
+{
+    <Paywall />
+}
+else if (_loadFailed)
 {
     <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
 }
@@ -152,6 +156,7 @@ else if (_question is not null)
     private bool _completed;
     private bool _loaded;
     private bool _loadFailed;
+    private bool _paywall;
     private string? _error;
 
     private int ProgressPercent => _total == 0 ? 0 : (int)Math.Round(100.0 * _answered / _total);
@@ -190,6 +195,10 @@ else if (_question is not null)
             }
 
             await StartSessionAsync();
+        }
+        catch (Exception ex) when (Paywall.IsPaywall(ex))
+        {
+            _paywall = true;
         }
         catch (Exception)
         {
@@ -288,6 +297,10 @@ else if (_question is not null)
             _completed = false;
             _loaded = false;
             await StartSessionAsync();
+        }
+        catch (Exception ex) when (Paywall.IsPaywall(ex))
+        {
+            _paywall = true;
         }
         catch (Exception)
         {

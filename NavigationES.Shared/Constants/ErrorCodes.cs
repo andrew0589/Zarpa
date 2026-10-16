@@ -57,6 +57,17 @@ public static class ErrorCodes
     public const string EmailSendFailedError = "EmailSendFailedError";
     #endregion
 
+    #region Subscriptions
+    // Trial over and no active subscription (HTTP 402 from the gated endpoints).
+    public const string SubscriptionRequiredError = "SubscriptionRequiredError";
+    // Checkout refused: the account already pays — manage it from the Customer Portal.
+    public const string AlreadySubscribedError = "AlreadySubscribedError";
+    // The plan is not one of the configured lookup keys, or Stripe has no active price for it.
+    public const string PlanNotFoundError = "PlanNotFoundError";
+    // Stripe keys are not configured, or Stripe refused the call.
+    public const string BillingUnavailableError = "BillingUnavailableError";
+    #endregion
+
     #region Admin (Convocatorias tab)
     // The comunidad id in the URL matches no seeded community.
     public const string ComunidadNotFoundError = "ComunidadNotFoundError";

@@ -14,7 +14,7 @@ using NavigationES.Shared.Validation;
 
 namespace NavigationES.Api.Services
 {
-    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService, AppleAuthService appleAuthService, IMemoryCache cache)
+    public class AuthService(NavigationESDbContext context, TokenService tokenService, PasswordService passwordService, IConfiguration configuration, IEmailService emailService, AppleAuthService appleAuthService, IMemoryCache cache, BillingService billingService)
     {
         private readonly NavigationESDbContext _context = context;
         private readonly IMemoryCache _cache = cache;
@@ -23,6 +23,7 @@ namespace NavigationES.Api.Services
         private readonly IConfiguration _configuration = configuration;
         private readonly IEmailService _emailService = emailService;
         private readonly AppleAuthService _appleAuthService = appleAuthService;
+        private readonly BillingService _billingService = billingService;
 
         public async Task<ResultWithDataDto<AuthResponseDto>> SignupAsync(SignupRequestDto dto)
         {
@@ -501,6 +502,9 @@ namespace NavigationES.Api.Services
 
             foreach (var login in appleLogins)
                 await _appleAuthService.TryRevokeRefreshTokenAsync(login.RefreshToken!);
+
+            // Stop billing before the subscription rows cascade away (best-effort too).
+            await _billingService.CancelAllAsync(userId);
 
             try
             {

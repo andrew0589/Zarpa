@@ -24,6 +24,7 @@ namespace NavigationES.Api.Data
         public DbSet<ExamEntity> Exams { get; set; }
         public DbSet<ExamQuestionEntity> ExamQuestions { get; set; }
         public DbSet<ExamSessionAnswerEntity> ExamSessionAnswers { get; set; }
+        public DbSet<SubscriptionEntity> Subscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,26 @@ namespace NavigationES.Api.Data
 
                 ul.HasIndex(x => new { x.Provider, x.ProviderKey })
                   .IsUnique();
+            });
+
+            modelBuilder.Entity<UserEntity>()
+                .HasIndex(u => u.StripeCustomerId)
+                .IsUnique()
+                .HasFilter("[StripeCustomerId] IS NOT NULL");
+
+            modelBuilder.Entity<SubscriptionEntity>(s =>
+            {
+                // Deleting an account removes its subscription history; the Stripe
+                // side is cancelled first by AuthService.DeleteAccountAsync.
+                s.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                s.HasIndex(x => x.StripeSubscriptionId)
+                 .IsUnique();
+
+                s.HasIndex(x => x.UserID);
             });
 
             modelBuilder.Entity<TopicEntity>()

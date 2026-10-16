@@ -96,6 +96,11 @@ namespace NavigationES.Client.ViewModels
 
                 ShowNextQuestion();
             }
+            catch (Exception ex) when (UserMessageHelper.IsAccessEnded(ex))
+            {
+                await UserMessageHelper.ShowAccessEndedAsync();
+                await Shell.Current.GoToAsync("..");
+            }
             catch (Exception)
             {
                 await UserMessageHelper.ShowErrorAsync(AppResources.UnknownError);

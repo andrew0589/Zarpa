@@ -132,6 +132,11 @@ namespace NavigationES.Client.ViewModels
                 // that failed to save.
                 StartTimer();
             }
+            catch (Exception ex) when (UserMessageHelper.IsAccessEnded(ex))
+            {
+                await UserMessageHelper.ShowAccessEndedAsync();
+                await Shell.Current.GoToAsync("..");
+            }
             catch (Exception)
             {
                 LoadFailed = true;

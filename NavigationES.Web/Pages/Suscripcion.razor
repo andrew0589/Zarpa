@@ -1,0 +1,191 @@
+@page "/suscripcion"
+@attribute [Authorize]
+@inject IBillingApi BillingApi
+@inject NavigationManager Navigation
+
+<PageTitle>Suscripción — NavigationES</PageTitle>
+
+<h1>Suscripción</h1>
+
+@if (_loadFailed)
+{
+    <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+}
+else if (_status is null)
+{
+    <p class="page-loading">Cargando…</p>
+}
+else
+{
+    <section class="retro-card">
+        <h2 class="retro-title">Tu acceso</h2>
+
+        @switch (_status.AccessSource)
+        {
+            case BillingAccess.Admin:
+                <span class="retro-tag ok">Administrador</span>
+                <p>Tu cuenta tiene acceso completo.</p>
+                break;
+
+            case BillingAccess.Subscription:
+                <span class="retro-tag ok">Suscripción activa</span>
+                <p>
+                    Plan @PlanName(_status.PlanLookupKey).
+                    @if (_status.CurrentPeriodEnd is DateTime end)
+                    {
+                        @(_status.CancelAtPeriodEnd
+                            ? $" Cancelada: tienes acceso hasta el {LocalDate(end)}."
+                            : $" Se renueva el {LocalDate(end)}.")
+                    }
+                </p>
+                @if (_status.SubscriptionStatus == "past_due")
+                {
+                    <p class="error" role="alert">No hemos podido cobrar la última renovación. Actualiza tu tarjeta para no perder el acceso.</p>
+                }
+                break;
+
+            case BillingAccess.Trial:
+                <span class="retro-tag warn">Prueba gratuita</span>
+                <p>Tienes acceso completo hasta el @LocalDateTime(_status.TrialEndsAt!.Value). Suscríbete cuando quieras para no perderlo.</p>
+                break;
+
+            default:
+                <span class="retro-tag warn">Sin suscripción</span>
+                <p>Tu prueba gratuita ha terminado. Elige un plan para seguir practicando.</p>
+                break;
+        }
+
+        @if (_waitingForPayment)
+        {
+            <p class="page-loading">Confirmando el pago…</p>
+        }
+
+        @if (_status.CanManage)
+        {
+            <button class="btn-outline-dark" disabled="@_busy" @onclick="OpenPortalAsync">Gestionar suscripción y facturas</button>
+        }
+    </section>
+
+    @if (_status.AccessSource is not BillingAccess.Subscription and not BillingAccess.Admin)
+    {
+        <div class="plan-grid">
+            @foreach (var plan in _plans)
+            {
+                <section class="retro-card plan-card">
+                    <h2 class="retro-title">@IntervalName(plan.IntervalMonths)</h2>
+                    <p class="plan-price">@Money(plan.AmountCents)</p>
+                    @if (plan.IntervalMonths > 1)
+                    {
+                        <p class="plan-note">@Money(plan.AmountCents / plan.IntervalMonths) al mes</p>
+                    }
+                    else
+                    {
+                        <p class="plan-note">Cancela cuando quieras</p>
+                    }
+                    <button class="btn-primary" disabled="@_busy" @onclick="() => CheckoutAsync(plan)">Suscribirme</button>
+                </section>
+            }
+        </div>
+
+        @if (_plans.Count == 0)
+        {
+            <p class="tagline">Las suscripciones no están disponibles en este momento.</p>
+        }
+        <p class="plan-legal">IVA incluido. Renovación automática; puedes cancelar en cualquier momento y mantienes el acceso hasta el final del periodo pagado.</p>
+    }
+
+    @if (_error is not null)
+    {
+        <p class="error" role="alert">@_error</p>
+    }
+}
+
+@code {
+    [SupplyParameterFromQuery(Name = "checkout")]
+    public string? Checkout { get; set; }
+
+    private BillingStatusDto? _status;
+    private List<BillingPlanDto> _plans = [];
+    private bool _loadFailed;
+    private bool _busy;
+    private bool _waitingForPayment;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _status = await BillingApi.GetStatusAsync();
+            _plans = await BillingApi.GetPlansAsync();
+        }
+        catch (Exception)
+        {
+            _loadFailed = true;
+            return;
+        }
+
+        // Back from a successful Checkout: the webhook usually lands within seconds,
+        // so poll briefly until the subscription shows up.
+        if (Checkout == "ok" && _status.AccessSource != BillingAccess.Subscription)
+        {
+            _waitingForPayment = true;
+            StateHasChanged();
+            for (var i = 0; i < 10 && _status.AccessSource != BillingAccess.Subscription; i++)
+            {
+                await Task.Delay(2000);
+                try { _status = await BillingApi.GetStatusAsync(); } catch (Exception) { }
+                StateHasChanged();
+            }
+            _waitingForPayment = false;
+        }
+    }
+
+    private async Task CheckoutAsync(BillingPlanDto plan) =>
+        await RedirectAsync(() => BillingApi.CreateCheckoutAsync(new CheckoutRequestDto(plan.LookupKey)));
+
+    private async Task OpenPortalAsync() =>
+        await RedirectAsync(BillingApi.CreatePortalAsync);
+
+    private async Task RedirectAsync(Func<Task<ResultWithDataDto<RedirectUrlDto>>> call)
+    {
+        _busy = true;
+        _error = null;
+        try
+        {
+            var result = await call();
+            if (result.IsSuccess)
+            {
+                // Stripe-hosted page; it returns to /suscripcion when done.
+                Navigation.NavigateTo(result.Data.Url, forceLoad: true);
+                return;
+            }
+            _error = ErrorMessages.Translate(result.ErrorCode);
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+        }
+        _busy = false;
+    }
+
+    private static readonly System.Globalization.CultureInfo Es = new("es-ES");
+
+    private static string Money(long cents) => (cents / 100m).ToString("C", Es);
+
+    private static string LocalDate(DateTime utc) => utc.ToLocalTime().ToString("d 'de' MMMM 'de' yyyy", Es);
+
+    private static string LocalDateTime(DateTime utc) => utc.ToLocalTime().ToString("d 'de' MMMM 'a las' HH:mm", Es);
+
+    private static string IntervalName(int months) => months switch
+    {
+        1 => "Mensual",
+        3 => "Trimestral",
+        12 => "Anual",
+        _ => $"{months} meses",
+    };
+
+    private string PlanName(string? lookupKey) =>
+        _plans.FirstOrDefault(p => p.LookupKey == lookupKey) is { } plan
+            ? IntervalName(plan.IntervalMonths).ToLowerInvariant()
+            : "Premium";
+}

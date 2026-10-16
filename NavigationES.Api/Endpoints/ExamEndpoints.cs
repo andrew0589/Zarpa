@@ -17,11 +17,14 @@ namespace NavigationES.Api.Endpoints
                 TypedResults.Ok(await examService.GetExamsAsync(user.GetUserId(), licenseId)));
 
             // Starts (or resumes) the timed simulation of a paper.
+            // Needs the trial or a subscription (SubscriptionEndpointFilter); the calls
+            // below continue an attempt already started, so they stay open.
             app.MapPost("/api/exams/{examId:long}/sessions/start",
                 async (long examId, ClaimsPrincipal user, ExamSessionService sessionService) =>
                     await sessionService.StartAsync(user.GetUserId(), examId) is { } session
                         ? Results.Ok(session)
-                        : Results.BadRequest());
+                        : Results.BadRequest())
+                .AddEndpointFilter<SubscriptionEndpointFilter>();
 
             // Records (or changes) the answer to one question.
             app.MapPost("/api/exams/sessions/{sessionId:long}/answers",

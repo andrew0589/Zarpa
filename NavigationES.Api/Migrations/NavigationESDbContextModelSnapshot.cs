@@ -644,6 +644,53 @@ namespace NavigationES.Api.Migrations
                     b.ToTable("SessionQuestions");
                 });
 
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.SubscriptionEntity", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<bool>("CancelAtPeriodEnd")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CurrentPeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PriceLookupKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("StripeSubscriptionId")
+                        .IsUnique();
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Subscriptions");
+                });
+
             modelBuilder.Entity("NavigationES.Api.Data.Entities.TestSessionEntity", b =>
                 {
                     b.Property<long>("ID")
@@ -895,6 +942,13 @@ namespace NavigationES.Api.Migrations
                     b.Property<long?>("SelectedLicenseID")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("TrialEndsAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.HasIndex("NormalizedEmail")
@@ -903,6 +957,10 @@ namespace NavigationES.Api.Migrations
                     b.HasIndex("SelectedComunidadAutonomaID");
 
                     b.HasIndex("SelectedLicenseID");
+
+                    b.HasIndex("StripeCustomerId")
+                        .IsUnique()
+                        .HasFilter("[StripeCustomerId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -1097,6 +1155,17 @@ namespace NavigationES.Api.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.SubscriptionEntity", b =>
+                {
+                    b.HasOne("NavigationES.Api.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("NavigationES.Api.Data.Entities.TestSessionEntity", b =>

@@ -8,6 +8,9 @@ namespace NavigationES.Api.Endpoints
         {
             app.MapGet("/privacy", () => Results.Content(PrivacyPolicyHtml, "text/html")).AllowAnonymous();
             app.MapGet("/data-deletion", () => Results.Content(DataDeletionHtml, "text/html")).AllowAnonymous();
+            // Linked from Stripe Checkout's consent checkbox (set the same URL as the
+            // Terms of Service URL under Stripe Dashboard → Settings → Public details).
+            app.MapGet("/terms", () => Results.Content(TermsHtml, "text/html")).AllowAnonymous();
 
             return app;
         }
@@ -72,6 +75,10 @@ namespace NavigationES.Api.Endpoints
                         the page. Google's <a href="https://policies.google.com/privacy">Privacy
                         Policy</a> and <a href="https://policies.google.com/terms">Terms of
                         Service</a> apply to that check. The mobile app does not use reCAPTCHA.</li>
+                    <li>Stripe, which processes subscription payments made on the website. Your card
+                        details go directly to Stripe and never reach our servers; we only keep the
+                        subscription's status, plan and renewal date. Stripe's
+                        <a href="https://stripe.com/privacy">Privacy Policy</a> applies.</li>
                     <li>Authorities, only where the law requires it.</li>
                 </ul>
 
@@ -118,7 +125,9 @@ namespace NavigationES.Api.Endpoints
                     <li>Tap <strong>Delete account</strong> and confirm.</li>
                 </ol>
                 <p>This immediately and permanently deletes your account, your study data and your
-                linked sign-in methods (Google, Apple or Facebook).</p>
+                linked sign-in methods (Google, Apple or Facebook), and cancels any active
+                subscription so you are not charged again. Invoices already issued are kept by our
+                payment provider for as long as tax law requires.</p>
 
                 <h2>Option 2 — by email</h2>
                 <p>Send an email to
@@ -132,6 +141,62 @@ namespace NavigationES.Api.Endpoints
                 <em>Settings &rarr; Apps and Websites</em> in your Facebook account.</p>
 
                 <p>See also our <a href="/privacy">Privacy Policy</a>.</p>
+            </body>
+            </html>
+            """;
+
+        private const string TermsHtml = $"""
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Términos y condiciones — NavigationES</title>
+                {PageStyle}
+            </head>
+            <body>
+                <h1>Términos y condiciones</h1>
+                <p class="muted">NavigationES &middot; Última actualización: 1 de octubre de 2026</p>
+
+                <h2>El servicio</h2>
+                <p>NavigationES ofrece tests de práctica y simulacros de examen para preparar las
+                titulaciones náuticas de recreo (PNB, PER, Patrón de Yate y Capitán de Yate), en la web
+                y en las aplicaciones móviles, con la misma cuenta.</p>
+
+                <h2>Prueba gratuita</h2>
+                <p>Cada cuenta nueva tiene acceso completo gratis durante 3 días, sin necesidad de
+                tarjeta. Al terminar la prueba, practicar y hacer simulacros requiere una suscripción.</p>
+
+                <h2>Suscripción</h2>
+                <ul>
+                    <li>La suscripción se contrata en la web y da acceso en todos los dispositivos.</li>
+                    <li>Los planes disponibles (mensual, trimestral y anual) y sus precios, IVA incluido,
+                        se muestran antes del pago.</li>
+                    <li>Se renueva automáticamente al final de cada periodo y se cobra a la tarjeta
+                        indicada, hasta que la canceles.</li>
+                    <li>Puedes cancelarla en cualquier momento desde <em>Mi suscripción</em> en la web. Mantienes
+                        el acceso hasta el final del periodo ya pagado; no se hacen reembolsos de periodos
+                        parciales.</li>
+                    <li>Si cambiamos el precio, te avisaremos por email antes de la siguiente renovación;
+                        el nuevo precio se aplica solo a partir de esa renovación.</li>
+                </ul>
+
+                <h2>Derecho de desistimiento</h2>
+                <p>Al contratar, solicitas el acceso inmediato al contenido digital y aceptas
+                expresamente que, por ello, pierdes el derecho de desistimiento de 14 días previsto en
+                el artículo 103.m) de la Ley General para la Defensa de los Consumidores y Usuarios.</p>
+
+                <h2>Pagos</h2>
+                <p>Los pagos los procesa Stripe. No guardamos los datos de tu tarjeta. Las facturas
+                están disponibles en <em>Mi suscripción</em>.</p>
+
+                <h2>Eliminación de la cuenta</h2>
+                <p>Si eliminas tu cuenta, la suscripción se cancela en ese momento y no se vuelve a
+                cobrar. Consulta las <a href="/data-deletion">instrucciones de eliminación</a> y la
+                <a href="/privacy">política de privacidad</a>.</p>
+
+                <h2>Contacto</h2>
+                <p><a href="mailto:navigationes@gmail.com">navigationes@gmail.com</a></p>
             </body>
             </html>
             """;

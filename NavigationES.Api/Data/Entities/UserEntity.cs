@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NavigationES.Api.Services;
 
 namespace NavigationES.Api.Data.Entities
 {
@@ -67,5 +68,15 @@ namespace NavigationES.Api.Data.Entities
         // When an administrator sent the "your account will be deleted" email. The
         // account may be removed a month later if LastActiveAt has not moved since.
         public DateTime? InactivityWarningSentAt { get; set; }
+
+        // End of the free full-access period every account gets (no card needed).
+        // New accounts start it at creation; accounts that existed when subscriptions
+        // went live got it from the SubscriptionsAndTrial migration. Null = no trial.
+        public DateTime? TrialEndsAt { get; set; } = DateTime.UtcNow.AddDays(BillingService.TrialDays);
+
+        // Set on the first Checkout and reused afterwards, so every subscription and
+        // invoice of the account lives under one Stripe customer.
+        [MaxLength(100)]
+        public string? StripeCustomerId { get; set; }
     }
 }

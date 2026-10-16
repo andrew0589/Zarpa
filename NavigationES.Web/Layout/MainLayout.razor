@@ -5,7 +5,7 @@
 <div class="page">
     <header class="topbar">
         <div class="topbar-inner">
-            <a class="brand" href="/">NavigationES</a>
+            <a class="brand" href="/"><img src="images/logo-white.svg" alt="" width="28" height="28" />NavigationES</a>
             <AuthorizeView>
                 <Authorized>
                     <button class="menu-toggle" aria-label="Menú" @onclick="() => _menuOpen = !_menuOpen">☰</button>
@@ -16,8 +16,9 @@
                         <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
                         <NavLink href="temas">Temas</NavLink>
                         <NavLink href="examen">Examen</NavLink>
-                        <NavLink href="estudiar">Estudiar</NavLink>
+                        @* <NavLink href="estudiar">Estudiar</NavLink> *@
                         <NavLink href="perfil">Perfil</NavLink>
+                        <NavLink href="suscripcion">Suscripción</NavLink>
                         @if (context.User.IsInRole(WebAuthStateProvider.AdminRole))
                         {
                             <NavLink href="admin/usuarios">Usuarios</NavLink>

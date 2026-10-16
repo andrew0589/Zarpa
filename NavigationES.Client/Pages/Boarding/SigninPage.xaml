@@ -74,7 +74,7 @@
                     <input:FormView x:Name="SigninForm" SubmitCommand="{Binding SigninCommand}">
                         <VerticalStackLayout Spacing="0">
 
-                            <!-- Brand: monogram tile + name + tagline -->
+                            <!-- Brand: logo tile + name + tagline -->
                             <Border BackgroundColor="White"
                                     Stroke="{StaticResource Primary}"
                                     StrokeThickness="1.5"
@@ -82,12 +82,11 @@
                                     WidthRequest="76"
                                     HeightRequest="76"
                                     HorizontalOptions="Center">
-                                <Label Text="Z"
-                                       TextColor="{StaticResource Primary}"
-                                       FontSize="40"
-                                       FontAttributes="Bold"
-                                       HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="Center" />
+                                <Image Source="logo_rumbo.png"
+                                       WidthRequest="52"
+                                       HeightRequest="52"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
                             </Border>
                             <Label Text="NavigationES"
                                    TextTransform="Uppercase"

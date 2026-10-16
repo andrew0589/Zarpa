@@ -157,6 +157,10 @@ public static class MauiProgram
         services.AddRefitGeneratedClient<IExamsApi>(refitSettings)
             .ConfigureHttpClient(SetHttpClient);
 
+        // Status only: the app never shows prices or starts a purchase (store rules).
+        services.AddRefitGeneratedClient<IBillingApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
         void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(envService.ApiBaseUrl);
     }
 }

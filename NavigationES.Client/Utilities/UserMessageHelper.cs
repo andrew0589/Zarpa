@@ -23,6 +23,20 @@ namespace NavigationES.Client.Utilities
             await ShowSnackBarAsync("⚠️", Colors.Orange, message);
         }
 
+        // HTTP 402 from the endpoints that start practice or an exam: the trial is over
+        // and the account has no subscription.
+        public static bool IsAccessEnded(Exception ex) =>
+            ex is Refit.ApiException { StatusCode: System.Net.HttpStatusCode.PaymentRequired };
+
+        // Deliberately neutral — no prices, no purchase button, no link to the website:
+        // the App Store and Google Play only allow in-app purchases through their own
+        // billing, so subscriptions are sold on the web and the app merely unlocks.
+        public static Task ShowAccessEndedAsync() =>
+            Shell.Current.DisplayAlertAsync(
+                Resources.Languages.AppResources.AccessEndedTitle,
+                Resources.Languages.AppResources.AccessEndedMessage,
+                "OK");
+
         public static async Task ShowErrorAsync(string message)
         {
             if (DateTime.UtcNow < _suppressErrorsUntil) return;

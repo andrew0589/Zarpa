@@ -200,6 +200,40 @@ cererea trece mai departe și rămân doar limitele pe IP. Refuzurile apar în l
 ca `reCAPTCHA rejected` / `reCAPTCHA failed` (cu scorul). Pragul implicit e 0.5;
 se poate schimba cu `Recaptcha__MinScore`.
 
+**Abonamente (Stripe)** — se vând doar pe site; aplicațiile doar citesc starea:
+
+1. Cont Stripe nou → *Product catalog* → un produs „NavigationES Premium” cu trei prețuri
+   recurente în EUR, *Include tax in price*, cu **lookup key** (în *Advanced*):
+   `premium_monthly` (4 €/lună), `premium_quarterly` (10 € la 3 luni),
+   `premium_yearly` (35 €/an).
+2. *Settings → Business → Business details*: Terms of service URL =
+   `https://navigationes.eu/terminos.html`, Privacy policy URL =
+   `https://navigationes.eu/privacidad.html`. Obligatoriu în live: compose-ul setează
+   `Stripe__TermsUrl`, care cere bifa de consimțământ, iar fără URL-ul din Stripe
+   Checkout-ul pică. Local, fără `Stripe:TermsUrl`, bifa lipsește și se poate testa oricum.
+3. *Settings → Billing → Customer portal*: activează anularea (la sfârșitul perioadei),
+   schimbarea planului între cele trei prețuri, actualizarea cardului și facturile.
+4. *Developers → Webhooks* → endpoint `https://api.navigationes.eu/api/billing/webhook`
+   cu evenimentele `checkout.session.completed`, `customer.subscription.created`,
+   `customer.subscription.updated`, `customer.subscription.deleted`,
+   `customer.subscription.paused`, `customer.subscription.resumed`.
+5. În *Environment*: `STRIPE_SECRET_KEY=sk_live_…`, `STRIPE_WEBHOOK_SECRET=whsec_…`.
+   Opțional `STRIPE_AUTOMATIC_TAX=true`, după ce Stripe Tax e configurat.
+6. Redeploy. `curl https://api.navigationes.eu/api/billing/plans` trebuie să arate
+   cele trei planuri.
+
+**Schimbarea unui preț:** în Stripe creezi un preț nou pe același produs, cu același
+lookup key, și bifezi *Transfer lookup key*. Site-ul îl arată în cel mult 10 minute
+(cache), fără deploy. Abonații existenți rămân pe prețul vechi.
+
+**Proba de 3 zile:** fiecare cont nou are acces complet 3 zile, fără card
+(`Users.TrialEndsAt`). La primul deploy cu migrarea `SubscriptionsAndTrial`, toate
+conturile existente primesc 3 zile din acel moment. Administratorii au mereu acces.
+
+Local: `dotnet user-secrets set Stripe:SecretKey sk_test_…` în `NavigationES.Api`, apoi
+`stripe listen --forward-to http://localhost:7136/api/billing/webhook` și secretul
+`whsec_…` afișat → `Stripe:WebhookSecret`.
+
 ---
 
 ## Update-uri ulterioare

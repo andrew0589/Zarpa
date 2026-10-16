@@ -15,6 +15,7 @@ namespace NavigationES.Client.ViewModels
         ILicensesApi licensesApi,
         IComunidadesApi comunidadesApi,
         IAuthApi authApi,
+        IBillingApi billingApi,
         AuthService authService,
         UserSessionService session,
         SelectedLicenseService selectedLicense) : BaseViewModel
@@ -22,6 +23,7 @@ namespace NavigationES.Client.ViewModels
         private readonly ILicensesApi _licensesApi = licensesApi;
         private readonly IComunidadesApi _comunidadesApi = comunidadesApi;
         private readonly IAuthApi _authApi = authApi;
+        private readonly IBillingApi _billingApi = billingApi;
         private readonly AuthService _authService = authService;
         private readonly UserSessionService _session = session;
         private readonly SelectedLicenseService _selectedLicense = selectedLicense;
@@ -35,6 +37,8 @@ namespace NavigationES.Client.ViewModels
         [ObservableProperty] private string? _userName;
         [ObservableProperty] private string? _userEmail;
         [ObservableProperty] private bool _isEmailVerified;
+        // Trial end / Premium / no access — status only, never a price or a purchase.
+        [ObservableProperty] private string? _accessText;
         [ObservableProperty] private bool _loadFailed;
 
         [ObservableProperty] private bool _confirmingDelete;
@@ -61,6 +65,27 @@ namespace NavigationES.Client.ViewModels
         public bool NotSavingName => !SavingName;
 
         public Task LoadAsync() => LoadCoreAsync(showBusyIndicator: true);
+
+        // A failure here only hides the row; it must not fail the whole profile.
+        private async Task LoadAccessAsync()
+        {
+            try
+            {
+                var status = await _billingApi.GetStatusAsync();
+                AccessText = status.AccessSource switch
+                {
+                    BillingAccess.Admin => AppResources.AccessAdmin,
+                    BillingAccess.Subscription => AppResources.AccessSubscription,
+                    BillingAccess.Trial => string.Format(AppResources.AccessTrialFormat,
+                        status.TrialEndsAt!.Value.ToLocalTime().ToString("d MMM, HH:mm", new System.Globalization.CultureInfo("es-ES"))),
+                    _ => AppResources.AccessNone,
+                };
+            }
+            catch (Exception)
+            {
+                AccessText = null;
+            }
+        }
 
         // Pull-to-refresh: RefreshView shows its own spinner, so the busy overlay stays off.
         [RelayCommand]
@@ -94,6 +119,8 @@ namespace NavigationES.Client.ViewModels
                 UserEmail = user?.Email;
                 IsEmailVerified = user?.IsEmailVerified == true;
                 Initial = InitialOf(user?.Name);
+
+                await LoadAccessAsync();
 
                 // The account's stored selection is the source of truth — it follows the
                 // user across the app and the web (same rule as the Tests tab).

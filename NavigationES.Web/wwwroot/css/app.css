@@ -74,6 +74,9 @@ h1 {
 }
 
 .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: white;
     font-size: 1.2rem;
     font-weight: 700;
@@ -232,6 +235,11 @@ h1 {
     display: flex;
     flex-direction: column;
 }
+
+    .auth-card .auth-logo {
+        align-self: center;
+        margin-bottom: 0.75rem;
+    }
 
     .auth-card label {
         font-size: 0.85rem;
@@ -2162,4 +2170,47 @@ body:has(.admin-card-bleed) {
 .admin-field:disabled {
     opacity: 0.6;
     cursor: default;
+}
+
+/* Suscripción: the three plans side by side, one column on phones. */
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 760px) {
+    .plan-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.plan-card {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.plan-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+.plan-note {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin: 0.3rem 0 1.1rem;
+}
+
+.plan-card .btn-primary {
+    margin-top: auto;
+}
+
+.plan-legal {
+    color: var(--gray-400);
+    font-size: 0.82rem;
+    margin-top: 1rem;
 }

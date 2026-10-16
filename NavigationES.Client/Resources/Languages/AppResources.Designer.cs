@@ -1474,6 +1474,69 @@ namespace NavigationES.Client.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acceso finalizado.
+        /// </summary>
+        internal static string AccessEndedTitle {
+            get {
+                return ResourceManager.GetString("AccessEndedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tu periodo de prueba ha terminado y esta cuenta no tiene acceso activo..
+        /// </summary>
+        internal static string AccessEndedMessage {
+            get {
+                return ResourceManager.GetString("AccessEndedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acceso.
+        /// </summary>
+        internal static string ProfileAccessLabel {
+            get {
+                return ResourceManager.GetString("ProfileAccessLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Administrador.
+        /// </summary>
+        internal static string AccessAdmin {
+            get {
+                return ResourceManager.GetString("AccessAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prueba gratuita hasta el {0}.
+        /// </summary>
+        internal static string AccessTrialFormat {
+            get {
+                return ResourceManager.GetString("AccessTrialFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Premium activo.
+        /// </summary>
+        internal static string AccessSubscription {
+            get {
+                return ResourceManager.GetString("AccessSubscription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sin acceso activo.
+        /// </summary>
+        internal static string AccessNone {
+            get {
+                return ResourceManager.GetString("AccessNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string.
         /// </summary>
         internal static string UnknownError {

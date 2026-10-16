@@ -39,6 +39,10 @@
             <li><strong>Preferencias:</strong> la titulación que preparas y tu comunidad autónoma.</li>
             <li><strong>Datos de estudio:</strong> los tests y simulacros que haces, tus respuestas,
                 los resultados y las estadísticas de progreso que se calculan a partir de ellos.</li>
+            <li><strong>Datos de suscripción:</strong> la fecha de fin de la prueba gratuita, el
+                identificador de cliente en Stripe, el plan contratado, el estado de la suscripción y
+                sus fechas de renovación. Los datos de pago (tarjeta) y, en su caso, la dirección de
+                facturación los recoge y guarda Stripe; nosotros no los recibimos.</li>
             <li><strong>Datos técnicos de uso:</strong> la fecha de tu última actividad y el tipo de
                 cliente (web o aplicación), para gestionar las cuentas inactivas.</li>
             <li><strong>Datos de seguridad:</strong> tu dirección IP, que se usa de forma temporal y
@@ -62,6 +66,12 @@
                         <td>Crear y gestionar tu cuenta, iniciar sesión, guardar tus resultados y
                             mostrarte tu progreso.</td>
                         <td>Ejecución del contrato que aceptas al registrarte (6.1.b).</td>
+                    </tr>
+                    <tr>
+                        <td>Gestionar la prueba gratuita, la suscripción, los cobros y las
+                            facturas.</td>
+                        <td>Ejecución del contrato (6.1.b) y, para conservar las facturas,
+                            obligación legal (6.1.c).</td>
                     </tr>
                     <tr>
                         <td>Enviarte los correos necesarios del servicio (verificación, contraseña,
@@ -98,13 +108,17 @@
                 página; e inicio de sesión con Google si lo eliges. Se aplican la
                 <a href="https://policies.google.com/privacy">Política de privacidad</a> y los
                 <a href="https://policies.google.com/terms">Términos</a> de Google.</li>
+            <li><strong>Stripe</strong> (Stripe Payments Europe, Ltd., Irlanda): procesa los pagos
+                de las suscripciones. Le facilitamos tu nombre y tu correo para crear tu ficha de
+                cliente; los datos de tarjeta los introduces directamente en su página de pago. Se
+                aplica la <a href="https://stripe.com/es/privacy">Política de privacidad de Stripe</a>.</li>
             <li><strong>Apple</strong> y <strong>Meta (Facebook)</strong>: solo si eliges iniciar
                 sesión con ellos.</li>
             <li>Autoridades y organismos públicos, solo cuando lo exija la ley.</li>
         </ul>
 
         <h2>Transferencias internacionales</h2>
-        <p>Google, Apple y Meta pueden tratar datos fuera del Espacio Económico Europeo, en
+        <p>Google, Apple, Meta y Stripe pueden tratar datos fuera del Espacio Económico Europeo, en
         particular en Estados Unidos. Estas empresas están adheridas al Marco de Privacidad de
         Datos UE-EE. UU. y aplican además cláusulas contractuales tipo aprobadas por la Comisión
         Europea.</p>
@@ -116,9 +130,11 @@
                 si no vuelves a acceder en el plazo de un mes, eliminarla.</li>
             <li>Los códigos de verificación caducan a los 15 minutos y los enlaces de restablecimiento
                 de contraseña, a la hora.</li>
-            <li>Cuando eliminas la cuenta, borramos de forma inmediata y definitiva tu cuenta, tus
-                datos de estudio y los inicios de sesión vinculados. Solo conservamos, bloqueados, los
-                datos que una ley nos obligue a guardar.</li>
+            <li>Cuando eliminas la cuenta, cancelamos la suscripción activa y borramos de forma
+                inmediata y definitiva tu cuenta, tus datos de estudio, tu historial de suscripción y
+                los inicios de sesión vinculados.</li>
+            <li>Las facturas y los datos de los pagos se conservan en Stripe durante los plazos que
+                exige la normativa fiscal y mercantil, aunque elimines la cuenta.</li>
         </ul>
 
         <h2>Tus derechos</h2>

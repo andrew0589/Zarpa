@@ -44,6 +44,13 @@ services:
       # (fails open, so signups keep working until the keys exist).
       - Recaptcha__SecretKey=${RECAPTCHA_SECRET_KEY}
 
+      # Subscriptions (Stripe). Blank keys = billing off: no plans or checkout,
+      # webhook 404 — the 3-day trial still runs and still gates the app after it.
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+      - Stripe__TermsUrl=https://navigationes.eu/terminos.html
+      - Stripe__AutomaticTax=${STRIPE_AUTOMATIC_TAX:-false}
+
       - Authentication__Google__ClientId=${GOOGLE_CLIENT_ID}
       - Authentication__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - Authentication__Apple__ServicesId=${APPLE_SERVICES_ID}

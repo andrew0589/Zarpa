@@ -33,13 +33,13 @@
             <ShellContent ContentTemplate="{DataTemplate pages:TestsPage}"
                           Route="TestsPage" />
         </Tab>
-        <Tab Title="{x:Static lang:AppResources.TabStudy}">
+        <!--<Tab Title="{x:Static lang:AppResources.TabStudy}">
             <Tab.Icon>
                 <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.BookOpen}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate pages:StudyPage}"
                           Route="StudyPage" />
-        </Tab>
+        </Tab>-->
         <Tab Title="{x:Static lang:AppResources.TabProfile}">
             <Tab.Icon>
                 <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.User}" />

@@ -8,13 +8,16 @@ namespace NavigationES.Api.Endpoints
     public static class SessionEndpoints
     {
         // Authenticated (fallback policy): sessions belong to the signed-in user.
+        // Starting (or resuming) practice needs the trial or a subscription
+        // (SubscriptionEndpointFilter); answering an open session does not.
         public static IEndpointRouteBuilder MapSessionEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/sessions/topic/start",
                 async (StartTopicPracticeRequestDto request, ClaimsPrincipal user, PracticeSessionService sessionService) =>
                     await sessionService.StartTopicPracticeAsync(user.GetUserId(), request) is { } session
                         ? Results.Ok(session)
-                        : Results.BadRequest());
+                        : Results.BadRequest())
+                .AddEndpointFilter<SubscriptionEndpointFilter>();
 
             app.MapPost("/api/sessions/topic/reset",
                 async (ResetTopicPracticeRequestDto request, ClaimsPrincipal user, PracticeSessionService sessionService) =>

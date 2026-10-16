@@ -12,6 +12,11 @@
 {
     <p class="page-loading">Cargando…</p>
 }
+else if (_paywall)
+{
+    <a class="back-link" href="examen">←&nbsp;Volver a los exámenes</a>
+    <Paywall />
+}
 else if (_loadFailed)
 {
     <a class="back-link" href="examen">←&nbsp;Volver a los exámenes</a>
@@ -245,6 +250,7 @@ else if (_session is not null)
     private bool _showAllResults;
     private bool _loaded;
     private bool _loadFailed;
+    private bool _paywall;
     private bool _finishing;
     private string? _error;
 
@@ -290,6 +296,11 @@ else if (_session is not null)
             _timer = new System.Timers.Timer(1000);
             _timer.Elapsed += (_, _) => _ = InvokeAsync(TickAsync);
             _timer.Start();
+        }
+        catch (Exception ex) when (Paywall.IsPaywall(ex))
+        {
+            _paywall = true;
+            _loadFailed = true;
         }
         catch (Exception)
         {

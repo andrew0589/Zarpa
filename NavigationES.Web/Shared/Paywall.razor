@@ -1,0 +1,14 @@
+@* Shown instead of a test or exam when the API answers 402 (trial over, no
+   subscription). The website is where subscriptions are sold, so it links to them. *@
+
+<div class="completed-card">
+    <p class="completed-text">Tu prueba gratuita ha terminado.</p>
+    <p class="tagline">Suscríbete para seguir practicando con todos los temas y simulacros de examen.</p>
+    <a class="btn-primary btn-link" href="suscripcion">Ver planes</a>
+</div>
+
+@code {
+    // Refit surfaces the 402 as an ApiException; pages call this from their catch.
+    public static bool IsPaywall(Exception ex) =>
+        ex is Refit.ApiException { StatusCode: System.Net.HttpStatusCode.PaymentRequired };
+}

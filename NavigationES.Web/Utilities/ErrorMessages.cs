@@ -38,6 +38,10 @@ namespace NavigationES.Web.Utilities
             [ErrorCodes.ComunidadNotFoundError] = "La comunidad autónoma no existe.",
             [ErrorCodes.ConvocatoriaUrlNotValidError] = "La dirección web no es válida: debe empezar por http:// o https:// (máximo 500 caracteres).",
             [ErrorCodes.ConvocatoriaNotesTooLongError] = "Las notas son demasiado largas (máximo 4000 caracteres).",
+            [ErrorCodes.SubscriptionRequiredError] = "Tu prueba gratuita ha terminado. Suscríbete para seguir practicando.",
+            [ErrorCodes.AlreadySubscribedError] = "Ya tienes una suscripción activa. Puedes gestionarla desde esta página.",
+            [ErrorCodes.PlanNotFoundError] = "Ese plan ya no está disponible. Recarga la página.",
+            [ErrorCodes.BillingUnavailableError] = "Los pagos no están disponibles en este momento. Inténtalo más tarde.",
             [ErrorCodes.UnknownError] = Unknown,
         };
 

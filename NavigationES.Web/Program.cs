@@ -73,5 +73,9 @@ static void ConfigureRefit(IServiceCollection services, string apiBaseUrl)
         .ConfigureHttpClient(SetHttpClient)
         .AddHttpMessageHandler<AuthHeaderHandler>();
 
+    services.AddRefitGeneratedClient<IBillingApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
     void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(apiBaseUrl);
 }
