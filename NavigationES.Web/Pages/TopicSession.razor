@@ -42,7 +42,8 @@ else if (_question is not null)
     </div>
     <div class="progress-track"><div class="progress-fill" style="width: @(ProgressPercent)%"></div></div>
 
-    <div class="question-card">@_question.Text</div>
+    @* TEMPORAL: id de la pregunta (tabla Questions) para localizar errores durante las pruebas. *@
+    <div class="question-card"><span class="debug-id">Q@(_question.Id)</span>@_question.Text</div>
 
     <div class="answer-list">
         @for (var i = 0; i < _question.Answers.Count; i++)

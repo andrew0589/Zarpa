@@ -1150,6 +1150,7 @@ h1 {
 }
 
 .question-card {
+    position: relative;
     background: white;
     border-radius: 16px;
     padding: 1.1rem 1.2rem;
@@ -1157,6 +1158,18 @@ h1 {
     font-size: 1.05rem;
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(16, 42, 67, 0.08);
+}
+
+/* TEMPORAL: id de la pregunta en la esquina, para localizar errores en la BD durante las pruebas. */
+.debug-id {
+    position: absolute;
+    top: 3px;
+    right: 8px;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: #9aa5b1;
+    user-select: all;
+    line-height: 1;
 }
 
 .answer-list {
@@ -1596,6 +1609,7 @@ h1 {
 }
 
 .review-question {
+    position: relative;
     background: white;
     border: 1.5px solid var(--card-border);
     border-radius: 14px;

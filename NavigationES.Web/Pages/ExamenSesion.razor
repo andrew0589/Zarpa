@@ -83,6 +83,7 @@ else if (_result is not null)
     @foreach (var question in reviewQuestions)
     {
         <div class="review-question">
+            <span class="debug-id">E@(question.ExamQuestionId)</span>
             <div class="review-title">
                 <span class="topic-num">@question.Position</span>
                 <span>@question.Text</span>
@@ -128,7 +129,9 @@ else if (_session is not null)
         }
     </div>
 
+    @* TEMPORAL: id de la pregunta (tabla ExamQuestions) para localizar errores durante las pruebas. *@
     <div class="question-card">
+        <span class="debug-id">E@(question.Id)</span>
         <div class="session-progress progress-header">
             <span>Pregunta @question.Position de @_questions.Count</span>
         </div>
