@@ -17,7 +17,7 @@ namespace NavigationES.Api.Services
     // deploy needed. Existing subscribers keep the price they signed up with.
     public class BillingService(NavigationESDbContext context, IConfiguration configuration, IMemoryCache cache, ILogger<BillingService> logger)
     {
-        public const int TrialDays = 3;
+        public const int TrialDays = 7;
 
         // past_due keeps access while Stripe retries the card (Smart Retries); it
         // ends up canceled or unpaid if every retry fails.

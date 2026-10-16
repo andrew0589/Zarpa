@@ -45,7 +45,7 @@ services:
       - Recaptcha__SecretKey=${RECAPTCHA_SECRET_KEY}
 
       # Subscriptions (Stripe). Blank keys = billing off: no plans or checkout,
-      # webhook 404 — the 3-day trial still runs and still gates the app after it.
+      # webhook 404 — the 7-day trial still runs and still gates the app after it.
       - Stripe__SecretKey=${STRIPE_SECRET_KEY}
       - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
       - Stripe__TermsUrl=https://navigationes.eu/terminos.html

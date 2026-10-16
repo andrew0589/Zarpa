@@ -24,10 +24,10 @@ namespace NavigationES.Api.Migrations
                 type: "datetime2",
                 nullable: true);
 
-            // Accounts that exist when subscriptions go live get the same 3-day trial
+            // Accounts that exist when subscriptions go live get the same 7-day trial
             // as new ones, counted from the moment this migration runs (API startup
-            // of the deploy). Keep the 3 in step with BillingService.TrialDays.
-            migrationBuilder.Sql("UPDATE Users SET TrialEndsAt = DATEADD(day, 3, SYSUTCDATETIME())");
+            // of the deploy). Keep the 7 in step with BillingService.TrialDays.
+            migrationBuilder.Sql("UPDATE Users SET TrialEndsAt = DATEADD(day, 7, SYSUTCDATETIME())");
 
             migrationBuilder.CreateTable(
                 name: "Subscriptions",

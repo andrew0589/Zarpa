@@ -226,9 +226,9 @@ se poate schimba cu `Recaptcha__MinScore`.
 lookup key, și bifezi *Transfer lookup key*. Site-ul îl arată în cel mult 10 minute
 (cache), fără deploy. Abonații existenți rămân pe prețul vechi.
 
-**Proba de 3 zile:** fiecare cont nou are acces complet 3 zile, fără card
+**Proba de 7 zile:** fiecare cont nou are acces complet 7 zile, fără card
 (`Users.TrialEndsAt`). La primul deploy cu migrarea `SubscriptionsAndTrial`, toate
-conturile existente primesc 3 zile din acel moment. Administratorii au mereu acces.
+conturile existente primesc 7 zile din acel moment. Administratorii au mereu acces.
 
 Local: `dotnet user-secrets set Stripe:SecretKey sk_test_…` în `NavigationES.Api`, apoi
 `stripe listen --forward-to http://localhost:7136/api/billing/webhook` și secretul
