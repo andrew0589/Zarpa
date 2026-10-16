@@ -34,6 +34,11 @@ namespace NavigationES.Api.Endpoints
                 if (billing.WebhookSecret is not { } secret || !billing.IsConfigured)
                     return Results.NotFound();
 
+                // Stripe.net throws a NullReferenceException (not a StripeException) on a
+                // missing header, so an unsigned request is turned away here.
+                if (string.IsNullOrEmpty(request.Headers["Stripe-Signature"]))
+                    return Results.BadRequest();
+
                 var json = await new StreamReader(request.Body).ReadToEndAsync();
                 Stripe.Event stripeEvent;
                 try

@@ -75,6 +75,9 @@ builder.Services.AddHttpClient<AppleAuthService>();
 builder.Services.AddHttpClient<FacebookAuthService>();
 builder.Services.AddHttpClient<RecaptchaService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+// Trial/subscription access and Stripe (Checkout, Portal, webhook); the billing endpoints
+// and SubscriptionEndpointFilter resolve it from DI.
+builder.Services.AddScoped<BillingService>();
 
 // CORS: only the browser-based client (NavigationES.Web) needs it — native apps are exempt
 // from the same-origin policy. Origins come from config so production can add the
