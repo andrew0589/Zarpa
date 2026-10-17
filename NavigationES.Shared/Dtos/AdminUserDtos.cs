@@ -21,7 +21,27 @@ namespace NavigationES.Shared.Dtos
         // "web", "android", "ios", "windows" or "app" (older app builds).
         string? LastActiveClient,
         // When an administrator sent the inactivity warning email, if ever.
-        DateTime? InactivityWarningSentAt);
+        DateTime? InactivityWarningSentAt,
+        // Paid access, resolved exactly like BillingService.GetStatusAsync: one of
+        // BillingAccess (admin / subscription / trial / none).
+        string AccessSource,
+        DateTime? TrialEndsAt,
+        // The live subscription if any, otherwise the most recent one (history).
+        string? SubscriptionStatus,
+        string? PlanLookupKey,
+        DateTime? CurrentPeriodEnd,
+        bool CancelAtPeriodEnd);
+
+    // ?access= values of the admin Usuarios list.
+    public static class AdminAccessFilter
+    {
+        public const string Subscription = "subscription";
+        public const string Canceling = "canceling";
+        public const string PastDue = "pastdue";
+        public const string Trial = "trial";
+        public const string None = "none";
+        public const string Admin = "admin";
+    }
 
     public record AdminUserListDto(List<AdminUserDto> Items, int TotalCount, int Page, int PageSize);
 }

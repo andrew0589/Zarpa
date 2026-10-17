@@ -27,6 +27,16 @@
                 <option value="inactive">Más inactivos primero</option>
                 <option value="newest">Alta más reciente</option>
                 <option value="name">Nombre</option>
+                <option value="expiring">Acceso que vence antes</option>
+            </select>
+            <select class="admin-select" @bind="_access" @bind:after="ReloadAsync" aria-label="Filtrar por suscripción">
+                <option value="">Todas las cuentas</option>
+                <option value="subscription">Con suscripción</option>
+                <option value="canceling">Cancelada (aún con acceso)</option>
+                <option value="pastdue">Impago</option>
+                <option value="trial">En prueba</option>
+                <option value="none">Sin acceso</option>
+                <option value="admin">Administradores</option>
             </select>
             <button type="submit" class="btn-primary admin-btn" disabled="@_loading">Buscar</button>
         </form>
@@ -58,6 +68,7 @@
                     <thead>
                         <tr>
                             <th>Usuario</th>
+                            <th>Suscripción</th>
                             <th>Acceso</th>
                             <th>Historial</th>
                             <th>Alta</th>
@@ -93,6 +104,14 @@
                                                 <span class="status-chip noapto">Sin verificar</span>
                                             }
                                         </div>
+                                    }
+                                </td>
+                                @{ var sub = Subscription(u); }
+                                <td>
+                                    <span class="status-chip @sub.Css">@sub.Label</span>
+                                    @if (sub.Detail is not null)
+                                    {
+                                        <span class="admin-small admin-block">@sub.Detail</span>
                                     }
                                 </td>
                                 <td class="admin-muted">@Access(u)</td>
@@ -183,6 +202,7 @@
     private string _search = string.Empty;
     private string _appliedSearch = string.Empty;
     private string _order = "recent";
+    private string _access = string.Empty;
     private int _page = 1;
     private string? _message;
     private string? _error;
@@ -201,14 +221,14 @@
         try
         {
             var search = string.IsNullOrWhiteSpace(_search) ? null : _search.Trim();
-            _list = await AdminApi.GetUsersAsync(search, _order, _page);
+            _list = await AdminApi.GetUsersAsync(search, _order, _page, access: Filter);
             _appliedSearch = search ?? string.Empty;
 
             // The page can fall off the end after a deletion or a narrower search.
             if (_list.Items.Count == 0 && _list.Page > 1)
             {
                 _page = Math.Max(1, TotalPages);
-                _list = await AdminApi.GetUsersAsync(search, _order, _page);
+                _list = await AdminApi.GetUsersAsync(search, _order, _page, access: Filter);
             }
         }
         catch (Exception)
@@ -312,6 +332,48 @@
     }
 
     // ----- presentation helpers -----
+
+    private string? Filter => string.IsNullOrEmpty(_access) ? null : _access;
+
+    // The paid-access column: what the user can do now and until when. AccessSource
+    // comes from the API (same rule as the user's own billing status).
+    private static (string Label, string Css, string? Detail) Subscription(AdminUserDto u)
+    {
+        var plan = PlanName(u.PlanLookupKey);
+        var end = FormatDay(u.CurrentPeriodEnd);
+        switch (u.AccessSource)
+        {
+            case BillingAccess.Admin:
+                return ("Admin", "admin", null);
+            case BillingAccess.Subscription when u.SubscriptionStatus == "past_due":
+                return ("Impago", "noapto", $"{plan} · reintentando cobro, periodo hasta el {end}");
+            case BillingAccess.Subscription when u.CancelAtPeriodEnd:
+                return ("Cancelada", "warn", $"{plan} · acceso hasta el {end}");
+            case BillingAccess.Subscription:
+                return ("Activa", "apto", $"{plan} · renueva el {end}");
+            case BillingAccess.Trial:
+                var days = (int)Math.Ceiling((AsUtc(u.TrialEndsAt!.Value) - DateTime.UtcNow).TotalDays);
+                return ("Prueba", "empezado", $"termina el {FormatDay(u.TrialEndsAt)} ({(days == 1 ? "queda 1 día" : $"quedan {days} días")})");
+            default:
+                if (u.SubscriptionStatus == "unpaid")
+                    return ("Impago", "noapto", $"{plan} · sin acceso desde el {end}");
+                if (u.SubscriptionStatus is not null)
+                    return ("Sin acceso", "empezado", $"{plan} · terminó el {end}");
+                return ("Sin acceso", "empezado", u.TrialEndsAt is null ? "sin prueba" : $"prueba terminada el {FormatDay(u.TrialEndsAt)}");
+        }
+    }
+
+    private static string PlanName(string? lookupKey) => lookupKey switch
+    {
+        "premium_monthly" => "Mensual",
+        "premium_quarterly" => "Trimestral",
+        "premium_yearly" => "Anual",
+        null => "Plan",
+        _ => lookupKey,
+    };
+
+    private static string FormatDay(DateTime? utc) =>
+        utc is null ? "—" : AsUtc(utc.Value).ToLocalTime().ToString("dd/MM/yyyy");
 
     private static string Access(AdminUserDto u)
     {

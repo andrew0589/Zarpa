@@ -22,6 +22,7 @@ namespace NavigationES.Api.Services
         public const string OrderInactive = "inactive";
         public const string OrderNewest = "newest";
         public const string OrderName = "name";
+        public const string OrderExpiring = "expiring";
 
         // Month names spelled out here so the email does not depend on ICU data being
         // present in the container (invariant-globalization images have none).
@@ -33,22 +34,56 @@ namespace NavigationES.Api.Services
         private readonly IEmailService _emailService = emailService;
         private readonly IConfiguration _configuration = configuration;
 
-        public async Task<AdminUserListDto> GetUsersAsync(string? search, string? order, int page, int pageSize)
+        public async Task<AdminUserListDto> GetUsersAsync(string? search, string? order, int page, int pageSize, string? access = null)
         {
             page = Math.Max(1, page);
             pageSize = Math.Clamp(pageSize <= 0 ? DefaultPageSize : pageSize, 1, MaxPageSize);
 
             var query = _context.Users.AsNoTracking();
+            var live = BillingService.LiveStatuses;
+            var now = DateTime.UtcNow;
 
             var term = search?.Trim();
             if (!string.IsNullOrEmpty(term))
                 query = query.Where(u => u.Name.Contains(term) || u.Email.Contains(term));
+
+            // Same precedence as BillingService.ResolveAccess: admin, then a live
+            // subscription, then a running trial.
+            query = access switch
+            {
+                AdminAccessFilter.Admin => query.Where(u => u.IsAdmin),
+                AdminAccessFilter.Subscription => query.Where(u => !u.IsAdmin
+                    && _context.Subscriptions.Any(s => s.UserID == u.ID && live.Contains(s.Status))),
+                AdminAccessFilter.Canceling => query.Where(u =>
+                    _context.Subscriptions.Any(s => s.UserID == u.ID && live.Contains(s.Status) && s.CancelAtPeriodEnd)),
+                AdminAccessFilter.PastDue => query.Where(u =>
+                    _context.Subscriptions.Any(s => s.UserID == u.ID && (s.Status == "past_due" || s.Status == "unpaid"))),
+                AdminAccessFilter.Trial => query.Where(u => !u.IsAdmin && u.TrialEndsAt > now
+                    && !_context.Subscriptions.Any(s => s.UserID == u.ID && live.Contains(s.Status))),
+                AdminAccessFilter.None => query.Where(u => !u.IsAdmin && (u.TrialEndsAt == null || u.TrialEndsAt <= now)
+                    && !_context.Subscriptions.Any(s => s.UserID == u.ID && live.Contains(s.Status))),
+                _ => query,
+            };
 
             query = order switch
             {
                 OrderInactive => query.OrderBy(u => u.LastActiveAt).ThenBy(u => u.CreatedAt).ThenBy(u => u.ID),
                 OrderNewest => query.OrderByDescending(u => u.CreatedAt).ThenByDescending(u => u.ID),
                 OrderName => query.OrderBy(u => u.Name).ThenBy(u => u.ID),
+                // Soonest end of access first (live subscription period, otherwise the
+                // trial); accounts with nothing to expire go last.
+                OrderExpiring => query
+                    .Select(u => new
+                    {
+                        User = u,
+                        Ends = _context.Subscriptions
+                            .Where(s => s.UserID == u.ID && live.Contains(s.Status))
+                            .Max(s => s.CurrentPeriodEnd) ?? u.TrialEndsAt,
+                    })
+                    .OrderBy(x => x.Ends == null || x.Ends <= now ? 1 : 0)
+                    .ThenBy(x => x.Ends)
+                    .ThenBy(x => x.User.ID)
+                    .Select(x => x.User),
                 _ => query.OrderByDescending(u => u.LastActiveAt).ThenByDescending(u => u.ID),
             };
 
@@ -74,13 +109,28 @@ namespace NavigationES.Api.Services
                     u.CreatedAt,
                     u.LastActiveAt,
                     u.LastActiveClient,
-                    u.InactivityWarningSentAt
+                    u.InactivityWarningSentAt,
+                    u.TrialEndsAt,
+                    // The live subscription if there is one, otherwise the latest — the
+                    // same pick as BillingService.GetStatusAsync.
+                    Subscription = _context.Subscriptions
+                        .Where(s => s.UserID == u.ID)
+                        .OrderByDescending(s => live.Contains(s.Status))
+                        .ThenByDescending(s => s.UpdatedAt)
+                        .Select(s => new { s.Status, s.PriceLookupKey, s.CurrentPeriodEnd, s.CancelAtPeriodEnd })
+                        .FirstOrDefault()
                 })
                 .ToListAsync();
 
             var items = rows.Select(r => new AdminUserDto(
                 r.ID, r.Name, r.Email, r.IsEmailVerified, r.IsAdmin, r.HasPassword, r.Providers, r.LicenseCode,
-                r.TopicSessions, r.ExamSessions, r.CreatedAt, r.LastActiveAt, r.LastActiveClient, r.InactivityWarningSentAt))
+                r.TopicSessions, r.ExamSessions, r.CreatedAt, r.LastActiveAt, r.LastActiveClient, r.InactivityWarningSentAt,
+                BillingService.ResolveAccess(r.IsAdmin, r.TrialEndsAt, r.Subscription?.Status, now),
+                r.TrialEndsAt,
+                r.Subscription?.Status,
+                r.Subscription?.PriceLookupKey,
+                r.Subscription?.CurrentPeriodEnd,
+                r.Subscription?.CancelAtPeriodEnd ?? false))
                 .ToList();
 
             return new AdminUserListDto(items, total, page, pageSize);

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "NavigationES.Web/NavigationES.Web.csproj", "--no-launch-profile", "--urls", "http://localhost:5200"],
+      "port": 5200
+    }
+  ]
+}

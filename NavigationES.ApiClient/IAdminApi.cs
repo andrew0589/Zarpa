@@ -9,7 +9,7 @@ namespace NavigationES.ApiClient
     {
         // order: recent (default) | inactive | newest | name. Paged, 10 per page.
         [Get("/api/admin/users")]
-        Task<AdminUserListDto> GetUsersAsync(string? search = null, string? order = null, int page = 1, int pageSize = 10);
+        Task<AdminUserListDto> GetUsersAsync(string? search = null, string? order = null, int page = 1, int pageSize = 10, string? access = null);
 
         // Deletes all of the user's topic-practice and exam sessions; the account stays.
         [Post("/api/admin/users/{id}/clear-history")]

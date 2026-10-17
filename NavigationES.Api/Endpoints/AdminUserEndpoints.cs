@@ -14,9 +14,11 @@ namespace NavigationES.Api.Endpoints
                 .AddEndpointFilter<AdminUserEndpointFilter>();
 
             // ?search= matches name or email; ?order= recent (default) | inactive |
-            // newest | name; ?page= (10 per page; a ?pageSize= above 10 is clamped).
-            users.MapGet("", async (string? search, string? order, int? page, int? pageSize, AdminUserService service) =>
-                TypedResults.Ok(await service.GetUsersAsync(search, order, page ?? 1, pageSize ?? AdminUserService.DefaultPageSize)));
+            // newest | name | expiring; ?access= subscription | canceling | pastdue |
+            // trial | none | admin (absent = all); ?page= (10 per page; a ?pageSize=
+            // above 10 is clamped).
+            users.MapGet("", async (string? search, string? order, string? access, int? page, int? pageSize, AdminUserService service) =>
+                TypedResults.Ok(await service.GetUsersAsync(search, order, page ?? 1, pageSize ?? AdminUserService.DefaultPageSize, access)));
 
             users.MapPost("/{id:long}/clear-history", async (long id, AdminUserService service) =>
                 TypedResults.Ok(await service.ClearHistoryAsync(id)));

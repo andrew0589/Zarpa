@@ -21,7 +21,8 @@ namespace NavigationES.Api.Services
 
         // past_due keeps access while Stripe retries the card (Smart Retries); it
         // ends up canceled or unpaid if every retry fails.
-        private static readonly string[] LiveStatuses = ["active", "trialing", "past_due"];
+        // Stripe statuses that still grant access (the admin user list filters on them too).
+        internal static readonly string[] LiveStatuses = ["active", "trialing", "past_due"];
 
         private static readonly string[] DefaultPlans = ["premium_monthly", "premium_quarterly", "premium_yearly"];
         private const string PlansCacheKey = "billing:plans";
