@@ -1,0 +1,28 @@
+{
+	"folder_teme": "C:\\NavigationES Documentation\\Questions\\Topics(teme)",
+	"surse": [
+		"1. Nomenclatura náutica - ok\\1. Nomenclatura Nautica - ok - 27.08.2026.txt",
+		"1. Nomenclatura náutica - ok\\1_Nomenclatura_noi - ok - 27.08.2026.txt",
+		"2. Elementos de amarre y fondeo - ok\\2.Elementos_de_amarre_y_fondeo - ok - 27.08.2026.txt",
+		"3. Seguridad - ok\\3_Seguridad_noi - ok.txt",
+		"4. Legislacion - ok\\4_Legislacion.___OK.txt",
+		"5.Balizamiento - ok\\5_Balizamiento_DE_VERIFICAT - ok.txt",
+		"6.Reglemento(RIPA) - ok\\6_RIPA_DE_VERIFICAT - ok.txt",
+		"7. Maniobra y navegacion - ok\\7_Maniobra_y_navegacion - ok.txt",
+		"8. Emergencias en la mar - ok\\8_Emergencias_en_la_mar - ok.txt",
+		"9. Meteorologia\\9_Meteorologia.txt",
+		"10. Teoria_de_la_navegacion\\10_Teoria_de_la_navegacion - ok.txt",
+		"Patron de Yate\\12.Seguridad en la mar(PY)\\12_Seguridad_en_la_mar_PY.txt",
+		"Patron de Yate\\13. Meteorologia (PY)\\13_Meteorologia_PY.txt",
+		"Patron de Yate\\14. Teoría de navegación (PY)\\14_Teoria_de_navegacion_PY.txt",
+		"Capitan de Yate\\16. Meteorología (CY)\\16_Meteorologia_CY.txt",
+		"Capitan de Yate\\17. Inglés (CY)\\17_Ingles_CY.txt",
+		"Capitan de Yate\\18. Teoría de navegación (CY)\\18_Teoria_de_navegacion_CY.txt"
+	],
+	"ore": ["08:00", "10:00", "12:00", "15:00", "16:00", "20:00"],
+	"rotatie": ["PER", "PNB", "PY", "PER", "CY", "PNB"],
+	"site": "https://navigationes.eu/",
+	"utm": "utm_source=facebook&utm_medium=social&utm_campaign=pregunta_dia",
+	"graph_version": "v23.0",
+	"chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+}

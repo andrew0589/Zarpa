@@ -733,8 +733,10 @@ h1 {
         margin-left: 0;
     }
 
-/* Left column of Perfil: titulación with comunidad stacked beneath it. */
-.perfil-left {
+/* Perfil columns: titulación + comunidad on the left, datos personales + tu
+   examen on the right. */
+.perfil-left,
+.perfil-right {
     display: grid;
     gap: 1.75rem;
 }
@@ -2321,6 +2323,82 @@ body:has(.admin-card-bleed) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Bar between question and explanation (js/ts-splitter.js). Only where the two
+   columns sit side by side; below that they stack and the bar is hidden. */
+.ts-splitter {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .ts-layout {
+        flex-wrap: nowrap;
+        gap: 0;
+    }
+
+    .ts-main {
+        flex: 1 1 0;
+    }
+
+    .ts-aside {
+        flex: 0 0 var(--ts-aside-w, 360px);
+        max-width: calc(100% - 420px);
+    }
+
+    .ts-splitter {
+        display: block;
+        flex: 0 0 1.5rem;
+        align-self: stretch;
+        min-height: 12rem;
+        position: relative;
+        cursor: col-resize;
+        touch-action: none;
+        outline: none;
+    }
+
+        .ts-splitter::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            background: transparent;
+            transition: background 0.15s;
+        }
+
+        .ts-splitter::after {
+            content: "";
+            position: absolute;
+            top: 6rem;
+            left: 50%;
+            width: 6px;
+            height: 2.75rem;
+            transform: translateX(-50%);
+            border-radius: 6px;
+            background: #C9D3E1;
+            transition: background 0.15s;
+        }
+
+        .ts-splitter:hover::before,
+        .ts-splitter:focus-visible::before,
+        .ts-resizing .ts-splitter::before {
+            background: #C9D3E1;
+        }
+
+        .ts-splitter:hover::after,
+        .ts-splitter:focus-visible::after,
+        .ts-resizing .ts-splitter::after {
+            background: var(--primary);
+        }
+}
+
+.ts-resizing {
+    cursor: col-resize;
+    user-select: none;
 }
 
 .ts-card {

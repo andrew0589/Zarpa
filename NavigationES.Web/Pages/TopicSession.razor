@@ -133,6 +133,11 @@ else if (_question is not null)
             }
         </section>
 
+        @* Drag (or arrow keys) to share the width between question and explanation; js/ts-splitter.js. *@
+        <div class="ts-splitter" role="separator" aria-orientation="vertical" aria-label="Ajustar el ancho de la explicación"
+             title="Arrastra para dar más espacio a la pregunta o a la explicación" tabindex="0"
+             aria-valuemin="260"></div>
+
         <aside class="ts-aside">
             @if (_result is not null && HasExplanation && _showExplanation)
             {
