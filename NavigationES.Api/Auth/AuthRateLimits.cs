@@ -17,6 +17,8 @@ namespace NavigationES.Api.Auth
         public const string VerificationCode = "auth-verification-code";
         // signin, resetPassword: password guessing / reset-token probing.
         public const string Signin = "auth-signin";
+        // /api/demo: anonymous mini test, a few database reads per call.
+        public const string PublicDemo = "public-demo";
 
         public static IServiceCollection AddAuthRateLimiting(this IServiceCollection services)
         {
@@ -25,6 +27,7 @@ namespace NavigationES.Api.Auth
                 options.AddPolicy(SendsEmail, http => PerIp(http, permits: 5, window: TimeSpan.FromMinutes(15)));
                 options.AddPolicy(VerificationCode, http => PerIp(http, permits: 10, window: TimeSpan.FromMinutes(15)));
                 options.AddPolicy(Signin, http => PerIp(http, permits: 10, window: TimeSpan.FromMinutes(1)));
+                options.AddPolicy(PublicDemo, http => PerIp(http, permits: 30, window: TimeSpan.FromMinutes(1)));
 
                 // Same body shape as the endpoints' own failures (both ResultDto's
                 // errorMessage and ResultWithDataDto's errorCode carry the code), so a

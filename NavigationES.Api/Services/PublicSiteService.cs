@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NavigationES.Api.Data;
+using NavigationES.Shared.Dtos;
 
 namespace NavigationES.Api.Services
 {
@@ -107,6 +108,64 @@ namespace NavigationES.Api.Services
                 .ToList();
 
             return new SampleExam(exam.Code, exam.Name, exam.Year, exam.Month, exam.Model, sample);
+        }
+
+        // Length of the no-account mini test on /prueba.
+        public const int DemoQuestionCount = 10;
+
+        // The no-account mini test (GET /api/demo). Built only from the topic samples
+        // the /test/{slug} pages already publish, so it exposes nothing new: with a
+        // topic, that topic's sample; otherwise up to ten questions spread over the
+        // qualification's topics, one per topic before any topic gets a second.
+        // Null when the qualification or the topic is unknown.
+        public async Task<DemoTestDto?> GetDemoAsync(string? licenseCode, string? topicSlug)
+        {
+            var code = string.IsNullOrWhiteSpace(licenseCode) ? "PER" : licenseCode.Trim().ToUpperInvariant();
+            var topics = await GetTopicsAsync();
+
+            if (!string.IsNullOrWhiteSpace(topicSlug))
+            {
+                var topic = topics.FirstOrDefault(t => t.Slug == topicSlug.Trim().ToLowerInvariant());
+                if (topic is null)
+                    return null;
+
+                var topicCode = topic.InExams.Any(e => e.LicenseCode == code)
+                    ? code
+                    : topic.InExams.Select(e => e.LicenseCode).FirstOrDefault() ?? code;
+                var sample = await GetTopicSampleAsync(topic.Id);
+                return new DemoTestDto($"Test de {topic.Name}", topicCode, topic.Slug,
+                    Shuffle(sample.Select(q => ToDemo(topic.Name, q))));
+            }
+
+            var ofLicense = topics.Where(t => t.InExams.Any(e => e.LicenseCode == code)).ToList();
+            if (ofLicense.Count == 0)
+                return null;
+
+            var pools = new List<(string Name, List<SampleQuestion> Questions)>();
+            foreach (var t in ofLicense)
+                pools.Add((t.Name, Shuffle(await GetTopicSampleAsync(t.Id))));
+
+            var picked = new List<DemoQuestionDto>();
+            for (var round = 0; picked.Count < DemoQuestionCount && pools.Any(p => p.Questions.Count > round); round++)
+            {
+                foreach (var (name, questions) in Shuffle(pools))
+                {
+                    if (questions.Count > round && picked.Count < DemoQuestionCount)
+                        picked.Add(ToDemo(name, questions[round]));
+                }
+            }
+
+            return new DemoTestDto($"Mini test de {code}", code, null, Shuffle(picked));
+        }
+
+        private static DemoQuestionDto ToDemo(string topic, SampleQuestion q) =>
+            new(topic, q.Text, q.Answers, q.CorrectIndex, q.ImageUrl, q.Explanation, q.ExplanationImageUrl);
+
+        private static List<T> Shuffle<T>(IEnumerable<T> items)
+        {
+            var array = items.ToArray();
+            Random.Shared.Shuffle(array);
+            return [.. array];
         }
 
         // Topics that have enough questions in the bank to make a page worth reading.

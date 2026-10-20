@@ -3151,3 +3151,210 @@ body:has(.admin-card-bleed) {
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
+
+/* Landing: "Prueba cómo se estudia aquí" — text and a still of the question
+   screen, both leading to /prueba. */
+.landing-try {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 2rem;
+    margin: 0 0 2.5rem;
+    padding: 1.75rem;
+    border-radius: 20px;
+    background: #EAF4F4;
+}
+
+.landing-try-text h2 {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin: 0.3rem 0 0.6rem;
+}
+
+.landing-try-text p {
+    color: var(--gray-600);
+    line-height: 1.55;
+    margin: 0 0 1.25rem;
+}
+
+.landing-try-kicker {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #1E6B67;
+}
+
+.landing-try-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: white;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 10px 30px rgba(16, 42, 67, 0.08);
+    color: var(--gray-800, #1F2933);
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+    .landing-try-preview:hover {
+        transform: translateY(-2px);
+    }
+
+.landing-try-q {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.2rem;
+}
+
+.landing-try-a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 0.92rem;
+}
+
+    .landing-try-a b {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 7px;
+        background: #EEF2F8;
+        color: var(--primary);
+        font-size: 0.8rem;
+        flex: none;
+    }
+
+    .landing-try-a i {
+        margin-left: auto;
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    .landing-try-a.correct {
+        border-color: #2AA5A0;
+        background: #E6F5F4;
+    }
+
+        .landing-try-a.correct b {
+            background: #2AA5A0;
+            color: white;
+        }
+
+    .landing-try-a.dim {
+        opacity: 0.5;
+    }
+
+.landing-try-verdict {
+    margin-top: 0.3rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1E6B67;
+}
+
+@media (max-width: 760px) {
+    .landing-try {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+        gap: 1.25rem;
+    }
+}
+
+/* /prueba — the no-account mini test (Prueba.razor) on the ts-* question screen. */
+.prueba-licenses {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.prueba-license {
+    border: 1.5px solid var(--card-border);
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 99px;
+    cursor: pointer;
+}
+
+    .prueba-license.selected {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+.prueba-topic {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #1E6B67;
+    margin-bottom: -0.6rem;
+}
+
+.prueba-question-image {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    align-self: center;
+    border-radius: 10px;
+}
+
+.prueba-aside-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #EAF4F4;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+    .prueba-aside-cta strong {
+        color: var(--primary);
+    }
+
+    .prueba-aside-cta a {
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+.prueba-result {
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.prueba-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem;
+    border-radius: 14px;
+    background: #EAF4F4;
+    line-height: 1.5;
+}
+
+    .prueba-cta strong {
+        color: var(--primary);
+    }
+
+.prueba-link {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Guest topbar on phones: no room for three items; the landing has the same link. */
+@media (max-width: 520px) {
+    .topbar-try {
+        display: none;
+    }
+}

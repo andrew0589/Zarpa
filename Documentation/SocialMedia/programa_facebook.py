@@ -132,14 +132,34 @@ def programeaza(cfg, maxim):
     print(f"{facute} programadas, {len(coada) - facute} siguen en coada.json")
 
 
+def publica_acum(cfg):
+    """Publica ya la primera de coada.json (para probar cómo se ve); su hora queda libre en la cola."""
+    page, token = credentiale()
+    coada = json.loads(COADA.read_text(encoding="utf-8")) if COADA.exists() else []
+    if not coada:
+        sys.exit("coada.json está vacía")
+    publicate = json.loads(PUBLICATE.read_text(encoding="utf-8")) if PUBLICATE.exists() else []
+    x = coada[0]
+    date, tip = multipart({"caption": x["descriere"], "access_token": token}, AICI / x["imagine"])
+    r = cere(f"{graph(cfg)}/{page}/photos", date, tip)
+    x["fb_id"] = r.get("post_id") or r.get("id")
+    x["status"] = "publicat"
+    x["ora"] = dt.datetime.now().replace(microsecond=0).isoformat()
+    publicate.append(x)
+    COADA.write_text(json.dumps(coada[1:], ensure_ascii=False, indent=1), encoding="utf-8")
+    PUBLICATE.write_text(json.dumps(publicate, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"Publicada: https://www.facebook.com/{x['fb_id']}")
+
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("comanda", choices=["verifica", "programeaza", "lista"])
+    p.add_argument("comanda", choices=["verifica", "programeaza", "lista", "publica-acum"])
     p.add_argument("--max", type=int)
     a = p.parse_args()
     cfg = json.loads((AICI / "config.json").read_text(encoding="utf-8"))
     {"verifica": lambda: verifica(cfg), "lista": lambda: lista(cfg),
-     "programeaza": lambda: programeaza(cfg, a.max)}[a.comanda]()
+     "programeaza": lambda: programeaza(cfg, a.max),
+     "publica-acum": lambda: publica_acum(cfg)}[a.comanda]()
 
 
 if __name__ == "__main__":

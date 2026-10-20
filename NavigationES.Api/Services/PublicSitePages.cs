@@ -147,6 +147,8 @@ namespace NavigationES.Api.Services
                 <p class="muted">Las fechas proceden de los calendarios oficiales de cada comunidad; confirma siempre plazos y
                 sedes en la web de la convocatoria.</p>
 
+                {TryIt("/prueba", "Prueba un mini test de 10 preguntas sin registrarte")}
+
                 {TopicLinks(topics)}
 
                 <h2>Preguntas frecuentes</h2>
@@ -207,6 +209,7 @@ namespace NavigationES.Api.Services
                 sb.Append($"<h2>Preguntas del examen de {E(sample.LicenseCode)} de {FormatSitting(sample.Year, sample.Month)}{model}</h2>");
                 sb.Append($"<p>Algunas preguntas del último examen oficial de {E(sample.LicenseName)} en {E(c.Name)}. Pulsa en cada una para ver la respuesta correcta.</p>");
                 sb.Append(QuestionsHtml(sample.Questions));
+                sb.Append(TryIt($"/prueba?licencia={Uri.EscapeDataString(sample.LicenseCode)}", $"Haz un mini test de {sample.LicenseCode} sin registrarte"));
             }
 
             sb.Append(Cta(c.ExamCount > 0
@@ -257,6 +260,7 @@ namespace NavigationES.Api.Services
             {
                 sb.Append($"<h2>Preguntas de ejemplo</h2><p>Pulsa en cada pregunta para ver la respuesta correcta y la explicación.</p>");
                 sb.Append(QuestionsHtml(sample));
+                sb.Append(TryIt($"/prueba?tema={t.Slug}", "Haz este test con corrección al momento, sin registrarte"));
             }
 
             sb.Append(Cta($"Practica las {t.QuestionCount} preguntas de {t.Name}"));
@@ -339,6 +343,11 @@ namespace NavigationES.Api.Services
                 <a class="button" href="/signup">Crear cuenta</a>
             </div>
             """;
+
+        // Link to the web's no-account mini test (/prueba, a Blazor page). Plain link
+        // under the crawlable content, which stays as it is.
+        private static string TryIt(string href, string text) =>
+            $"<p class=\"try\"><a class=\"button secondary\" href=\"{E(href)}\">{E(text)} →</a></p>";
 
         private static string FaqHtml(IEnumerable<(string Q, string A)> faq) =>
             string.Concat(faq.Select(f => $"<h3>{E(f.Q)}</h3><p>{E(f.A)}</p>"));
@@ -424,6 +433,8 @@ namespace NavigationES.Api.Services
                 summary { cursor: pointer; color: var(--brand); font-weight: 600; }
                 .correct { margin: 8px 0; }
                 img { max-width: 100%; height: auto; display: block; margin: 8px 0; }
+                .try { margin: 16px 0 24px; }
+                .button.secondary { background: #FFFFFF; color: var(--brand); border: 1.5px solid var(--brand); }
                 .cta { margin: 32px 0; padding: 20px; border-radius: 12px; background: var(--soft); text-align: center; }
                 .cta p { font-size: 1.1em; font-weight: 600; margin-top: 0; }
                 .button { display: inline-block; padding: 10px 20px; border-radius: 8px; background: var(--brand); color: #FFFFFF;

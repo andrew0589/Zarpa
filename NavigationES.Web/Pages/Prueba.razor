@@ -1,0 +1,346 @@
+@page "/prueba"
+@using NavigationES.Shared.Dtos
+@inject IDemoApi DemoApi
+@inject ApiOptions Api
+
+@* The no-account mini test: what a visitor gets before signing up. Same question
+   screen as TopicSession (ts-* classes, keys 1–4 / Intro / E, the draggable bar),
+   but the questions come from GET /api/demo — the samples the public /test pages
+   already show — and are checked here, with nothing saved. ?licencia=PER|PNB|PY|CY
+   picks the qualification, ?tema={slug} one topic (links from the /test pages).
+   noindex: the crawlable copy of these questions is /test/{slug}. *@
+
+<PageTitle>Prueba un test gratis — NavigationES</PageTitle>
+<HeadContent>
+    <meta name="robots" content="noindex" />
+</HeadContent>
+
+<div class="ts-page" @ref="_pageRef" tabindex="-1" @onkeydown="OnKeyDown">
+<a class="back-link" href="">←&nbsp;Volver a Inicio</a>
+
+@if (_loadFailed)
+{
+    <h1>Prueba un test gratis</h1>
+    <p class="error" role="alert">No hemos podido cargar las preguntas. Por favor, inténtalo de nuevo en un momento.</p>
+    <button class="btn-primary" @onclick="LoadAsync">Reintentar</button>
+}
+else if (_test is null)
+{
+    <h1>Prueba un test gratis</h1>
+    <p class="page-loading">Cargando…</p>
+}
+else if (_finished)
+{
+    <h1>@_test.Title</h1>
+    <div class="completed-card prueba-result">
+        <span class="completed-check">✓</span>
+        <p class="completed-text">@_correct de @_test.Questions.Count correctas</p>
+        <p class="tagline">@ResultText</p>
+        <div class="prueba-cta">
+            <strong>¿Te ha gustado? Esto es solo una muestra.</strong>
+            <span>Con tu cuenta tienes todos los exámenes oficiales de tu comunidad, el temario completo por temas y el repaso de tus fallos, con tu progreso guardado.</span>
+        </div>
+        <a class="btn-primary btn-link" href="signup">Crear cuenta · 3 días gratis</a>
+        <button class="btn-outline-dark" @onclick="LoadAsync">Otro test</button>
+        <a class="prueba-link" href="examenes" target="_top">Ver exámenes por comunidad</a>
+    </div>
+}
+else if (_test.Questions.Count == 0)
+{
+    <h1>@_test.Title</h1>
+    <p class="tagline">Todavía no hay preguntas de muestra para esta titulación.</p>
+}
+else
+{
+    var question = _test.Questions[_index];
+    <div class="ts-header">
+        <div class="ts-header-main">
+            <div class="ts-header-line">
+                <h1 class="ts-title">@_test.Title</h1>
+                <span class="ts-count">Pregunta @(_index + 1) de @_test.Questions.Count</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width: @(ProgressPercent)%"></div></div>
+        </div>
+        @if (_test.TopicSlug is null)
+        {
+            <div class="prueba-licenses" role="group" aria-label="Titulación">
+                @foreach (var lic in Licenses)
+                {
+                    <button class="prueba-license @(lic == _test.LicenseCode ? "selected" : null)"
+                            aria-pressed="@(lic == _test.LicenseCode)" @onclick="() => SwitchLicenseAsync(lic)">@lic</button>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="ts-layout">
+        <section class="ts-main">
+            <div class="ts-card">
+                <span class="prueba-topic">@question.Topic</span>
+                <p class="ts-question">@question.Text</p>
+                @if (ImageUrl(question.ImageUrl) is { } questionImage)
+                {
+                    <img class="prueba-question-image" src="@questionImage" alt="Imagen de la pregunta" />
+                }
+
+                <div class="ts-answers">
+                    @for (var i = 0; i < question.Answers.Length; i++)
+                    {
+                        var number = i + 1;
+                        var state = AnswerClass(question, number);
+                        <button class="ts-answer @state @(_chosen is not null && state is null ? "dim" : null)"
+                                disabled="@(_chosen is not null)"
+                                @onpointerdown="e => _pointerDownY = e.ClientY"
+                                @onclick="e => AnswerIfTap(number, e)">
+                            <span class="ts-letter">@((char)('A' + i))</span>
+                            <span class="ts-answer-text">@question.Answers[i]</span>
+                            @if (state == "correct")
+                            {
+                                <svg class="ts-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Respuesta correcta"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                            }
+                            else if (state == "wrong")
+                            {
+                                <svg class="ts-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" role="img" aria-label="Tu respuesta, incorrecta"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                            }
+                        </button>
+                    }
+                </div>
+
+                @if (_chosen is null)
+                {
+                    <p class="ts-hint">Pulsa una respuesta o usa las teclas 1–@question.Answers.Length.</p>
+                }
+            </div>
+
+            @if (_chosen is not null)
+            {
+                var ok = _chosen == question.CorrectIndex;
+                <div class="ts-verdict @(ok ? "ok" : "ko")" role="status">
+                    <strong class="ts-verdict-title">@(ok ? "¡Correcto!" : $"Casi: la correcta es la {(char)('A' + question.CorrectIndex - 1)}")</strong>
+                    <div class="ts-verdict-actions">
+                        <button class="btn-primary ts-next" @ref="_nextRef" @onclick="Next">
+                            @(_index + 1 == _test.Questions.Count ? "Ver resultado" : "Siguiente pregunta")
+                        </button>
+                        @if (HasExplanation(question))
+                        {
+                            <button class="ts-secondary" @onclick="() => _showExplanation = !_showExplanation">
+                                @(_showExplanation ? "Ocultar explicación" : "Ver explicación")
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+
+        <div class="ts-splitter" role="separator" aria-orientation="vertical" aria-label="Ajustar el ancho de la explicación"
+             title="Arrastra para dar más espacio a la pregunta o a la explicación" tabindex="0"
+             aria-valuemin="260"></div>
+
+        <aside class="ts-aside">
+            @if (_chosen is not null && HasExplanation(question) && _showExplanation)
+            {
+                <div class="ts-explanation">
+                    @if (ImageUrl(question.ExplanationImageUrl) is { } explanationImage)
+                    {
+                        <button class="ts-image-btn" title="Ver a pantalla completa" @onclick="() => _fullscreenImage = explanationImage">
+                            <img src="@explanationImage" alt="Imagen de la explicación" />
+                        </button>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(question.Explanation))
+                    {
+                        <div class="ts-explanation-body">
+                            <h2 class="ts-explanation-title">Por qué</h2>
+                            <div class="explanation-text">@((MarkupString)question.Explanation)</div>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="prueba-aside-cta">
+                <strong>Estás probando sin cuenta</strong>
+                <span>Tus respuestas no se guardan. Crea tu cuenta para guardar tu progreso y practicar con los exámenes oficiales.</span>
+                <a href="signup">Crear cuenta gratis →</a>
+            </div>
+            <div class="ts-shortcuts">
+                <strong>Atajos</strong>
+                <span><kbd>1</kbd>–<kbd>4</kbd> responder · <kbd>Intro</kbd> siguiente · <kbd>E</kbd> explicación</span>
+            </div>
+        </aside>
+    </div>
+}
+</div>
+
+@if (_fullscreenImage is not null)
+{
+    @* Fullscreen viewer: any click closes it. *@
+    <div class="lightbox" @onclick="() => _fullscreenImage = null">
+        <img src="@_fullscreenImage" alt="Explicación" />
+        <button class="lightbox-close" aria-label="Cerrar">✕</button>
+    </div>
+}
+
+@code {
+    private static readonly string[] Licenses = ["PNB", "PER", "PY", "CY"];
+
+    [SupplyParameterFromQuery(Name = "licencia")]
+    public string? Licencia { get; set; }
+
+    [SupplyParameterFromQuery(Name = "tema")]
+    public string? Tema { get; set; }
+
+    private DemoTestDto? _test;
+    private bool _loadFailed;
+    private int _index;
+    private int? _chosen;
+    private int _correct;
+    private bool _finished;
+    private bool _showExplanation;
+    private string? _fullscreenImage;
+    private double _pointerDownY;
+
+    private ElementReference _pageRef;
+    private ElementReference _nextRef;
+    private bool _focusPage = true;
+    private bool _focusNext;
+
+    private int ProgressPercent =>
+        _test is null || _test.Questions.Count == 0 ? 0 : (int)Math.Round(100.0 * (_index + (_chosen is null ? 0 : 1)) / _test.Questions.Count);
+
+    private string ResultText
+    {
+        get
+        {
+            var total = _test?.Questions.Count ?? 0;
+            if (total == 0) return "";
+            var share = (double)_correct / total;
+            return share >= 0.8 ? "¡Muy bien! Vas por buen camino."
+                : share >= 0.5 ? "No está mal: con práctica lo tendrás."
+                : "Toca repasar: para eso estamos.";
+        }
+    }
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _test = null;
+        _loadFailed = false;
+        _index = 0;
+        _chosen = null;
+        _correct = 0;
+        _finished = false;
+        try
+        {
+            _test = await DemoApi.GetDemoAsync(Licencia, Tema);
+            _focusPage = true;
+        }
+        catch (Exception) when (!string.IsNullOrWhiteSpace(Tema) || !string.IsNullOrWhiteSpace(Licencia))
+        {
+            // Unknown topic or qualification in the link: fall back to the general mini test.
+            try
+            {
+                _test = await DemoApi.GetDemoAsync();
+            }
+            catch (Exception)
+            {
+                _loadFailed = true;
+            }
+        }
+        catch (Exception)
+        {
+            _loadFailed = true;
+        }
+    }
+
+    private async Task SwitchLicenseAsync(string code)
+    {
+        if (code == _test?.LicenseCode) return;
+        Licencia = code;
+        Tema = null;
+        await LoadAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (_focusNext)
+            {
+                _focusNext = false;
+                await _nextRef.FocusAsync();
+            }
+            else if (_focusPage && _test is not null)
+            {
+                _focusPage = false;
+                await _pageRef.FocusAsync(preventScroll: true);
+            }
+        }
+        catch (Exception)
+        {
+            // An element that left the DOM in the meantime — nothing to focus.
+        }
+    }
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (_test is null || _finished || _fullscreenImage is not null || _test.Questions.Count == 0) return;
+        var question = _test.Questions[_index];
+
+        if (_chosen is null && e.Key.Length == 1 && char.IsDigit(e.Key[0]))
+        {
+            var number = e.Key[0] - '0';
+            if (number >= 1 && number <= question.Answers.Length)
+                Answer(number);
+        }
+        else if (_chosen is not null && (e.Key == "e" || e.Key == "E") && HasExplanation(question))
+        {
+            _showExplanation = !_showExplanation;
+        }
+    }
+
+    // A finger that moved vertically between touch and release was scrolling.
+    private void AnswerIfTap(int number, MouseEventArgs e)
+    {
+        if (Math.Abs(e.ClientY - _pointerDownY) > 12) return;
+        Answer(number);
+    }
+
+    private void Answer(int number)
+    {
+        if (_chosen is not null || _test is null) return;
+        _chosen = number;
+        if (number == _test.Questions[_index].CorrectIndex) _correct++;
+        _showExplanation = true;
+        _focusNext = true;
+    }
+
+    private void Next()
+    {
+        if (_test is null) return;
+        if (_index + 1 >= _test.Questions.Count)
+        {
+            _finished = true;
+            return;
+        }
+        _index++;
+        _chosen = null;
+        _showExplanation = false;
+        _focusPage = true;
+    }
+
+    private string? AnswerClass(DemoQuestionDto question, int number)
+    {
+        if (_chosen is null) return null;
+        if (number == question.CorrectIndex) return "correct";
+        if (number == _chosen) return "wrong";
+        return null;
+    }
+
+    private bool HasExplanation(DemoQuestionDto question) =>
+        !string.IsNullOrWhiteSpace(question.Explanation) || ImageUrl(question.ExplanationImageUrl) is not null;
+
+    // Relative paths ("images/questions/x.png") live on the API, like in TopicSession.
+    private string? ImageUrl(string? path) =>
+        string.IsNullOrWhiteSpace(path)
+            ? null
+            : Uri.IsWellFormedUriString(path, UriKind.Absolute) ? path : Api.Url(path);
+}

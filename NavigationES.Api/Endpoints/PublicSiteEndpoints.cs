@@ -1,3 +1,4 @@
+using NavigationES.Api.Auth;
 using NavigationES.Api.Services;
 
 namespace NavigationES.Api.Endpoints
@@ -47,6 +48,13 @@ namespace NavigationES.Api.Endpoints
                 var sample = await service.GetTopicSampleAsync(topic.Id);
                 return Html(http, PublicSitePages.Topic(Origin(config), topic, sample, topics));
             }).AllowAnonymous();
+
+            // The no-account mini test on the web's /prueba page (JSON, not a crawlable
+            // page: random on every call, so never cached).
+            app.MapGet("/api/demo", async (string? licencia, string? tema, PublicSiteService service) =>
+                await service.GetDemoAsync(licencia, tema) is { } demo ? Results.Ok(demo) : Results.NotFound())
+                .AllowAnonymous()
+                .RequireRateLimiting(AuthRateLimits.PublicDemo);
 
             app.MapMethods("/sitemap.xml", GetOrHead, async (HttpContext http, PublicSiteService service, IConfiguration config) =>
             {
