@@ -19,6 +19,13 @@ namespace NavigationES.Api.Services
         private readonly ILicenseRepository _licenseRepository = licenseRepository;
         private readonly ISessionRepository _sessionRepository = sessionRepository;
 
+        // "Mini test": questions per session.
+        public const int QuickTestSize = 10;
+
+        // "Repasar mis fallos": at most this many per session, so a long list is
+        // worked off in sittings; the next start plans the rest.
+        public const int ReviewBatchSize = 25;
+
         public async Task<PracticeSessionDto?> StartTopicPracticeAsync(long userId, StartTopicPracticeRequestDto request)
         {
             var topics = await _topicRepository.GetByNumberAsync();
@@ -86,6 +93,67 @@ namespace NavigationES.Api.Services
             return new PracticeSessionDto(session.ID, plannedIds.Count, answeredIds.Count, remaining);
         }
 
+        // "Repasar mis fallos" (Review) and "Mini test" (Quick): sessions over every topic
+        // of the license. An unfinished one is resumed, like a topic session. Review
+        // plans the questions whose latest answer was wrong (null when there are none);
+        // Quick plans QuickTestSize random questions. Answers count towards topic
+        // progress like any other: progress reads each question's latest answer.
+        public async Task<PracticeSessionDto?> StartLicensePracticeAsync(long userId, long licenseId, TestMode mode)
+        {
+            if (mode is not (TestMode.Review or TestMode.Quick))
+                return null;
+
+            var topicIds = await _licenseRepository.GetTopicIdsAsync(licenseId);
+            if (topicIds.Count == 0)
+                return null;
+
+            var session = await _sessionRepository.FindOpenLicenseSessionAsync(userId, licenseId, mode);
+            var plannedIds = new HashSet<long>();
+            var answeredIds = new HashSet<long>();
+
+            if (session is not null)
+            {
+                plannedIds = await _sessionRepository.GetPlannedQuestionIdsAsync(session.ID);
+                answeredIds = await _sessionRepository.GetAnsweredQuestionIdsAsync(session.ID);
+                if (plannedIds.All(answeredIds.Contains))
+                {
+                    session.FinishedAt = DateTime.UtcNow;
+                    session = null;
+                }
+            }
+
+            if (session is null)
+            {
+                List<long> ids = mode == TestMode.Review
+                    ? [.. (await _sessionRepository.GetLatestFailedQuestionIdsAsync(userId, topicIds)).Order().Take(ReviewBatchSize)]
+                    : await _questionRepository.GetRandomActiveIdsAsync(topicIds, QuickTestSize);
+                if (ids.Count == 0)
+                {
+                    await _sessionRepository.SaveChangesAsync();
+                    return null;
+                }
+
+                plannedIds = [.. ids];
+                answeredIds = [];
+                session = new TestSessionEntity { UserID = userId, LicenseID = licenseId, Mode = mode };
+                _sessionRepository.AddSession(session);
+                _sessionRepository.AddPlannedQuestions(session, plannedIds);
+            }
+
+            await _sessionRepository.SaveChangesAsync();
+
+            var remainingIds = plannedIds.Where(id => !answeredIds.Contains(id)).ToList();
+            var questions = await _questionRepository.GetActiveByIdsAsync(remainingIds);
+            var remaining = questions
+                .Select(q => new SessionQuestionDto(
+                    q.ID,
+                    q.Text,
+                    [.. q.Answers.OrderBy(a => a.Order).Select(a => new SessionAnswerOptionDto(a.ID, a.Text))]))
+                .ToList();
+
+            return new PracticeSessionDto(session.ID, plannedIds.Count, answeredIds.Count, remaining);
+        }
+
         // Deletes the user's whole TopicPractice history for the topic, so the next
         // start plans the full question set again instead of the retry subset.
         public async Task<bool> ResetTopicPracticeAsync(long userId, ResetTopicPracticeRequestDto request)
@@ -105,7 +173,7 @@ namespace NavigationES.Api.Services
         public async Task<SubmitAnswerResultDto?> SubmitAnswerAsync(long userId, long sessionId, SubmitAnswerRequestDto request)
         {
             var session = await _sessionRepository.FindByIdAsync(sessionId, userId);
-            if (session is null || session.TopicID is null)
+            if (session is null || session.Mode is not (TestMode.TopicPractice or TestMode.Review or TestMode.Quick))
                 return null;
 
             var question = await _questionRepository.FindActiveWithAnswersAsync(request.QuestionId);

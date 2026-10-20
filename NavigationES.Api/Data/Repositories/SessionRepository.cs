@@ -63,6 +63,43 @@ namespace NavigationES.Api.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<long>> GetLatestFailedQuestionIdsAsync(long userId, IReadOnlyCollection<long> topicIds)
+        {
+            var latestAnswerIds = _context.SessionAnswers
+                .Where(sa => sa.Session.UserID == userId
+                    && topicIds.Contains(sa.Question.TopicID)
+                    && sa.Question.IsActive)
+                .GroupBy(sa => sa.QuestionID)
+                .Select(g => g.Max(sa => sa.ID));
+
+            return await _context.SessionAnswers
+                .Where(sa => latestAnswerIds.Contains(sa.ID) && !sa.IsCorrect)
+                .Select(sa => sa.QuestionID)
+                .ToListAsync();
+        }
+
+        public async Task<TestSessionEntity?> FindOpenLicenseSessionAsync(long userId, long licenseId, TestMode mode)
+        {
+            return await _context.TestSessions
+                .Where(s => s.UserID == userId
+                    && s.Mode == mode
+                    && s.LicenseID == licenseId
+                    && s.FinishedAt == null)
+                .OrderByDescending(s => s.ID)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<TestSessionEntity?> FindLatestTopicSessionAsync(long userId, long licenseId)
+        {
+            return await _context.TestSessions
+                .Include(s => s.Topic)
+                .Where(s => s.UserID == userId
+                    && s.Mode == TestMode.TopicPractice
+                    && s.LicenseID == licenseId)
+                .OrderByDescending(s => s.ID)
+                .FirstOrDefaultAsync();
+        }
+
         public void AddPlannedQuestions(TestSessionEntity session, IEnumerable<long> questionIds)
         {
             foreach (var questionId in questionIds)

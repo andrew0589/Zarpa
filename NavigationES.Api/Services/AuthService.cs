@@ -483,6 +483,27 @@ namespace NavigationES.Api.Services
             }
         }
 
+        public async Task<DateOnly?> GetExamDateAsync(long userId) =>
+            await _context.Users.Where(u => u.ID == userId).Select(u => u.ExamDate).FirstOrDefaultAsync();
+
+        // The user's own exam sitting; null clears it. A date in the past year is
+        // accepted (correcting a sitting just taken), anything further back or more
+        // than three years ahead is a typo.
+        public async Task<ResultDto> UpdateExamDateAsync(long userId, DateOnly? date)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            if (date is { } d && (d < today.AddYears(-1) || d > today.AddYears(3)))
+                return ResultDto.Failure(ErrorCodes.ExamDateNotValidError);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == userId);
+            if (user is null)
+                return ResultDto.Failure(ErrorCodes.UserDoesNotExist);
+
+            user.ExamDate = date;
+            await _context.SaveChangesAsync();
+            return ResultDto.Success();
+        }
+
         // Permanently removes the account. The database cascades take everything
         // derived from it: UserLogins, PasswordResetTokens, TestSessions and — through
         // the sessions — SessionQuestions, SessionAnswers and ExamSessionAnswers.

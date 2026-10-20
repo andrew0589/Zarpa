@@ -57,6 +57,13 @@ namespace NavigationES.Api.Endpoints
             app.MapPut("/api/account/name", async (UpdateNameRequestDto dto, ClaimsPrincipal principal, AuthService authService) =>
                 TypedResults.Ok(await authService.UpdateNameAsync(principal.GetUserId(), dto)));
 
+            // The signed-in user's own exam date (shown on Inicio; null = not set).
+            app.MapGet("/api/account/exam-date", async (ClaimsPrincipal principal, AuthService authService) =>
+                TypedResults.Ok(new ExamDateDto(await authService.GetExamDateAsync(principal.GetUserId()))));
+
+            app.MapPut("/api/account/exam-date", async (ExamDateDto dto, ClaimsPrincipal principal, AuthService authService) =>
+                TypedResults.Ok(await authService.UpdateExamDateAsync(principal.GetUserId(), dto.Date)));
+
             // Opened in the system browser by WebAuthenticator (or navigated to by the
             // website with ?client=web); sends the user to Google's consent page. The
             // redirect_uri is this API's /callback below and must match one of the

@@ -47,6 +47,11 @@ namespace NavigationES.Api.Data.Entities
         // Null = no preference yet (all communities' exams are offered).
         public long? SelectedComunidadAutonomaID { get; set; }
 
+        // The date of the user's own exam sitting, typed in by the user on Inicio or
+        // Perfil (they know it; the community's NextExamDate is only a suggestion).
+        // Null = not set.
+        public DateOnly? ExamDate { get; set; }
+
         // Grants the web's Usuarios tab and the /api/admin/users endpoints. Set by
         // hand in the database (UPDATE Users SET IsAdmin = 1 WHERE Email = ...) —
         // there is deliberately no UI to promote accounts.

@@ -1,4 +1,5 @@
 @page "/temas/{Number:int}"
+@page "/practica/{Practica}"
 @attribute [Authorize]
 @inject ISessionsApi SessionsApi
 @inject ILicensesApi LicensesApi
@@ -7,105 +8,158 @@
 
 <PageTitle>@Title — NavigationES</PageTitle>
 
-<a class="back-link" href="temas">←&nbsp;Volver a los temas</a>
-<h1>@Title</h1>
+<div class="ts-page" @ref="_pageRef" tabindex="-1" @onkeydown="OnKeyDownAsync">
+<a class="back-link" href="@BackHref">←&nbsp;@BackText</a>
 
 @if (_paywall)
 {
+    <h1>@Title</h1>
     <Paywall />
 }
 else if (_loadFailed)
 {
+    <h1>@Title</h1>
     <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
 }
 else if (!_loaded)
 {
+    <h1>@Title</h1>
     <p class="page-loading">Cargando…</p>
 }
 else if (_completed)
 {
+    <h1>@Title</h1>
     <div class="completed-card">
         <span class="completed-check">✓</span>
-        <p class="completed-text">¡Has completado todas las preguntas de este tema!</p>
-        @if (_error is not null)
+        @if (Mode == PracticeKind.Topic)
         {
-            <p class="error" role="alert">@_error</p>
+            <p class="completed-text">¡Has completado todas las preguntas de este tema!</p>
+            @if (_error is not null)
+            {
+                <p class="error" role="alert">@_error</p>
+            }
+            <button class="btn-primary" @onclick="() => _showRestartConfirm = true">Reiniciar tema</button>
+            <a class="btn-outline-dark btn-link" href="temas">Volver a los temas</a>
         }
-        <button class="btn-primary" @onclick="() => _showRestartConfirm = true">Reiniciar tema</button>
-        <a class="btn-outline-dark btn-link" href="temas">Volver a los temas</a>
+        else
+        {
+            <p class="completed-text">@CompletedText</p>
+            @if (_sessionCorrect + _sessionWrong > 0)
+            {
+                <p class="tagline">@_sessionCorrect @(_sessionCorrect == 1 ? "acierto" : "aciertos") · @_sessionWrong @(_sessionWrong == 1 ? "fallo" : "fallos")</p>
+            }
+            <button class="btn-primary" @onclick="StartAgainAsync">@(Mode == PracticeKind.Quick ? "Otro mini test" : "Seguir repasando")</button>
+            <a class="btn-outline-dark btn-link" href="">Volver a Inicio</a>
+        }
     </div>
 }
 else if (_question is not null)
 {
-    <div class="progress-header session-progress">
-        <span>Pregunta @(_answered + 1) de @_total</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" style="width: @(ProgressPercent)%"></div></div>
-
-    @* TEMPORAL: id de la pregunta (tabla Questions) para localizar errores durante las pruebas. *@
-    <div class="question-card"><span class="debug-id">Q@(_question.Id)</span>@_question.Text</div>
-
-    <div class="answer-list">
-        @for (var i = 0; i < _question.Answers.Count; i++)
+    <div class="ts-header">
+        <div class="ts-header-main">
+            <div class="ts-header-line">
+                <h1 class="ts-title">@Title</h1>
+                <span class="ts-count">Pregunta @(_answered + (_result is null ? 1 : 0)) de @_total</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width: @(ProgressPercent)%"></div></div>
+        </div>
+        @if (_sessionCorrect + _sessionWrong > 0)
         {
-            var answer = _question.Answers[i];
-            var letter = (char)('A' + i);
-            <button class="answer @AnswerClass(answer)" disabled="@(_result is not null)"
-                    @onpointerdown="OnAnswerPointerDown"
-                    @onclick="e => AnswerIfTapAsync(answer, e)">
-                <span class="answer-letter">@letter)</span>@answer.Text
-            </button>
+            <div class="ts-tally" aria-label="Resultado de esta sesión">
+                <span class="ts-pill ok">@_sessionCorrect @(_sessionCorrect == 1 ? "acierto" : "aciertos")</span>
+                <span class="ts-pill ko">@_sessionWrong @(_sessionWrong == 1 ? "fallo" : "fallos")</span>
+            </div>
         }
     </div>
 
-    @if (_error is not null)
-    {
-        <p class="error" role="alert">@_error</p>
-    }
+    <div class="ts-layout">
+        <section class="ts-main">
+            <div class="ts-card">
+                @* TEMPORAL: id de la pregunta (tabla Questions) para localizar errores durante las pruebas. *@
+                <span class="debug-id">Q@(_question.Id)</span>
+                <p class="ts-question">@_question.Text</p>
 
-    @if (_result is not null)
-    {
-        <p class="feedback @(_result.IsCorrect ? "ok" : "ko")">
-            @(_result.IsCorrect ? "¡Correcto!" : "Incorrecto")
-        </p>
+                <div class="ts-answers">
+                    @for (var i = 0; i < _question.Answers.Count; i++)
+                    {
+                        var answer = _question.Answers[i];
+                        var letter = (char)('A' + i);
+                        var state = AnswerClass(answer);
+                        <button class="ts-answer @state @(_result is not null && state is null ? "dim" : null)"
+                                disabled="@(_result is not null)"
+                                @onpointerdown="OnAnswerPointerDown"
+                                @onclick="e => AnswerIfTapAsync(answer, e)">
+                            <span class="ts-letter">@letter</span>
+                            <span class="ts-answer-text">@answer.Text</span>
+                            @if (state == "correct")
+                            {
+                                <svg class="ts-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Respuesta correcta"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                            }
+                            else if (state == "wrong")
+                            {
+                                <svg class="ts-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" role="img" aria-label="Tu respuesta, incorrecta"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                            }
+                        </button>
+                    }
+                </div>
 
-        @if (HasExplanation)
-        {
-            @* While the explanation is open, Siguiente sits on this row so a long
-               explanation doesn't push it far down the page. *@
-            <div class="explanation-row">
-                <button class="btn-explanation" @onclick="() => _showExplanation = !_showExplanation">
-                    ⓘ Explicación
-                </button>
-                @if (_showExplanation)
+                @if (_result is null)
                 {
-                    <button class="btn-primary btn-next-inline" @onclick="NextQuestion">Siguiente</button>
+                    <p class="ts-hint">Pulsa una respuesta o usa las teclas 1–@_question.Answers.Count.</p>
                 }
             </div>
 
-            @if (_showExplanation)
+            @if (_error is not null)
             {
-                <div class="explanation-card">
+                <p class="error" role="alert">@_error</p>
+            }
+
+            @if (_result is not null)
+            {
+                <div class="ts-verdict @(_result.IsCorrect ? "ok" : "ko")" role="status">
+                    <strong class="ts-verdict-title">@(_result.IsCorrect ? "¡Correcto!" : $"Casi: la correcta es la {CorrectLetter}")</strong>
+                    <div class="ts-verdict-actions">
+                        <button class="btn-primary ts-next" @ref="_nextRef" @onclick="NextQuestion">
+                            @(_remaining.Count == 0 ? "Terminar tema" : "Siguiente pregunta")
+                        </button>
+                        @if (HasExplanation)
+                        {
+                            <button class="ts-secondary" @onclick="() => _showExplanation = !_showExplanation">
+                                @(_showExplanation ? "Ocultar explicación" : "Ver explicación")
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+
+        <aside class="ts-aside">
+            @if (_result is not null && HasExplanation && _showExplanation)
+            {
+                <div class="ts-explanation">
                     @if (ExplanationImageUrl is not null)
                     {
-                        <img class="explanation-img" src="@ExplanationImageUrl" alt="Explicación"
-                             title="Ver a pantalla completa"
-                             @onclick="() => _showImageFullscreen = true" />
+                        <button class="ts-image-btn" title="Ver a pantalla completa" @onclick="() => _showImageFullscreen = true">
+                            <img src="@ExplanationImageUrl" alt="Imagen de la explicación" />
+                        </button>
                     }
                     @if (!string.IsNullOrWhiteSpace(_result.Explanation))
                     {
-                        <div class="explanation-text">@((MarkupString)_result.Explanation)</div>
+                        <div class="ts-explanation-body">
+                            <h2 class="ts-explanation-title">Por qué</h2>
+                            <div class="explanation-text">@((MarkupString)_result.Explanation)</div>
+                        </div>
                     }
                 </div>
             }
-        }
-
-        @if (!_showExplanation)
-        {
-            <button class="btn-primary btn-next" @onclick="NextQuestion">Siguiente</button>
-        }
-    }
+            <div class="ts-shortcuts">
+                <strong>Atajos</strong>
+                <span><kbd>1</kbd>–<kbd>4</kbd> responder · <kbd>Intro</kbd> siguiente · <kbd>E</kbd> explicación</span>
+            </div>
+        </aside>
+    </div>
 }
+</div>
 
 @if (_showImageFullscreen && ExplanationImageUrl is not null)
 {
@@ -135,13 +189,37 @@ else if (_question is not null)
 @code {
     [Parameter] public int Number { get; set; }
 
+    // "/practica/fallos" (Review) or "/practica/mini" (Quick); null on a topic route.
+    [Parameter] public string? Practica { get; set; }
+
+    private enum PracticeKind { Topic, Review, Quick }
+
+    private PracticeKind Mode => Practica switch
+    {
+        "fallos" => PracticeKind.Review,
+        "mini" => PracticeKind.Quick,
+        _ => PracticeKind.Topic,
+    };
+
+    private string BackHref => Mode == PracticeKind.Topic ? "temas" : "";
+    private string BackText => Mode == PracticeKind.Topic ? "Volver a los temas" : "Volver a Inicio";
+
+    private string CompletedText => Mode == PracticeKind.Quick
+        ? "¡Mini test terminado!"
+        : "¡No te quedan fallos por repasar!";
+
     [SupplyParameterFromQuery(Name = "nombre")]
     public string? Nombre { get; set; }
 
     [SupplyParameterFromQuery(Name = "completado")]
     public bool Completado { get; set; }
 
-    private string Title => Nombre ?? $"Tema {Number}";
+    private string Title => Mode switch
+    {
+        PracticeKind.Review => "Repaso de fallos",
+        PracticeKind.Quick => "Mini test",
+        _ => Nombre ?? $"Tema {Number}",
+    };
 
     private long _licenseId;
     private long _sessionId;
@@ -160,7 +238,22 @@ else if (_question is not null)
     private bool _paywall;
     private string? _error;
 
+    // Right/wrong count of this visit (not the topic's history), for the header pills.
+    private int _sessionCorrect;
+    private int _sessionWrong;
+
+    // Keyboard: the page wrapper holds focus while a question waits for an answer
+    // (1–4 answer it); after answering, focus moves to "Siguiente" so Enter is the
+    // button's own click and never fires twice.
+    private ElementReference _pageRef;
+    private ElementReference _nextRef;
+    private bool _focusPage = true;
+    private bool _focusNext;
+
     private int ProgressPercent => _total == 0 ? 0 : (int)Math.Round(100.0 * _answered / _total);
+
+    private char CorrectLetter =>
+        (char)('A' + Math.Max(0, _question?.Answers.FindIndex(a => a.Id == _result?.CorrectAnswerId) ?? 0));
 
     private bool HasExplanation =>
         !string.IsNullOrWhiteSpace(_result?.Explanation) || ExplanationImageUrl is not null;
@@ -188,7 +281,7 @@ else if (_question is not null)
 
             // Already-completed topic: land on the completed screen without starting
             // a session — starting one would re-plan the full question set.
-            if (Completado)
+            if (Completado && Mode == PracticeKind.Topic)
             {
                 _completed = true;
                 _loaded = true;
@@ -209,7 +302,23 @@ else if (_question is not null)
 
     private async Task StartSessionAsync()
     {
-        var session = await SessionsApi.StartTopicPracticeAsync(new StartTopicPracticeRequestDto(Number, _licenseId));
+        PracticeSessionDto session;
+        try
+        {
+            session = Mode switch
+            {
+                PracticeKind.Review => await SessionsApi.StartReviewAsync(new StartLicensePracticeRequestDto(_licenseId)),
+                PracticeKind.Quick => await SessionsApi.StartQuickAsync(new StartLicensePracticeRequestDto(_licenseId)),
+                _ => await SessionsApi.StartTopicPracticeAsync(new StartTopicPracticeRequestDto(Number, _licenseId)),
+            };
+        }
+        catch (Refit.ApiException ex) when (Mode == PracticeKind.Review && ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            // Nothing to review: the API plans no session without failed questions.
+            _loaded = true;
+            _completed = true;
+            return;
+        }
 
         _sessionId = session.SessionId;
         _total = session.TotalQuestions;
@@ -238,6 +347,44 @@ else if (_question is not null)
         }
 
         _question = _remaining.Peek();
+        _focusPage = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (_focusNext)
+            {
+                _focusNext = false;
+                await _nextRef.FocusAsync();
+            }
+            else if (_focusPage && _question is not null)
+            {
+                _focusPage = false;
+                await _pageRef.FocusAsync(preventScroll: true);
+            }
+        }
+        catch (Exception)
+        {
+            // An element that left the DOM in the meantime — nothing to focus.
+        }
+    }
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs e)
+    {
+        if (_question is null || _showRestartConfirm || _showImageFullscreen) return;
+
+        if (_result is null && e.Key.Length == 1 && char.IsDigit(e.Key[0]))
+        {
+            var index = e.Key[0] - '1';
+            if (index >= 0 && index < _question.Answers.Count)
+                await AnswerAsync(_question.Answers[index]);
+        }
+        else if (_result is not null && (e.Key == "e" || e.Key == "E") && HasExplanation)
+        {
+            _showExplanation = !_showExplanation;
+        }
     }
 
     private double _pointerDownY;
@@ -266,6 +413,9 @@ else if (_question is not null)
             _result = result;
             _remaining.Dequeue();
             _answered++;
+            if (result.IsCorrect) _sessionCorrect++; else _sessionWrong++;
+            _showExplanation = true;
+            _focusNext = true;
         }
         catch (Exception)
         {
@@ -283,6 +433,28 @@ else if (_question is not null)
     }
 
     private void NextQuestion() => ShowNextQuestion();
+
+    // "Otro mini test" / "Seguir repasando" on the completed screen.
+    private async Task StartAgainAsync()
+    {
+        _completed = false;
+        _loaded = false;
+        _sessionCorrect = 0;
+        _sessionWrong = 0;
+        try
+        {
+            await StartSessionAsync();
+        }
+        catch (Exception ex) when (Paywall.IsPaywall(ex))
+        {
+            _paywall = true;
+        }
+        catch (Exception)
+        {
+            _loaded = true;
+            _loadFailed = true;
+        }
+    }
 
     // Deletes the user's whole history for this topic on the server, then starts the
     // topic again from question 1 — same behavior as the app's restart button.

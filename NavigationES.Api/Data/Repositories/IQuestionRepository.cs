@@ -14,6 +14,12 @@ namespace NavigationES.Api.Data.Repositories
 
         Task<QuestionEntity?> FindActiveWithAnswersAsync(long questionId);
 
+        // Active questions with the given IDs, answers included, ordered by ID.
+        Task<List<QuestionEntity>> GetActiveByIdsAsync(IReadOnlyCollection<long> questionIds);
+
+        // Up to `count` random active question IDs from the given topics.
+        Task<List<long>> GetRandomActiveIdsAsync(IReadOnlyCollection<long> topicIds, int count);
+
         void Add(QuestionEntity question);
 
         Task SaveChangesAsync();

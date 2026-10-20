@@ -11,6 +11,7 @@ namespace NavigationES.Web.Utilities
         private static readonly Dictionary<string, string> _messages = new()
         {
             [ErrorCodes.UserDoesNotExist] = "¡El usuario no existe!",
+            [ErrorCodes.ExamDateNotValidError] = "Esa fecha no parece la de un examen. Revísala, por favor.",
             [ErrorCodes.IncorrectPasswordError] = "¡Contraseña incorrecta!",
             [ErrorCodes.UserBlocked] = "Tu cuenta ha sido bloqueada por un administrador.",
             [ErrorCodes.UseSocialSigninError] = "Esta cuenta se creó con Google, Apple o Facebook. Usa el botón correspondiente para iniciar sesión.",

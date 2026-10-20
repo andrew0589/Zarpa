@@ -19,6 +19,15 @@ namespace NavigationES.Api.Data.Repositories
         // the retry set a new session starts with.
         Task<List<long>> GetLatestFailedQuestionIdsAsync(long userId, long topicId);
 
+        // The same across several topics (a whole license) — "Repasar mis fallos".
+        Task<List<long>> GetLatestFailedQuestionIdsAsync(long userId, IReadOnlyCollection<long> topicIds);
+
+        // The user's unfinished license-wide session (Review or Quick) for the license.
+        Task<TestSessionEntity?> FindOpenLicenseSessionAsync(long userId, long licenseId, Shared.Enums.TestMode mode);
+
+        // The user's most recent TopicPractice session for the license, topic included.
+        Task<TestSessionEntity?> FindLatestTopicSessionAsync(long userId, long licenseId);
+
         void AddPlannedQuestions(TestSessionEntity session, IEnumerable<long> questionIds);
 
         Task<SessionAnswerEntity?> FindAnswerAsync(long sessionId, long questionId);

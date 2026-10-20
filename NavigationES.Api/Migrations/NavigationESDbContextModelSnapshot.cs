@@ -902,6 +902,9 @@ namespace NavigationES.Api.Migrations
                     b.Property<DateTime?>("EmailVerificationExpiry")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateOnly?>("ExamDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("Hash")
                         .HasMaxLength(180)
                         .HasColumnType("nvarchar(180)");

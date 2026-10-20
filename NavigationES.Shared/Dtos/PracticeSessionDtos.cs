@@ -4,6 +4,9 @@ namespace NavigationES.Shared.Dtos
 
     public record ResetTopicPracticeRequestDto(int TopicNumber, long LicenseId);
 
+    // "Repasar mis fallos" and "Mini test": sessions over the whole license, not one topic.
+    public record StartLicensePracticeRequestDto(long LicenseId);
+
     // An answer option as shown to the user — deliberately without the correct flag;
     // correctness comes back only after answering, from the submit endpoint.
     public record SessionAnswerOptionDto(long Id, string Text);

@@ -75,5 +75,7 @@ public static class ErrorCodes
     public const string ConvocatoriaUrlNotValidError = "ConvocatoriaUrlNotValidError";
     // The notes exceed the column (4000).
     public const string ConvocatoriaNotesTooLongError = "ConvocatoriaNotesTooLongError";
+    // The user's exam date is outside the accepted range (past year .. 3 years ahead).
+    public const string ExamDateNotValidError = "ExamDateNotValidError";
     #endregion
 }

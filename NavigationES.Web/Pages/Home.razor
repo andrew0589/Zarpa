@@ -3,6 +3,8 @@
 @inject IComunidadesApi ComunidadesApi
 @inject ITopicsApi TopicsApi
 @inject IExamsApi ExamsApi
+@inject ISessionsApi SessionsApi
+@inject IAuthApi AuthApi
 @inject WebAuthStateProvider Auth
 @inject NavigationManager Navigation
 
@@ -16,8 +18,11 @@ else
 {
 <PageTitle>NavigationES</PageTitle>
 
-<div class="@(_showDashboard ? "inicio-page" : null)">
-<h1>Hola, @Auth.User?.Name</h1>
+<div class="@(_showDashboard ? "home-page" : null)">
+@if (!_showDashboard)
+{
+    <h1>Hola, @Auth.User?.Name</h1>
+}
 
 @if (!_loaded)
 {
@@ -37,63 +42,176 @@ else if (!_hasComunidad)
 }
 else
 {
-    <p class="tagline">
-        Tu progreso en @_selectedLicense.Code
-        @if (_comunidadName is not null)
-        {
-            <text> — </text><ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName
-        }
-    </p>
-
-    <div class="inicio-grid">
-        <section class="retro-card inicio-card">
-            <h2 class="retro-title">Práctica por temas</h2>
-
-            <div class="inicio-hero">
-                <span class="inicio-hero-value">@_temasPercent%</span>
-                <span class="inicio-hero-label">aciertos del temario</span>
-            </div>
-            <div class="progress-track"><div class="progress-fill" style="width: @(_temasPercent)%"></div></div>
-
-            <ul class="donut-legend inicio-legend">
-                <li><span class="chip chip-ok"></span><span>Aciertos</span><strong>@_temasCorrect</strong></li>
-                <li><span class="chip chip-ko"></span><span>Fallos</span><strong>@_temasFailed</strong></li>
-                <li><span class="chip chip-rest"></span><span>Sin responder</span><strong>@_temasRemaining</strong></li>
-            </ul>
-
-            <p class="stats-summary">
-                Realizadas <strong>@(_temasCorrect + _temasFailed)</strong> de <strong>@_temasTotal</strong> preguntas
-            </p>
-
-            <a class="btn-primary btn-link inicio-cta" href="temas">Ir a Temas</a>
-        </section>
-
-        <section class="retro-card inicio-card">
-            <h2 class="retro-title">Simulación de examen</h2>
-
-            <div class="inicio-hero">
-                <span class="inicio-hero-value">@_examsPassed <span class="inicio-hero-de">de</span> @_examsTotal</span>
-                <span class="inicio-hero-label">exámenes aprobados</span>
-            </div>
-            <div class="progress-track"><div class="progress-fill" style="width: @(_examsPercent)%"></div></div>
-
-            <ul class="donut-legend inicio-legend">
-                <li><span class="chip chip-ok"></span><span>Aprobados</span><strong>@_examsPassed</strong></li>
-                <li><span class="chip chip-ko"></span><span>No aptos</span><strong>@_examsFailed</strong></li>
-                <li><span class="chip chip-rest"></span><span>Sin hacer</span><strong>@_examsPending</strong></li>
-            </ul>
-
-            <p class="stats-summary">
-                Exámenes oficiales de <strong>@_selectedLicense.Code</strong>
-                @if (_comunidadName is not null)
+    <section class="home-head">
+        <div class="home-greeting">
+            <h1 class="home-title">Hola, @FirstName</h1>
+            <p class="home-today">Hoy te proponemos: <strong>@TodayText</strong></p>
+        </div>
+        <div class="home-exam-chip">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3" /><path d="M8 2v4M16 2v4M3 10h18" /></svg>
+            <div class="home-exam-text">
+                <span class="home-exam-label">
+                    @_selectedLicense.Code
+                    @if (_comunidadName is not null)
+                    {
+                        <text> · </text><ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName
+                    }
+                </span>
+                @if (_editingExamDate)
                 {
-                    <text> · </text><ComunidadFlag ComunidadId="_comunidadId" Class="inline" />@_comunidadName
+                    <form class="home-exam-form" @onsubmit="SaveExamDateAsync" @onsubmit:preventDefault>
+                        <label class="visually-hidden" for="exam-date">Fecha de tu examen</label>
+                        <input id="exam-date" class="home-exam-input" type="date" @bind="_examDateDraft" min="@Today.ToString("yyyy-MM-dd")" />
+                        <button type="submit" class="home-exam-btn primary" disabled="@(_savingExamDate || _examDateDraft is null)">Guardar</button>
+                        <button type="button" class="home-exam-btn" @onclick="() => _editingExamDate = false">Cancelar</button>
+                        @if (_myExamDate is not null)
+                        {
+                            <button type="button" class="home-exam-btn link" @onclick="ClearExamDateAsync">Quitar fecha</button>
+                        }
+                    </form>
+                    @if (_examDateError is not null)
+                    {
+                        <span class="home-exam-error" role="alert">@_examDateError</span>
+                    }
                 }
-            </p>
+                else if (_myExamDate is { } mine && mine >= Today)
+                {
+                    <strong>Tu examen: @FormatDay(mine) · @DaysLeftText(mine)</strong>
+                }
+                else if (_myExamDate is { } past)
+                {
+                    <strong>¿Qué tal fue tu examen del @FormatDay(past)?</strong>
+                    <span class="home-exam-sub">Si tienes otro, añade la nueva fecha.</span>
+                }
+                else if (_dashboard?.NextExam is { } suggestion)
+                {
+                    <strong>Próxima convocatoria en @suggestion.Comunidad: @FormatDay(suggestion.Date)</strong>
+                    <span class="home-exam-sub">¿Es la tuya?</span>
+                }
+                else
+                {
+                    <strong>¿Cuándo es tu examen?</strong>
+                    <span class="home-exam-sub">Añade la fecha y verás la cuenta atrás.</span>
+                }
+            </div>
+            @if (!_editingExamDate)
+            {
+                <div class="home-exam-actions">
+                    @if (_myExamDate is null && _dashboard?.NextExam is { } offer)
+                    {
+                        <button type="button" class="home-exam-btn primary" disabled="@_savingExamDate" @onclick="() => SetExamDateAsync(offer.Date)">Sí, es la mía</button>
+                        <button type="button" class="home-exam-btn" @onclick="StartEditingExamDate">Otra fecha</button>
+                    }
+                    else if (_myExamDate is { } d && d >= Today)
+                    {
+                        <button type="button" class="home-exam-btn link" @onclick="StartEditingExamDate">Cambiar</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="home-exam-btn primary" @onclick="StartEditingExamDate">Añadir fecha</button>
+                    }
+                </div>
+            }
+        </div>
+    </section>
 
-            <a class="btn-primary btn-link inicio-cta" href="examen">Ir a Examen</a>
-        </section>
-    </div>
+    <section class="home-grid">
+        <article class="home-hero">
+            <div class="home-hero-main">
+                @if (ContinueTopic is { } cont)
+                {
+                    <span class="home-kicker">Continúa donde lo dejaste</span>
+                    <h2 class="home-hero-title">Tema @cont.Number · @cont.Name</h2>
+                    <p class="home-hero-text">Vas por la pregunta @(cont.Answered + 1) de @cont.Total.</p>
+                    <div class="home-hero-track"><div style="width: @(cont.Total == 0 ? 0 : 100 * cont.Answered / cont.Total)%"></div></div>
+                    <div class="home-hero-actions">
+                        <a class="home-btn-light" href="@TopicHref(cont.Number, cont.Name, false)">Continuar</a>
+                        <a class="home-btn-ghost" href="temas">Elegir otro tema</a>
+                    </div>
+                }
+                else if (SuggestedTopic is { } next)
+                {
+                    <span class="home-kicker">@(_dashboard?.LastTopic is null ? "Empieza por aquí" : "Tu siguiente tema")</span>
+                    <h2 class="home-hero-title">Tema @next.Number · @next.Name</h2>
+                    <p class="home-hero-text">@SuggestedReason(next)</p>
+                    <div class="home-hero-actions">
+                        <a class="home-btn-light" href="@TopicHref(next.Number, next.Name, false)">Empezar</a>
+                        <a class="home-btn-ghost" href="temas">Ver todos los temas</a>
+                    </div>
+                }
+                else
+                {
+                    <span class="home-kicker">Temario completado</span>
+                    <h2 class="home-hero-title">Has acertado todas las preguntas</h2>
+                    <p class="home-hero-text">Ahora toca practicar con exámenes oficiales completos.</p>
+                    <div class="home-hero-actions">
+                        <a class="home-btn-light" href="examen">Hacer un simulacro</a>
+                    </div>
+                }
+            </div>
+            <div class="home-ring">
+                <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="@($"Temario dominado: {_temasPercent} por ciento")">
+                    <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="14" />
+                    <circle cx="75" cy="75" r="62" fill="none" stroke="#2AA5A0" stroke-width="14" stroke-linecap="round"
+                            stroke-dasharray="@RingDash" transform="rotate(-90 75 75)" />
+                    <text x="75" y="85" text-anchor="middle" font-size="34" font-weight="800" fill="#FFFFFF">@_temasPercent%</text>
+                </svg>
+                <span>del temario dominado</span>
+                <span class="home-ring-sub">@_temasCorrect de @_temasTotal preguntas</span>
+            </div>
+        </article>
+
+        <article class="home-card home-quick">
+            <h2 class="home-card-title">Repaso rápido</h2>
+            @if (_failedCount > 0)
+            {
+                <a class="home-quick-item warm" href="practica/fallos">
+                    <span class="home-quick-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg></span>
+                    <span class="home-quick-text"><strong>Repasar mis @_failedCount @(_failedCount == 1 ? "fallo" : "fallos")</strong><span>Solo lo que fallaste, de todos los temas</span></span>
+                </a>
+            }
+            else
+            {
+                <div class="home-quick-item done">
+                    <span class="home-quick-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
+                    <span class="home-quick-text"><strong>Sin fallos pendientes</strong><span>Cuando falles una pregunta, aparecerá aquí</span></span>
+                </div>
+            }
+            <a class="home-quick-item teal" href="@SimulacroHref">
+                <span class="home-quick-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2M9 2h6" /></svg></span>
+                <span class="home-quick-text"><strong>Simulacro oficial</strong><span>@_examsPassed de @_examsTotal aprobados@(_nextExamName is null ? null : $" · siguiente: {_nextExamName}")</span></span>
+            </a>
+            <a class="home-quick-item navy" href="practica/mini">
+                <span class="home-quick-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg></span>
+                <span class="home-quick-text"><strong>Mini test de @(_dashboard?.QuickTestSize ?? 10)</strong><span>Unos 5 minutos · mezcla de todos los temas</span></span>
+            </a>
+        </article>
+    </section>
+
+    <section class="home-card">
+        <div class="home-card-head">
+            <h2 class="home-card-title">Tu temario</h2>
+            <span class="home-card-note">Primero lo que más te conviene repasar</span>
+        </div>
+        <div class="home-topics">
+            @foreach (var t in OrderedTopics)
+            {
+                var pct = Percent(t);
+                var chip = TopicChip(t, pct);
+                <a class="home-topic" href="@TopicHref(t.Number, t.Name, t.QuestionCount > 0 && t.CorrectCount == t.QuestionCount)">
+                    <span class="home-topic-num">@t.Number</span>
+                    <span class="home-topic-body">
+                        <span class="home-topic-line"><strong>@t.Name</strong><span>@pct%</span></span>
+                        <span class="home-topic-track"><span class="@(pct < 50 ? "low" : null)" style="width: @(pct)%"></span></span>
+                    </span>
+                    @if (chip is not null)
+                    {
+                        <span class="home-chip @chip.Value.Css">@chip.Value.Label</span>
+                    }
+                </a>
+            }
+        </div>
+    </section>
 }
 </div>
 }
@@ -117,6 +235,17 @@ else
     private int _examsFailed;
     private int _examsPending;
     private int _examsPercent;
+
+    private DashboardDto? _dashboard;
+    private DateOnly? _myExamDate;
+    private bool _editingExamDate;
+    private bool _savingExamDate;
+    private DateOnly? _examDateDraft;
+    private string? _examDateError;
+    private List<TopicProgressDto> _topics = [];
+    private int _failedCount;
+    private long? _nextExamId;
+    private string? _nextExamName;
 
     private bool _showDashboard => _loaded && _selectedLicense is not null && _hasComunidad;
 
@@ -160,7 +289,10 @@ else
         var topicsTask = TopicsApi.GetTopicsAsync(_selectedLicense!.Id);
         var examsTask = ExamsApi.GetExamsAsync(_selectedLicense.Id);
 
+        var dashboardTask = SessionsApi.GetDashboardAsync(_selectedLicense.Id);
+
         var topics = (await topicsTask).Topics;
+        _topics = topics;
         _temasTotal = topics.Sum(t => t.QuestionCount);
         _temasCorrect = topics.Sum(t => t.CorrectCount);
         _temasFailed = topics.Sum(t => t.FailedCount);
@@ -174,9 +306,137 @@ else
         _examsPending = _examsTotal - _examsPassed - _examsFailed;
         _examsPercent = _examsTotal == 0 ? 0 : (int)Math.Round(100.0 * _examsPassed / _examsTotal);
 
+        // The simulation to suggest: the most recent paper not passed yet.
+        var nextExam = exams
+            .Where(e => !e.Passed)
+            .OrderByDescending(e => e.Year ?? 0).ThenByDescending(e => e.Month ?? 0)
+            .FirstOrDefault();
+        _nextExamId = nextExam?.Id;
+        _nextExamName = nextExam is { Year: int y, Month: int m } ? $"{Months[m - 1]} {y}" : null;
+
+        try
+        {
+            _dashboard = await dashboardTask;
+            _failedCount = _dashboard.FailedCount;
+            _myExamDate = _dashboard.MyExamDate;
+        }
+        catch (Exception)
+        {
+            // Older API or a hiccup: the page still works without the extras.
+            _dashboard = null;
+            _failedCount = _temasFailed;
+        }
+
         _comunidadId = (await ComunidadesApi.GetSelectedComunidadAsync()).ComunidadId;
         if (_comunidadId is not null)
             _comunidadName = (await ComunidadesApi.GetComunidadesAsync()).FirstOrDefault(c => c.Id == _comunidadId)?.Name;
+    }
+
+    private static readonly string[] Months =
+        ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+    private string FirstName => (Auth.User?.Name ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
+
+    private static int Percent(TopicProgressDto t) =>
+        t.QuestionCount == 0 ? 0 : (int)Math.Round(100.0 * t.CorrectCount / t.QuestionCount);
+
+    // The open topic session, if the last one is not finished.
+    private DashboardTopicDto? ContinueTopic =>
+        _dashboard?.LastTopic is { Finished: false } last ? last : null;
+
+    // Weakest topic that still has questions to get right: lowest share of correct
+    // answers, the one with more failed questions first on a tie.
+    private TopicProgressDto? SuggestedTopic =>
+        _topics.Where(t => t.QuestionCount > 0 && t.CorrectCount < t.QuestionCount)
+               .OrderBy(Percent).ThenByDescending(t => t.FailedCount).ThenBy(t => t.Number)
+               .FirstOrDefault();
+
+    private static string SuggestedReason(TopicProgressDto t) =>
+        t.CorrectCount + t.FailedCount == 0
+            ? $"Aún no lo has empezado: {t.QuestionCount} preguntas."
+            : $"Es tu tema más flojo: {Percent(t)}% de aciertos, {t.FailedCount} {(t.FailedCount == 1 ? "fallo" : "fallos")}.";
+
+    private string TodayText =>
+        ContinueTopic is { } c ? $"terminar el tema {c.Number}"
+        : _failedCount > 0 ? $"repasar tus {_failedCount} {(_failedCount == 1 ? "fallo" : "fallos")}"
+        : SuggestedTopic is { } s ? $"el tema {s.Number}, {s.Name}"
+        : "un simulacro de examen";
+
+    // Weakest first by share of correct answers; empty topics last.
+    private IEnumerable<TopicProgressDto> OrderedTopics =>
+        _topics.OrderBy(t => t.QuestionCount == 0)
+               .ThenBy(Percent)
+               .ThenBy(t => t.Number);
+
+    private (string Label, string Css)? TopicChip(TopicProgressDto t, int pct)
+    {
+        if (t.QuestionCount == 0) return ("Sin preguntas", "muted");
+        if (ContinueTopic?.Number == t.Number) return ("En curso", "teal");
+        if (t.CorrectCount == t.QuestionCount) return ("Completado", "navy");
+        if (pct >= 90) return ("Dominado", "navy");
+        if (t.CorrectCount + t.FailedCount == 0) return ("Sin empezar", "muted");
+        if (t.FailedCount > 0 && pct < 50) return ("Repasar", "warm");
+        return null;
+    }
+
+    private static string TopicHref(int number, string name, bool completed) =>
+        $"temas/{number}?nombre={Uri.EscapeDataString(name)}" + (completed ? "&completado=true" : string.Empty);
+
+    private string SimulacroHref => _nextExamId is long id && _nextExamName is not null
+        ? $"examen/{id}?titulo={Uri.EscapeDataString(_nextExamName)}"
+        : "examen";
+
+    private string RingDash => $"{Math.Round(389.6 * _temasPercent / 100.0, 1).ToString(System.Globalization.CultureInfo.InvariantCulture)} 390";
+
+    private static DateOnly Today => DateOnly.FromDateTime(DateTime.Now);
+
+    private void StartEditingExamDate()
+    {
+        _examDateDraft = _myExamDate is { } d && d >= Today ? d : _dashboard?.NextExam?.Date;
+        _examDateError = null;
+        _editingExamDate = true;
+    }
+
+    private Task SaveExamDateAsync() => SetExamDateAsync(_examDateDraft);
+
+    private Task ClearExamDateAsync() => SetExamDateAsync(null);
+
+    private async Task SetExamDateAsync(DateOnly? date)
+    {
+        _savingExamDate = true;
+        _examDateError = null;
+        try
+        {
+            var result = await AuthApi.UpdateExamDateAsync(new ExamDateDto(date));
+            if (result.IsSuccess)
+            {
+                _myExamDate = date;
+                _editingExamDate = false;
+            }
+            else
+            {
+                _examDateError = ErrorMessages.Translate(result.ErrorMessage);
+                _editingExamDate = true;
+            }
+        }
+        catch (Exception)
+        {
+            _examDateError = ErrorMessages.Translate(null);
+            _editingExamDate = true;
+        }
+        finally
+        {
+            _savingExamDate = false;
+        }
+    }
+
+    private static string FormatDay(DateOnly d) =>
+        d.Year == Today.Year ? $"{d.Day} de {Months[d.Month - 1]}" : $"{d.Day} de {Months[d.Month - 1]} de {d.Year}";
+
+    private static string DaysLeftText(DateOnly d)
+    {
+        var days = d.DayNumber - DateOnly.FromDateTime(DateTime.Now).DayNumber;
+        return days switch { 0 => "es hoy", 1 => "mañana", _ => $"faltan {days} días" };
     }
 
     private async Task OnLicenseChosenAsync(LicenseDto license)

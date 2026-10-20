@@ -23,6 +23,26 @@ namespace NavigationES.Api.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<QuestionEntity>> GetActiveByIdsAsync(IReadOnlyCollection<long> questionIds)
+        {
+            return await _context.Questions
+                .Include(q => q.Answers)
+                .Where(q => questionIds.Contains(q.ID) && q.IsActive)
+                .OrderBy(q => q.ID)
+                .ToListAsync();
+        }
+
+        public async Task<List<long>> GetRandomActiveIdsAsync(IReadOnlyCollection<long> topicIds, int count)
+        {
+            // NEWID() ordering: fine for a bank of a few thousand rows per license.
+            return await _context.Questions
+                .Where(q => topicIds.Contains(q.TopicID) && q.IsActive)
+                .OrderBy(q => Guid.NewGuid())
+                .Select(q => q.ID)
+                .Take(count)
+                .ToListAsync();
+        }
+
         public async Task<QuestionEntity?> FindActiveWithAnswersAsync(long questionId)
         {
             return await _context.Questions

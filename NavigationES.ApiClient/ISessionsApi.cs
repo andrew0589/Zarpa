@@ -8,6 +8,15 @@ namespace NavigationES.ApiClient
         [Post("/api/sessions/topic/start")]
         Task<PracticeSessionDto> StartTopicPracticeAsync(StartTopicPracticeRequestDto request);
 
+        [Post("/api/sessions/review/start")]
+        Task<PracticeSessionDto> StartReviewAsync(StartLicensePracticeRequestDto request);
+
+        [Post("/api/sessions/quick/start")]
+        Task<PracticeSessionDto> StartQuickAsync(StartLicensePracticeRequestDto request);
+
+        [Get("/api/dashboard")]
+        Task<DashboardDto> GetDashboardAsync(long licenseId);
+
         [Post("/api/sessions/topic/reset")]
         Task ResetTopicPracticeAsync(ResetTopicPracticeRequestDto request);
 

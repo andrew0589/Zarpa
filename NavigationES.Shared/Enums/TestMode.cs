@@ -9,5 +9,9 @@ namespace NavigationES.Shared.Enums
         ExamPractice = 2,
         // Questions from a single topic, untimed, with explanations.
         TopicPractice = 3,
+        // Every question of the license whose latest answer was wrong, any topic.
+        Review = 4,
+        // A short random mix (QuickTestSize questions) across the license's topics.
+        Quick = 5,
     }
 }

@@ -18,6 +18,24 @@
             <h2 class="retro-title">Tu comunidad autónoma</h2>
             <ComunidadSelector />
         </section>
+
+        <section class="retro-card">
+            <h2 class="retro-title">Tu examen</h2>
+            <p class="tagline">La fecha de tu examen. En Inicio verás cuántos días te quedan.</p>
+            <form class="home-exam-form" @onsubmit="SaveExamDateAsync" @onsubmit:preventDefault>
+                <label class="visually-hidden" for="perfil-exam-date">Fecha de tu examen</label>
+                <input id="perfil-exam-date" class="home-exam-input" type="date" @bind="_examDate" disabled="@_savingExamDate" />
+                <button type="submit" class="home-exam-btn primary" disabled="@(_savingExamDate || _examDate == _savedExamDate)">Guardar</button>
+                @if (_savedExamDate is not null)
+                {
+                    <button type="button" class="home-exam-btn link" disabled="@_savingExamDate" @onclick="ClearExamDateAsync">Quitar fecha</button>
+                }
+            </form>
+            @if (_examDateMessage is not null)
+            {
+                <p class="@(_examDateFailed ? "error" : "tagline")" role="status">@_examDateMessage</p>
+            }
+        </section>
     </div>
 
     <section class="retro-card">
@@ -108,6 +126,57 @@
 </div>
 
 @code {
+    private DateOnly? _examDate;
+    private DateOnly? _savedExamDate;
+    private bool _savingExamDate;
+    private string? _examDateMessage;
+    private bool _examDateFailed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _savedExamDate = _examDate = (await AuthApi.GetExamDateAsync()).Date;
+        }
+        catch (Exception)
+        {
+            // The card stays empty; saving still works.
+        }
+    }
+
+    private Task SaveExamDateAsync() => StoreExamDateAsync(_examDate);
+
+    private Task ClearExamDateAsync() => StoreExamDateAsync(null);
+
+    private async Task StoreExamDateAsync(DateOnly? date)
+    {
+        _savingExamDate = true;
+        _examDateMessage = null;
+        try
+        {
+            var result = await AuthApi.UpdateExamDateAsync(new ExamDateDto(date));
+            _examDateFailed = !result.IsSuccess;
+            if (result.IsSuccess)
+            {
+                _savedExamDate = _examDate = date;
+                _examDateMessage = date is null ? "Fecha quitada." : "Fecha guardada.";
+            }
+            else
+            {
+                _examDateMessage = ErrorMessages.Translate(result.ErrorMessage);
+            }
+        }
+        catch (Exception)
+        {
+            _examDateFailed = true;
+            _examDateMessage = ErrorMessages.Translate(null);
+        }
+        finally
+        {
+            _savingExamDate = false;
+        }
+    }
+
     private bool _confirmingDelete;
     private bool _deleting;
     private string? _deleteError;

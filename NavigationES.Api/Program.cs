@@ -52,6 +52,7 @@ builder.Services.AddTransient<ComunidadService>();
 builder.Services.AddTransient<ExamService>();
 builder.Services.AddTransient<ExamSessionService>();
 builder.Services.AddTransient<PracticeSessionService>();
+builder.Services.AddTransient<DashboardService>();
 builder.Services.AddTransient<QuestionImportService>();
 builder.Services.AddTransient<ExamImportService>();
 builder.Services.AddTransient<AdminUserService>();

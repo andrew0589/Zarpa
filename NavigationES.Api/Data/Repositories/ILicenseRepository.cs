@@ -11,5 +11,8 @@ namespace NavigationES.Api.Data.Repositories
 
         // Whether the topic is part of the license's exam blueprint.
         Task<bool> IncludesTopicAsync(long licenseId, long topicId);
+
+        // The topic IDs of the license's blueprint.
+        Task<List<long>> GetTopicIdsAsync(long licenseId);
     }
 }

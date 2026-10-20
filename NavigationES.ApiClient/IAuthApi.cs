@@ -28,5 +28,11 @@ namespace NavigationES.ApiClient
         // that replaces the stored one.
         [Put("/api/account/name")]
         Task<ResultWithDataDto<AuthResponseDto>> UpdateNameAsync(UpdateNameRequestDto dto);
+
+        [Get("/api/account/exam-date")]
+        Task<ExamDateDto> GetExamDateAsync();
+
+        [Put("/api/account/exam-date")]
+        Task<ResultDto> UpdateExamDateAsync(ExamDateDto dto);
     }
 }

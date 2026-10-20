@@ -26,5 +26,13 @@ namespace NavigationES.Api.Data.Repositories
             return await _context.LicenseTopics
                 .AnyAsync(lt => lt.LicenseID == licenseId && lt.TopicID == topicId);
         }
+
+        public async Task<List<long>> GetTopicIdsAsync(long licenseId)
+        {
+            return await _context.LicenseTopics
+                .Where(lt => lt.LicenseID == licenseId)
+                .Select(lt => lt.TopicID)
+                .ToListAsync();
+        }
     }
 }
