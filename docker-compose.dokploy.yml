@@ -40,6 +40,10 @@ services:
       # Guards /api/admin/* (question and exam import). Fails closed if unset.
       - AdminSettings__ApiKey=${ADMIN_API_KEY}
 
+      # Estudiar (video lessons): false = administrators only. Set STUDY_PUBLIC=true
+      # in Dokploy once the videos are ready — no client release needed.
+      - Study__Public=${STUDY_PUBLIC:-false}
+
       # reCAPTCHA v3 on the website's signup/forgot-password. Blank = check off
       # (fails open, so signups keep working until the keys exist).
       - Recaptcha__SecretKey=${RECAPTCHA_SECRET_KEY}
@@ -67,6 +71,12 @@ services:
       - EmailSettings__Username=${SMTP_USERNAME}
       - EmailSettings__Password=${SMTP_PASSWORD}
       - EmailSettings__EnableSsl=true
+    volumes:
+      # Estudiar videos (mp4 + vtt), uploaded from the web's Admin › Vídeos tab — not
+      # in git, not in the image, and kept across redeploys, so a new or re-edited
+      # video needs no deploy. Served as https://api.navigationes.eu/videos/<file>.
+      # Docker creates the volume on the first deploy (DEPLOY.md, "Video-uri Estudiar").
+      - navigationes-videos:/app/wwwroot/videos
     networks:
       # `mssql` is reachable here too — DEPLOY.md attaches it to this same network.
       - dokploy-network
@@ -127,6 +137,9 @@ services:
       - "traefik.http.routers.navigationes-web-http.entrypoints=web"
       - "traefik.http.routers.navigationes-web-http.middlewares=navigationes-https"
       - "traefik.http.routers.navigationes-web-http.service=navigationes-web"
+
+volumes:
+  navigationes-videos:
 
 networks:
   dokploy-network:

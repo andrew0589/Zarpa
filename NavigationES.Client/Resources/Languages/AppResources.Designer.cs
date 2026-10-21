@@ -1652,5 +1652,238 @@ namespace NavigationES.Client.Resources.Languages {
                 return ResourceManager.GetString("YourProgressTitle", resourceCulture);
             }
         }
+            /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyTagline {
+            get {
+                return ResourceManager.GetString("StudyTagline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyContinueTitle {
+            get {
+                return ResourceManager.GetString("StudyContinueTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyRemainingFormat {
+            get {
+                return ResourceManager.GetString("StudyRemainingFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudySyllabusFormat {
+            get {
+                return ResourceManager.GetString("StudySyllabusFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyOneVideo {
+            get {
+                return ResourceManager.GetString("StudyOneVideo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyVideosFormat {
+            get {
+                return ResourceManager.GetString("StudyVideosFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyWatchedFormat {
+            get {
+                return ResourceManager.GetString("StudyWatchedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyInPreparation {
+            get {
+                return ResourceManager.GetString("StudyInPreparation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyTopicFormat {
+            get {
+                return ResourceManager.GetString("StudyTopicFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyStateWatched {
+            get {
+                return ResourceManager.GetString("StudyStateWatched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyStateInProgress {
+            get {
+                return ResourceManager.GetString("StudyStateInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyStateNotWatched {
+            get {
+                return ResourceManager.GetString("StudyStateNotWatched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyStateLocked {
+            get {
+                return ResourceManager.GetString("StudyStateLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyFree {
+            get {
+                return ResourceManager.GetString("StudyFree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyDraft {
+            get {
+                return ResourceManager.GetString("StudyDraft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyStart {
+            get {
+                return ResourceManager.GetString("StudyStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyContinue {
+            get {
+                return ResourceManager.GetString("StudyContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyPracticeTopicFormat {
+            get {
+                return ResourceManager.GetString("StudyPracticeTopicFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudySections {
+            get {
+                return ResourceManager.GetString("StudySections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyKeyTerms {
+            get {
+                return ResourceManager.GetString("StudyKeyTerms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyChapters {
+            get {
+                return ResourceManager.GetString("StudyChapters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyNext {
+            get {
+                return ResourceManager.GetString("StudyNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyLockedTitle {
+            get {
+                return ResourceManager.GetString("StudyLockedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyLockedText {
+            get {
+                return ResourceManager.GetString("StudyLockedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyNoVideoFile {
+            get {
+                return ResourceManager.GetString("StudyNoVideoFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string.
+        /// </summary>
+        internal static string StudyNoVideos {
+            get {
+                return ResourceManager.GetString("StudyNoVideos", resourceCulture);
+            }
+        }
     }
 }

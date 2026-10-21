@@ -1,6 +1,8 @@
 @inherits LayoutComponentBase
 @inject WebAuthStateProvider Auth
 @inject NavigationManager Navigation
+@inject IStudyApi StudyApi
+@implements IDisposable
 
 <div class="page">
     <header class="topbar">
@@ -16,7 +18,11 @@
                         <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
                         <NavLink href="temas">Temas</NavLink>
                         <NavLink href="examen">Examen</NavLink>
-                        @* <NavLink href="estudiar">Estudiar</NavLink> *@
+                        @* Administrators only until the API's Study:Public is switched on. *@
+                        @if (_studyOpen)
+                        {
+                            <NavLink href="estudiar">Estudiar</NavLink>
+                        }
                         <NavLink href="perfil">Perfil</NavLink>
                         <NavLink href="suscripcion">Suscripción</NavLink>
                         @if (context.User.IsInRole(WebAuthStateProvider.AdminRole))
@@ -24,6 +30,7 @@
                             <NavLink href="admin/usuarios">Usuarios</NavLink>
                             <NavLink href="admin/contenido">Contenido</NavLink>
                             <NavLink href="admin/convocatorias">Convocatorias</NavLink>
+                            <NavLink href="admin/videos">Vídeos</NavLink>
                         }
                         <div class="nav-user-mobile">
                             <span class="user-name">@context.User.Identity?.Name</span>
@@ -64,6 +71,40 @@
 
 @code {
     private bool _menuOpen;
+    private bool _studyOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await RefreshStudyAccessAsync(await Auth.GetAuthenticationStateAsync());
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> state)
+    {
+        await RefreshStudyAccessAsync(await state);
+        StateHasChanged();
+    }
+
+    // The API decides (admin, or Study:Public); a failed call just hides the tab.
+    private async Task RefreshStudyAccessAsync(AuthenticationState state)
+    {
+        if (state.User.Identity?.IsAuthenticated != true)
+        {
+            _studyOpen = false;
+            return;
+        }
+
+        try
+        {
+            _studyOpen = (await StudyApi.GetAccessAsync()).Enabled;
+        }
+        catch (Exception)
+        {
+            _studyOpen = false;
+        }
+    }
+
+    public void Dispose() => Auth.AuthenticationStateChanged -= OnAuthenticationStateChanged;
 
     private async Task SignoutAsync()
     {

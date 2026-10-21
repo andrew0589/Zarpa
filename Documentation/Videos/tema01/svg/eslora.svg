@@ -1,0 +1,25 @@
+<svg viewBox="0 0 1400 640" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <marker id="es-f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#B71C1C"/></marker>
+  </defs>
+  <rect x="0" y="430" width="1400" height="210" fill="#D8ECF7"/>
+  <path d="M0 430 q50 -14 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <!-- barco -->
+  <path d="M150 300 Q700 335 1250 268 L1180 400 Q1100 452 900 460 L300 460 Q195 452 170 400 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M168 395 Q700 430 1185 392" fill="none" stroke="#0B3D5C" stroke-width="12"/>
+  <path d="M430 312 L470 215 L820 210 L930 302 Z" fill="#F7FAFC" stroke="#0B3D5C" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M820 210 L860 255 L760 255 L760 228 Z" fill="#2E4A60"/><rect x="510" y="236" width="230" height="24" rx="12" fill="#2E4A60"/>
+  <!-- púlpito de proa (no cuenta) -->
+  <path d="M1150 276 L1160 212 Q1270 208 1320 250 L1300 268" fill="none" stroke="#8A97A1" stroke-width="7" stroke-linecap="round" stroke-dasharray="14 8"/>
+  <!-- planos y cota -->
+  <g stroke="#B71C1C" stroke-width="4" stroke-dasharray="14 10">
+    <line x1="150" y1="130" x2="150" y2="580"/><line x1="1250" y1="130" x2="1250" y2="580"/>
+  </g>
+  <line x1="160" y1="560" x2="1240" y2="560" stroke="#B71C1C" stroke-width="6" marker-start="url(#es-f)" marker-end="url(#es-f)"/>
+  <text x="700" y="610" text-anchor="middle" font-size="38" font-weight="800" fill="#B71C1C">ESLORA MÁXIMA</text>
+  <g font-size="30" font-weight="700" fill="#24465E" text-anchor="middle">
+    <text x="230" y="110">parte más saliente de popa</text>
+    <text x="1180" y="110">cubierta con la roda</text>
+  </g>
+  <text x="1290" y="175" font-size="28" font-weight="700" fill="#5B6770" text-anchor="middle">púlpito: no cuenta</text>
+</svg>

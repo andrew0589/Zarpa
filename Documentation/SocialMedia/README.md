@@ -22,11 +22,21 @@ Imaginile se pot verifica în `out/` înainte de programare; o postare nedorită
 10 minute și ~30 de zile în avans; ce e mai departe rămâne în coadă pentru rularea următoare.
 Orele sunt ora locală a PC-ului (Romance Standard Time = Madrid).
 
+## Instagram (@navigationes)
+
+Instagram nu are programare prin API, așa că `programa_instagram.py publica-scadente` rulează la 15 minute
+din Task Scheduler (`instaleaza_task_instagram.ps1`, o singură dată) și publică postările din
+`coada.json`/`publicate.json` cărora le-a venit ora. Merge doar cât PC-ul e pornit; ce e întârziat
+peste 3 ore se sare. Starea e în `instagram.json`, jurnalul în `instagram.log`.
+Imaginea trece printr-o foto nepublicată pe pagină (Instagram cere URL public), ștearsă imediat după.
+
 ## Token (o singură dată)
 
 1. developers.facebook.com → **My Apps → Create App**, cazul de utilizare „Manage everything on your Page”.
 2. **Tools → Graph API Explorer**: alege aplicația, „Get User Access Token”, permisiunile
-   `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, **Generate Access Token**.
+   `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `instagram_basic`,
+   `instagram_content_publish` (ultimele două vin din use case-ul „Manage messaging & content on
+   Instagram” → „API setup with Facebook login”), **Generate Access Token**; bifează pagina și contul IG.
 3. **Tools → Access Token Debugger**: lipește token-ul → **Extend Access Token** (token de user pe 60 de zile).
 4. Înapoi în Explorer, cu token-ul extins, cererea `GET me/accounts` → la pagina NavigationES
    copiază `id` și `access_token` (token de pagină care nu expiră).

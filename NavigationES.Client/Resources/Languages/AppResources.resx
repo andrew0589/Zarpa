@@ -573,4 +573,82 @@
   <data name="AccessNone" xml:space="preserve">
     <value>Sin acceso activo</value>
   </data>
+  <data name="StudyTagline" xml:space="preserve">
+    <value>Vídeo-lecciones del temario, apartado por apartado.</value>
+  </data>
+  <data name="StudyContinueTitle" xml:space="preserve">
+    <value>Continuar viendo</value>
+  </data>
+  <data name="StudyRemainingFormat" xml:space="preserve">
+    <value>Quedan {0}</value>
+  </data>
+  <data name="StudySyllabusFormat" xml:space="preserve">
+    <value>Temario · {0} capítulos</value>
+  </data>
+  <data name="StudyOneVideo" xml:space="preserve">
+    <value>1 vídeo</value>
+  </data>
+  <data name="StudyVideosFormat" xml:space="preserve">
+    <value>{0} vídeos</value>
+  </data>
+  <data name="StudyWatchedFormat" xml:space="preserve">
+    <value>{0} vistos</value>
+  </data>
+  <data name="StudyInPreparation" xml:space="preserve">
+    <value>Vídeos en preparación</value>
+  </data>
+  <data name="StudyTopicFormat" xml:space="preserve">
+    <value>Tema {0}</value>
+  </data>
+  <data name="StudyStateWatched" xml:space="preserve">
+    <value>Visto</value>
+  </data>
+  <data name="StudyStateInProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="StudyStateNotWatched" xml:space="preserve">
+    <value>Sin ver</value>
+  </data>
+  <data name="StudyStateLocked" xml:space="preserve">
+    <value>Con suscripción</value>
+  </data>
+  <data name="StudyFree" xml:space="preserve">
+    <value>Gratis</value>
+  </data>
+  <data name="StudyDraft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="StudyStart" xml:space="preserve">
+    <value>Empezar</value>
+  </data>
+  <data name="StudyContinue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="StudyPracticeTopicFormat" xml:space="preserve">
+    <value>Practicar el tema {0}</value>
+  </data>
+  <data name="StudySections" xml:space="preserve">
+    <value>Apartados</value>
+  </data>
+  <data name="StudyKeyTerms" xml:space="preserve">
+    <value>Términos clave</value>
+  </data>
+  <data name="StudyChapters" xml:space="preserve">
+    <value>Capítulos del vídeo</value>
+  </data>
+  <data name="StudyNext" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
+  <data name="StudyLockedTitle" xml:space="preserve">
+    <value>Disponible con tu suscripción</value>
+  </data>
+  <data name="StudyLockedText" xml:space="preserve">
+    <value>El primer vídeo de cada tema es gratis. Los demás forman parte de la suscripción de NavigationES.</value>
+  </data>
+  <data name="StudyNoVideoFile" xml:space="preserve">
+    <value>Vídeo todavía no subido</value>
+  </data>
+  <data name="StudyNoVideos" xml:space="preserve">
+    <value>Los vídeos de este tema están en preparación.</value>
+  </data>
 </root>

@@ -1,0 +1,323 @@
+@page "/admin/videos"
+@attribute [Authorize(Roles = WebAuthStateProvider.AdminRole)]
+@inject IAdminApi AdminApi
+@inject ApiOptions Api
+@inject IJSRuntime JS
+@using System.Text.Json
+
+<PageTitle>Vídeos — NavigationES</PageTitle>
+
+<div class="admin-page">
+    <h1>Vídeos</h1>
+    <p class="tagline">
+        @if (_topics is null)
+        {
+            <text>Cargando…</text>
+        }
+        else
+        {
+            <text>@_topics.Sum(t => t.Videos.Count) vídeos · @_topics.Sum(t => t.Videos.Count(v => v.IsPublished)) publicados · @_topics.Count(t => t.Videos.Count > 0) temas con vídeos</text>
+        }
+    </p>
+
+    <section class="retro-card admin-card admin-card-bleed">
+        <p class="admin-hint">
+            La sección <strong>Estudiar</strong> solo la ven los administradores mientras <code>Study__Public</code> esté
+            en <code>false</code> en la API. Cada tema es un capítulo: PNB ve los temas 1–6, PER 1–11, PY 12–15 y CY 16–19.
+            <strong>Subir vídeos y catálogo</strong>: selecciona de <code>Documentation\Videos\out</code> los <code>.mp4</code>,
+            los <code>.vtt</code> y el <code>catalogo.json</code> de <code>exporta_catalogo.py</code>, todos a la vez. Los vídeos se
+            guardan en el servidor (un vídeo rehecho sustituye al anterior, sin deploy) y el catálogo crea o actualiza por
+            tema + código, sin pisar las fotos ni los check que ya hayas puesto. Las rutas relativas
+            (<code>images/study/…</code>, <code>videos/…</code>) las sirve la API. Fotos en 16:9: capítulo 1600×900, apartado 1280×720.
+            Los cambios se guardan al salir de cada campo.
+        </p>
+
+        <div class="admin-toolbar">
+            <label class="btn-outline-dark study-import @(_busy ? "is-busy" : null)">
+                Subir vídeos y catálogo
+                <InputFile multiple accept=".mp4,.vtt,.json,video/mp4,text/vtt,application/json" OnChange="UploadAsync" disabled="@_busy" />
+            </label>
+            @if (_progress is not null)
+            {
+                <span class="admin-small" role="status">@_progress</span>
+            }
+            <select class="admin-field" @bind="_license" aria-label="Titulación">
+                <option value="">Todas las titulaciones</option>
+                <option value="PNB">PNB</option>
+                <option value="PER">PER</option>
+                <option value="PY">PY</option>
+                <option value="CY">CY</option>
+            </select>
+        </div>
+
+        @if (_message is not null)
+        {
+            <p class="admin-message" role="status">@_message</p>
+        }
+        @if (_error is not null)
+        {
+            <p class="error" role="alert">@_error</p>
+        }
+    </section>
+
+    @if (_topics is not null)
+    {
+        @foreach (var t in _topics.Where(t => _license == "" || t.Licenses.Split(" · ").Contains(_license)))
+        {
+            <details class="retro-card admin-card study-admin-topic" open="@(t.Videos.Count > 0)">
+                <summary>
+                    <strong>Tema @t.Number · @t.Name</strong>
+                    <span class="admin-small">@(t.Licenses == "" ? "sin titulación" : t.Licenses) · @StudyFormat.Videos(t.Videos.Count)</span>
+                </summary>
+
+                <div class="study-admin-cover">
+                    <div class="study-admin-cover-img">
+                        <StudyImage Url="@StudyFormat.Media(Api, t.ImageUrl)" Label="Sin foto" />
+                    </div>
+                    <div class="study-admin-cover-fields">
+                        <label>Foto del capítulo (URL o images/study/…)
+                            <input class="admin-field" @bind="t.ImageUrl" @bind:after="() => SaveTopicAsync(t)" placeholder="images/study/tema01.webp" />
+                        </label>
+                        <label>Descripción
+                            <textarea class="admin-field" rows="2" maxlength="1000" @bind="t.Description" @bind:after="() => SaveTopicAsync(t)"></textarea>
+                        </label>
+                    </div>
+                </div>
+
+                @if (t.Videos.Count > 0)
+                {
+                    <div class="admin-table-wrap">
+                        <table class="admin-table study-admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Orden</th><th>Código</th><th>Título / subtítulo</th><th>Foto</th><th>Vídeo / subtítulos (.vtt)</th>
+                                    <th>Duración (s)</th><th>Gratis</th><th>Publicado</th><th>Datos</th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var v in t.Videos)
+                                {
+                                    <tr>
+                                        <td><input class="admin-field study-num" type="number" @bind="v.SortOrder" @bind:after="() => SaveVideoAsync(v)" aria-label="Orden de @v.Code" /></td>
+                                        <td><strong>@v.Code</strong></td>
+                                        <td>
+                                            <input class="admin-field" @bind="v.Title" @bind:after="() => SaveVideoAsync(v)" aria-label="Título de @v.Code" />
+                                            <input class="admin-field" @bind="v.Subtitle" @bind:after="() => SaveVideoAsync(v)" placeholder="Subtítulo" aria-label="Subtítulo de @v.Code" />
+                                        </td>
+                                        <td><input class="admin-field" @bind="v.ImageUrl" @bind:after="() => SaveVideoAsync(v)" placeholder="images/study/…" aria-label="Foto de @v.Code" /></td>
+                                        <td>
+                                            <input class="admin-field" @bind="v.VideoUrl" @bind:after="() => SaveVideoAsync(v)" placeholder="https://… .mp4 / .m3u8" aria-label="Vídeo de @v.Code" />
+                                            <input class="admin-field" @bind="v.SubtitlesUrl" @bind:after="() => SaveVideoAsync(v)" placeholder="… .vtt" aria-label="Subtítulos de @v.Code" />
+                                        </td>
+                                        <td>
+                                            <input class="admin-field study-num" type="number" min="0" @bind="v.DurationSeconds" @bind:after="() => SaveVideoAsync(v)" aria-label="Duración de @v.Code" />
+                                            <span class="admin-small admin-block">@StudyFormat.Clock(v.DurationSeconds)</span>
+                                        </td>
+                                        <td><input type="checkbox" @bind="v.IsFree" @bind:after="() => SaveVideoAsync(v)" aria-label="@v.Code gratis" /></td>
+                                        <td><input type="checkbox" @bind="v.IsPublished" @bind:after="() => SaveVideoAsync(v)" aria-label="@v.Code publicado" /></td>
+                                        <td class="admin-small">@v.KeyTermCount términos<br />@v.ChapterCount capítulos</td>
+                                        <td>
+                                            <a class="admin-small" href="estudiar/video/@v.Id">Ver</a>
+                                            <button type="button" class="btn-danger-outline admin-btn-sm" @onclick="() => DeleteAsync(t, v)">Borrar</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </details>
+        }
+    }
+</div>
+
+@code {
+    // The DTOs are immutable; the page edits these copies with @bind.
+    private sealed class Topic
+    {
+        public required int Number { get; init; }
+        public required string Name { get; init; }
+        public required string Licenses { get; init; }
+        public string? ImageUrl { get; set; }
+        public string? Description { get; set; }
+        public required List<Video> Videos { get; init; }
+    }
+
+    private sealed class Video
+    {
+        public required long Id { get; init; }
+        public required string Code { get; init; }
+        public int SortOrder { get; set; }
+        public string Title { get; set; } = "";
+        public string? Subtitle { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? VideoUrl { get; set; }
+        public string? SubtitlesUrl { get; set; }
+        public int DurationSeconds { get; set; }
+        public bool IsFree { get; set; }
+        public bool IsPublished { get; set; }
+        public int KeyTermCount { get; init; }
+        public int ChapterCount { get; init; }
+    }
+
+    private List<Topic>? _topics;
+    private string _license = "";
+    private string? _message;
+    private string? _error;
+    private bool _busy;
+    private string? _progress;
+
+    // The largest single file the browser hands over (the API accepts up to 500 MB).
+    private const long MaxVideoBytes = 500L * 1024 * 1024;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            var dtos = await AdminApi.GetStudyAsync();
+            _topics = dtos.Select(t => new Topic
+            {
+                Number = t.Number,
+                Name = t.Name,
+                Licenses = t.Licenses,
+                ImageUrl = t.ImageUrl,
+                Description = t.Description,
+                Videos = t.Videos.Select(v => new Video
+                {
+                    Id = v.Id, Code = v.Code, SortOrder = v.SortOrder, Title = v.Title, Subtitle = v.Subtitle,
+                    ImageUrl = v.ImageUrl, VideoUrl = v.VideoUrl, SubtitlesUrl = v.SubtitlesUrl,
+                    DurationSeconds = v.DurationSeconds, IsFree = v.IsFree, IsPublished = v.IsPublished,
+                    KeyTermCount = v.KeyTermCount, ChapterCount = v.ChapterCount,
+                }).ToList(),
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+        }
+    }
+
+    private async Task SaveTopicAsync(Topic t) =>
+        await RunAsync($"Tema {t.Number}", () => AdminApi.UpdateStudyTopicAsync(t.Number, new AdminStudyTopicUpdateDto(t.ImageUrl, t.Description)));
+
+    private async Task SaveVideoAsync(Video v) =>
+        await RunAsync(v.Code, () => AdminApi.UpdateStudyVideoAsync(v.Id, new AdminStudyVideoUpdateDto(
+            v.Title, v.Subtitle, v.ImageUrl, v.VideoUrl, v.SubtitlesUrl, v.DurationSeconds, v.SortOrder, v.IsFree, v.IsPublished)));
+
+    private async Task DeleteAsync(Topic t, Video v)
+    {
+        if (!await JS.InvokeAsync<bool>("confirm", $"¿Borrar el vídeo {v.Code} {v.Title}? Se pierde también el progreso de los usuarios."))
+            return;
+
+        await RunAsync(v.Code, () => AdminApi.DeleteStudyVideoAsync(v.Id), "borrado");
+        if (_error is null)
+            t.Videos.Remove(v);
+    }
+
+    private async Task RunAsync(string what, Func<Task<ResultDto>> call, string done = "guardado")
+    {
+        _message = null;
+        _error = null;
+        try
+        {
+            var result = await call();
+            if (result.IsSuccess)
+                _message = $"{what}: {done}.";
+            else
+                _error = ErrorMessages.Translate(result.ErrorMessage);
+        }
+        catch (Exception)
+        {
+            _error = ErrorMessages.Translate(null);
+        }
+    }
+
+    // One selection from Documentation\Videos\out: every .mp4/.vtt goes to the
+    // server one by one (a failure stops nothing else), then catalogo.json, if picked,
+    // is imported — after the files, so the videos it points to already exist.
+    private async Task UploadAsync(InputFileChangeEventArgs e)
+    {
+        _busy = true;
+        _message = null;
+        _error = null;
+        var files = e.GetMultipleFiles(maximumFileCount: 500);
+        var media = files.Where(f => f.Name.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase)
+                                  || f.Name.EndsWith(".vtt", StringComparison.OrdinalIgnoreCase)).ToList();
+        var catalog = files.FirstOrDefault(f => f.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
+        var failed = new List<string>();
+        var uploaded = 0;
+
+        try
+        {
+            for (var i = 0; i < media.Count; i++)
+            {
+                var file = media[i];
+                _progress = $"Subiendo {i + 1} de {media.Count}: {file.Name} ({file.Size / (1024 * 1024.0):0.#} MB)…";
+                StateHasChanged();
+                try
+                {
+                    // Copied into memory first: handed to Refit directly, the browser file
+                    // stream is read synchronously and goes out as an empty part.
+                    using var buffer = new MemoryStream(capacity: (int)file.Size);
+                    await using (var stream = file.OpenReadStream(MaxVideoBytes))
+                        await stream.CopyToAsync(buffer);
+                    buffer.Position = 0;
+                    var contentType = file.Name.EndsWith(".vtt", StringComparison.OrdinalIgnoreCase) ? "text/vtt" : "video/mp4";
+                    var result = await AdminApi.UploadStudyFileAsync(new Refit.StreamPart(buffer, file.Name, contentType));
+                    if (result.IsSuccess)
+                        uploaded++;
+                    else
+                        failed.Add($"{file.Name} ({ErrorMessages.Translate(result.ErrorMessage)})");
+                }
+                catch (Exception)
+                {
+                    failed.Add(file.Name);
+                }
+            }
+
+            var summary = media.Count > 0 ? $"Subidos {uploaded} de {media.Count} ficheros." : "";
+            if (catalog is not null)
+            {
+                _progress = "Importando el catálogo…";
+                StateHasChanged();
+                summary += " " + await ImportCatalogAsync(catalog);
+            }
+
+            _message = summary.Trim() is { Length: > 0 } text ? text : null;
+            if (failed.Count > 0)
+                _error = $"No se han podido subir: {string.Join(", ", failed)}.";
+            await LoadAsync();
+        }
+        finally
+        {
+            _progress = null;
+            _busy = false;
+        }
+    }
+
+    // Returns the line for the status message; a bad file becomes an error instead.
+    private async Task<string> ImportCatalogAsync(IBrowserFile file)
+    {
+        try
+        {
+            await using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+            var rows = await JsonSerializer.DeserializeAsync<List<StudyVideoImportDto>>(stream, JsonSerializerOptions.Web);
+            if (rows is null || rows.Count == 0)
+                return "El catálogo no contiene vídeos.";
+
+            var result = await AdminApi.ImportStudyAsync(rows);
+            return $"Catálogo: {result.Created} nuevos, {result.Updated} actualizados." +
+                   (result.Errors.Count > 0 ? $" Con errores ({result.Errors.Count}): {string.Join(" · ", result.Errors)}" : "");
+        }
+        catch (JsonException)
+        {
+            return "El catálogo no es un JSON válido.";
+        }
+        catch (Exception)
+        {
+            return "No se ha podido importar el catálogo.";
+        }
+    }
+}

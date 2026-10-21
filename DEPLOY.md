@@ -251,6 +251,36 @@ docker exec -it navigationes-api curl -s localhost:8080/ping
 
 ---
 
+## Video-uri Estudiar (volum Docker, upload din admin)
+
+Video-urile (`.mp4` + subtitrarea `.vtt`) nu sunt în git și nici în imaginea Docker:
+stau în volumul Docker `navigationes-videos`, montat în API la `/app/wwwroot/videos`
+(vezi `volumes:` în `docker-compose.dokploy.yml`). API-ul le servește la
+`https://api.navigationes.eu/videos/<fișier>`. Volumul se creează singur la primul
+deploy și rămâne între deploy-uri; pe server nu e nimic de pregătit.
+
+### La fiecare lot de video-uri (din PC)
+
+```bash
+# catalogul (titluri, durate, termeni, capitole) -> Documentation/Videos/out/catalogo.json
+python Documentation/Videos/exporta_catalogo.py --publicar
+```
+
+Pe https://navigationes.eu, cu contul de admin: **Vídeos → Subir vídeos y catálogo** și
+selectezi din `Documentation\Videos\out` toate `.mp4`, `.vtt` și `catalogo.json` odată.
+Fișierele urcă unul câte unul (cel mult 500 MB fiecare), apoi se importă catalogul.
+Un video refăcut se urcă din nou cu același nume și îl înlocuiește pe cel vechi — fără
+deploy. Baza de producție e alta decât cea locală, deci importul se face aici separat.
+
+Verificare: `curl -sI https://api.navigationes.eu/videos/1.1_casco.mp4` → 200, `video/mp4`.
+
+Un video refăcut poate rămâne în cache-ul browserului: Ctrl+F5. Ce e în volum:
+`docker exec navigationes-api ls -la /app/wwwroot/videos`. Când secțiunea devine publică
+și traficul crește, video-urile se pot muta pe un CDN: reexporți catalogul cu
+`--base-url https://…/` și reimporți.
+
+---
+
 ## Ce a rămas nerezolvat
 
 Lucruri pe care deploy-ul le scoate la iveală, dar care nu blochează lansarea:

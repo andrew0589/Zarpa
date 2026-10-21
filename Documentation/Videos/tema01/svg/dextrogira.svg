@@ -1,0 +1,23 @@
+<svg viewBox="0 0 1400 620" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <path id="dx-pala" d="M0 0 C -80 -50, -60 -170, 0 -170 C 80 -165, 70 -50, 0 0 Z"/>
+    <marker id="dx-flecha" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#1F7A8C"/>
+    </marker>
+  </defs>
+  <g fill="#D2AA52" stroke="#8A6A22" stroke-width="4">
+    <g transform="translate(350 360)"><use href="#dx-pala"/><use href="#dx-pala" transform="rotate(120)"/><use href="#dx-pala" transform="rotate(240)"/><circle r="38" fill="#B08A36"/></g>
+    <g transform="translate(1050 360) scale(-1 1)"><use href="#dx-pala"/><use href="#dx-pala" transform="rotate(120)"/><use href="#dx-pala" transform="rotate(240)"/><circle r="38" fill="#B08A36"/></g>
+  </g>
+  <g fill="none" stroke="#1F7A8C" stroke-width="10" stroke-linecap="round">
+    <path d="M160 260 A215 215 0 0 1 540 260" marker-end="url(#dx-flecha)"/>
+    <path d="M1240 260 A215 215 0 0 0 860 260" marker-end="url(#dx-flecha)"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="350" y="70" font-size="42" font-weight="800" fill="#0B3D5C">DEXTRÓGIRA</text>
+    <text x="350" y="110" font-size="28" fill="#24465E">a derechas · como el reloj</text>
+    <text x="1050" y="70" font-size="42" font-weight="800" fill="#0B3D5C">LEVÓGIRA</text>
+    <text x="1050" y="110" font-size="28" fill="#24465E">a izquierdas · al contrario del reloj</text>
+    <text x="700" y="600" font-size="28" font-weight="700" fill="#B85A00">Siempre mirando desde popa y dando avante</text>
+  </g>
+</svg>

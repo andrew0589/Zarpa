@@ -59,6 +59,8 @@ builder.Services.AddTransient<AdminUserService>();
 builder.Services.AddTransient<AdminContentService>();
 builder.Services.AddTransient<AdminComunidadService>();
 builder.Services.AddTransient<PublicSiteService>();
+builder.Services.AddTransient<StudyService>();
+builder.Services.AddTransient<AdminStudyService>();
 
 // Repositories: all data access (the LINQ queries) lives here; services hold the
 // business rules and endpoints only adapt HTTP. Scoped to follow the DbContext.
@@ -141,8 +143,17 @@ app.MapAdminEndpoints();
 app.UseForwardedHeaders();
 
 // Question/explanation images live in wwwroot/images and are served publicly —
-// static files bypass the endpoint auth policy by design.
-app.UseStaticFiles();
+// static files bypass the endpoint auth policy by design. .vtt (Estudiar subtitles)
+// is not in the default content-type map, so it is added here.
+var staticTypes = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+staticTypes.Mappings[".vtt"] = "text/vtt";
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = staticTypes,
+    // The web player loads videos and their <track> subtitles with crossorigin
+    // (required for subtitles from another origin); these files are public anyway.
+    OnPrepareResponse = ctx => ctx.Context.Response.Headers.AccessControlAllowOrigin = "*",
+});
 // The same images under /img for the public pages (PublicSiteEndpoints): nginx on
 // navigationes.eu proxies /img to here, because /images there is the web app's own.
 app.UseStaticFiles(new StaticFileOptions
@@ -191,11 +202,14 @@ app.MapLicenseEndpoints();
 app.MapComunidadEndpoints();
 app.MapExamEndpoints();
 app.MapSessionEndpoints();
+// Estudiar (video lessons): administrators only until Study:Public is switched on.
+app.MapStudyEndpoints();
 // Trial/subscription status for every client; Checkout, Portal and the Stripe webhook.
 app.MapBillingEndpoints();
 // Usuarios tab: JWT + IsAdmin (checked in the database on every call).
 app.MapAdminUserEndpoints();
 app.MapAdminContentEndpoints();
 app.MapAdminComunidadEndpoints();
+app.MapAdminStudyEndpoints();
 
 app.Run();

@@ -1,0 +1,72 @@
+{
+  "tema": "Tema 1 · Nomenclatura náutica",
+  "seccion": "1.4 El timón",
+  "imagenes": "C:/NavigationES Documentation/Questions/Topics(teme)/1. Nomenclatura náutica - ok/images",
+  "slides": [
+    {
+      "tipo": "portada",
+      "titulo": "1.4 El timón",
+      "sub": "Pala, caña, mecha, limera y guardines",
+      "narracion": "Seguimos con el tema uno. Ahora le toca al timón: para qué sirve, cuáles son sus piezas, qué diferencia hay entre un timón ordinario y uno compensado, y cómo llega el movimiento de la rueda hasta la pala."
+    },
+    {
+      "titulo": "El timón y sus piezas",
+      "img": "img/timon_partes.webp",
+      "terminos": [
+        {"t": "Timón", "d": "Sirve para **gobernar**: cambiar o mantener el rumbo. Es una pala vertical en la popa que gira sobre pivotes fijos al casco."},
+        {"t": "Pala", "d": "La parte ancha que, al girar en el agua, **cambia el rumbo** del barco."},
+        {"t": "Caña o rueda", "d": "Lo que maneja el timonel para mover el timón: el volante del barco."}
+      ],
+      "narracion": "El timón sirve para gobernar la embarcación, es decir, para cambiar el rumbo o para mantenerlo. Es una pala vertical colocada en la popa, sostenida por unos pivotes fijos al casco, sobre los que puede girar a izquierda y a derecha. La pala es la parte ancha del timón: al girar en el agua, desvía el flujo y provoca el cambio de rumbo. Y para mover el timón, el timonel maneja la caña o la rueda, que vendría a ser el volante del barco."
+    },
+    {
+      "titulo": "Mecha y limera",
+      "img": "img/timon_partes.webp",
+      "terminos": [
+        {"t": "Mecha", "d": "El **eje** del timón: une la pala con la caña o la rueda."},
+        {"t": "Limera", "d": "El **orificio** por donde la mecha atraviesa el casco."}
+      ],
+      "nota": "Pregunta típica: «El orificio por donde el eje del timón atraviesa el casco se denomina…» → **limera**.",
+      "narracion": "Dos piezas que caen mucho en el examen. La mecha es el eje del timón: la barra vertical que une la pala, abajo, con la caña o la rueda, arriba. Cuando giramos la caña, gira la mecha, y con ella la pala. Y la limera es el orificio por el que pasa la mecha para atravesar el casco. Fíjate en la pregunta típica: el orificio por donde el eje del timón atraviesa el casco se llama limera. Y la caña y la limera, ambas, forman parte del timón."
+    },
+    {
+      "titulo": "Timón ordinario y compensado",
+      "svg": "svg/timon_tipos.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "Timón ordinario", "d": "Eje en el **extremo delantero** de la pala. Más sensible, pero pide **más esfuerzo** al timonel."},
+        {"t": "Timón compensado", "d": "Eje más o menos **en el centro** de la pala. Pierde algo de sensibilidad, pero cuesta **menos fuerza**."}
+      ],
+      "narracion": "Según dónde tenga la pala su eje de giro, hablamos de dos tipos de timón. En el timón ordinario, el eje está en el extremo delantero de la pala, y toda la pala queda detrás. Es más sensible, pero exige más esfuerzo al timonel. En el timón compensado, el eje está más o menos hacia el centro de la pala, de modo que una parte queda por delante del eje y equilibra a la otra. Se pierde un poco de sensibilidad, pero gobernar requiere mucha menos fuerza."
+    },
+    {
+      "titulo": "Guardines",
+      "svg": "svg/guardines.svg",
+      "terminos": [
+        {"t": "Guardines", "d": "Conjunto de **cables y poleas** que transmiten el movimiento de la **rueda** a la pala del timón."}
+      ],
+      "nota": "Solo en barcos que se gobiernan con **rueda**. Con caña, la caña va directamente sobre la mecha.",
+      "narracion": "Cuando el barco se gobierna con caña, la caña va directamente sobre la mecha. Pero si se gobierna con rueda, la rueda suele estar lejos de la mecha, así que hace falta transmitir el movimiento. Para eso están los guardines: el conjunto de cables y poleas que llevan el giro de la rueda hasta la pala del timón. En el dibujo, los cables bajan desde la rueda, pasan por las poleas y tiran de un sector unido a la mecha."
+    },
+    {
+      "titulo": "Fueraborda y dentro-fueraborda",
+      "img": "img/fueraborda.webp",
+      "terminos": [
+        {"t": "Sin pala de timón", "d": "Con motor **fueraborda** o **dentro-fueraborda** no hace falta pala: la **cola del motor** hace de timón."}
+      ],
+      "narracion": "Un caso especial. En las embarcaciones con motor fueraborda, o con motor dentro-fueraborda, no hace falta la pala del timón, porque es la cola del motor la que hace su función: al girar la cola, cambia la dirección del empuje de la hélice, y con ella el rumbo del barco."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Timón = gobernar: cambiar o mantener el rumbo.",
+        "Pala = la parte ancha que, al girar en el agua, cambia el rumbo.",
+        "Mecha = eje del timón · limera = orificio por donde pasa.",
+        "Ordinario: eje delante, más sensible y más esfuerzo · compensado: eje al centro, menos esfuerzo.",
+        "Guardines = cables y poleas de la rueda a la pala.",
+        "Fueraborda: sin pala, gobierna la cola del motor."
+      ],
+      "narracion": "Repasamos. El timón sirve para gobernar, cambiando o manteniendo el rumbo. La pala es la parte ancha que, al girar en el agua, cambia el rumbo. La mecha es el eje del timón, y la limera el orificio por donde pasa. El timón ordinario tiene el eje delante, es más sensible y cuesta más; el compensado lo tiene hacia el centro y cuesta menos. Los guardines son los cables y poleas que van de la rueda a la pala. Y con motor fueraborda no hay pala: gobierna la cola del motor."
+    }
+  ]
+}

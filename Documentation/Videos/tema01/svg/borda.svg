@@ -1,0 +1,22 @@
+<svg viewBox="0 0 1000 680" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <rect x="0" y="470" width="1000" height="210" fill="#D8ECF7"/>
+  <path d="M170 170 L180 420 Q200 620 500 620 Q800 620 820 420 L830 170 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M0 470 q42 -14 84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <rect x="182" y="225" width="636" height="16" fill="#D9B98C"/>
+  <text x="500" y="270" text-anchor="middle" font-size="24" fill="#7A5530">cubierta</text>
+  <!-- borda / regala resaltadas -->
+  <g fill="#3CC2BC" stroke="#0B3D5C" stroke-width="3">
+    <rect x="152" y="152" width="44" height="26" rx="6"/>
+    <rect x="804" y="152" width="44" height="26" rx="6"/>
+  </g>
+  <g font-weight="800" font-size="36" fill="#0B3D5C">
+    <text x="60" y="90">Borda o regala</text>
+    <text x="940" y="90" text-anchor="end">Borda o regala</text>
+  </g>
+  <g stroke="#12324A" stroke-width="2.5" stroke-dasharray="6 6">
+    <line x1="170" y1="102" x2="172" y2="148"/><line x1="828" y1="102" x2="826" y2="148"/>
+  </g>
+  <text x="155" y="360" font-size="30" font-weight="700" fill="#24465E" text-anchor="end">costado</text>
+  <text x="845" y="360" font-size="30" font-weight="700" fill="#24465E">costado</text>
+  <text x="500" y="420" text-anchor="middle" font-size="26" fill="#24465E">canto superior del costado = borda</text>
+</svg>

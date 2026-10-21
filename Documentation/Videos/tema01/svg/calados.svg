@@ -1,0 +1,25 @@
+<svg viewBox="0 0 1400 560" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <marker id="cl-f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#B71C1C"/></marker>
+  </defs>
+  <g transform="translate(700 300) rotate(-2.5) scale(1.6)">
+    <path d="M-260 -40 Q0 -25 260 -55 L225 20 Q190 45 120 50 L-200 50 Q-245 45 -250 20 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M-90 -32 L-70 -88 L100 -90 L150 -44 Z" fill="#F7FAFC" stroke="#0B3D5C" stroke-width="3"/>
+    <rect x="-40" y="-72" width="110" height="16" rx="8" fill="#2E4A60"/>
+  </g>
+  <rect x="0" y="300" width="1400" height="260" fill="#9FD0EA" opacity=".5"/>
+  <path d="M0 300 q50 -14 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <g stroke="#B71C1C" stroke-width="5" marker-start="url(#cl-f)" marker-end="url(#cl-f)">
+    <line x1="383" y1="306" x2="383" y2="388"/>
+    <line x1="702" y1="306" x2="702" y2="374"/>
+    <line x1="895" y1="306" x2="895" y2="366"/>
+  </g>
+  <g font-size="30" font-weight="800" fill="#B71C1C" text-anchor="middle">
+    <text x="383" y="450">a popa</text>
+    <text x="702" y="440">en el medio</text>
+    <text x="895" y="430">a proa</text>
+  </g>
+  <text x="130" y="200" font-size="30" font-weight="800" fill="#0B3D5C">← POPA</text>
+  <text x="1270" y="200" font-size="30" font-weight="800" fill="#0B3D5C" text-anchor="end">PROA →</text>
+  <text x="700" y="530" text-anchor="middle" font-size="30" font-weight="700" fill="#0B3D5C">Calado medio = (calado a proa + calado a popa) ÷ 2</text>
+</svg>

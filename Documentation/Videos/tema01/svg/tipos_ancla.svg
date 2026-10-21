@@ -1,0 +1,34 @@
+<svg viewBox="0 0 1500 520" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <g fill="#5B6770" stroke="#3D4A54" stroke-width="4" stroke-linejoin="round">
+    <!-- arado (CQR) -->
+    <path d="M170 60 Q205 200 250 300" fill="none" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="170" cy="60" r="18" fill="none" stroke-width="10"/>
+    <path d="M250 290 L150 330 Q170 400 260 410 Q350 400 370 330 Z"/>
+    <path d="M260 300 L260 405" stroke="#DCE3E8" stroke-width="5" fill="none"/>
+    <!-- Danforth -->
+    <rect x="738" y="70" width="24" height="320" rx="6"/>
+    <circle cx="750" cy="60" r="18" fill="none" stroke-width="10"/>
+    <path d="M735 390 L690 170 L655 390 Z"/>
+    <path d="M765 390 L810 170 L845 390 Z"/>
+    <rect x="715" y="370" width="70" height="40" rx="6"/>
+    <rect x="600" y="398" width="300" height="16" rx="8"/>
+    <!-- rezón -->
+    <rect x="1238" y="70" width="24" height="270" rx="6"/>
+    <circle cx="1250" cy="60" r="18" fill="none" stroke-width="10"/>
+    <path d="M1250 340 Q1170 360 1150 270" fill="none" stroke-width="20" stroke-linecap="round"/>
+    <path d="M1250 340 Q1330 360 1350 270" fill="none" stroke-width="20" stroke-linecap="round"/>
+    <path d="M1250 340 Q1230 400 1195 395" fill="none" stroke-width="18" stroke-linecap="round"/>
+    <path d="M1250 340 Q1272 400 1305 395" fill="none" stroke-width="18" stroke-linecap="round"/>
+    <ellipse cx="1150" cy="255" rx="16" ry="30"/><ellipse cx="1350" cy="255" rx="16" ry="30"/>
+    <ellipse cx="1185" cy="395" rx="22" ry="12"/><ellipse cx="1315" cy="395" rx="22" ry="12"/>
+  </g>
+  <g text-anchor="middle" font-size="40" font-weight="800" fill="#0B3D5C">
+    <text x="260" y="480">Arado (CQR)</text>
+    <text x="750" y="480">Danforth</text>
+    <text x="1250" y="480">Rezón</text>
+  </g>
+  <g text-anchor="middle" font-size="24" fill="#24465E">
+    <text x="915" y="412" text-anchor="start">barra bajo la cruz</text>
+    <text x="1250" y="440">4 brazos, sin cepo</text>
+  </g>
+</svg>

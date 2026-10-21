@@ -1,0 +1,24 @@
+<svg viewBox="0 0 1400 520" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <line x1="700" y1="40" x2="700" y2="500" stroke="#C9D8E2" stroke-width="3" stroke-dasharray="10 10"/>
+  <g text-anchor="middle">
+    <text x="350" y="50" font-size="38" font-weight="800" fill="#0B3D5C">A vela: plegada</text>
+    <text x="350" y="86" font-size="26" fill="#24465E">«pico de pato» · poca resistencia</text>
+    <text x="1050" y="50" font-size="38" font-weight="800" fill="#0B3D5C">A motor: abierta</text>
+    <text x="1050" y="86" font-size="26" fill="#24465E">se abre por la fuerza centrífuga</text>
+  </g>
+  <!-- plegada -->
+  <rect x="90" y="285" width="300" height="26" rx="6" fill="#9AA6AF" stroke="#5B6770" stroke-width="3"/>
+  <rect x="385" y="268" width="70" height="60" rx="10" fill="#B08A36" stroke="#8A6A22" stroke-width="4"/>
+  <path d="M455 272 Q570 250 640 292 Q570 284 455 296 Z" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M455 324 Q570 346 640 304 Q570 312 455 300 Z" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" stroke-linejoin="round"/>
+  <g stroke="#3C8DBC" stroke-width="5" stroke-linecap="round" opacity=".8">
+    <line x1="100" y1="200" x2="620" y2="200"/><line x1="100" y1="400" x2="620" y2="400"/>
+  </g>
+  <!-- abierta -->
+  <rect x="790" y="285" width="300" height="26" rx="6" fill="#9AA6AF" stroke="#5B6770" stroke-width="3"/>
+  <rect x="1085" y="268" width="70" height="60" rx="10" fill="#B08A36" stroke="#8A6A22" stroke-width="4"/>
+  <ellipse cx="1130" cy="200" rx="26" ry="80" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" transform="rotate(10 1130 200)"/>
+  <ellipse cx="1130" cy="398" rx="26" ry="80" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" transform="rotate(-10 1130 398)"/>
+  <path d="M1230 200 A130 130 0 0 1 1230 400" fill="none" stroke="#1F7A8C" stroke-width="9" stroke-linecap="round"/>
+  <polygon points="1230,420 1212,392 1246,392" fill="#1F7A8C"/>
+</svg>

@@ -1,7 +1,126 @@
 @page "/estudiar"
 @attribute [Authorize]
+@inject ILicensesApi LicensesApi
+@inject IStudyApi StudyApi
+@inject ApiOptions Api
+@inject NavigationManager Navigation
 
 <PageTitle>Estudiar — NavigationES</PageTitle>
 
-<h1>Estudiar</h1>
-<p class="tagline">Próximamente…</p>
+<div class="study-page">
+    <div class="study-head">
+        <div>
+            <h1>Estudiar</h1>
+            <p class="tagline">Vídeo-lecciones del temario, apartado por apartado. Mira el vídeo y practica justo después con las preguntas del tema.</p>
+        </div>
+        @if (_overview is not null)
+        {
+            <div class="study-stats">
+                <div><strong>@_completed / @_videoCount</strong>vídeos vistos</div>
+                <div><strong>@StudyFormat.Minutes(_totalSeconds)</strong>de vídeo</div>
+            </div>
+        }
+    </div>
+
+    @if (_notOpen)
+    {
+        <p class="tagline">Próximamente…</p>
+    }
+    else if (_error)
+    {
+        <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+    }
+    else if (_overview is null)
+    {
+        <p class="page-loading">Cargando…</p>
+    }
+    else
+    {
+        @if (_overview.Continue is { } next)
+        {
+            <section class="study-continue" aria-labelledby="study-continue-title">
+                <a class="study-thumb study-thumb-continue" href="estudiar/video/@next.VideoId" aria-label="Continuar @next.Title">
+                    <StudyImage Url="@StudyFormat.Media(Api, next.ImageUrl)" Label="@($"Foto {next.Code}")" />
+                    <span class="study-play" aria-hidden="true"></span>
+                    <span class="study-thumb-progress" style="width: @(StudyFormat.Percent(next.PositionSeconds, next.DurationSeconds))%"></span>
+                </a>
+                <div class="study-continue-text">
+                    <div class="study-eyebrow" id="study-continue-title">Continuar viendo</div>
+                    <div class="study-continue-name">@next.Code @next.Title</div>
+                    <div class="study-muted">Tema @next.TopicNumber · @next.TopicName · quedan @StudyFormat.Clock(next.DurationSeconds - next.PositionSeconds) de @StudyFormat.Clock(next.DurationSeconds)</div>
+                </div>
+                <a class="btn-primary btn-link" href="estudiar/video/@next.VideoId">Continuar</a>
+            </section>
+        }
+
+        <section aria-labelledby="study-chapters">
+            <h2 id="study-chapters" class="study-section-title">Temario · @_overview.Chapters.Count @(_overview.Chapters.Count == 1 ? "capítulo" : "capítulos")</h2>
+            <div class="study-grid">
+                @foreach (var c in _overview.Chapters)
+                {
+                    <a class="study-card @(c.VideoCount == 0 ? "is-empty" : null)" href="estudiar/tema/@c.Number">
+                        <span class="study-card-img">
+                            <StudyImage Url="@StudyFormat.Media(Api, c.ImageUrl)" Label="@($"Foto tema {c.Number}")" />
+                            <span class="study-badge">Tema @c.Number</span>
+                            @if (c.VideoCount == 0)
+                            {
+                                <span class="study-badge study-badge-soon">Próximamente</span>
+                            }
+                        </span>
+                        <span class="study-card-body">
+                            <span class="study-card-name">@c.Name</span>
+                            <span class="study-muted">
+                                @if (c.VideoCount == 0)
+                                {
+                                    <text>Vídeos en preparación</text>
+                                }
+                                else
+                                {
+                                    <text>@StudyFormat.Videos(c.VideoCount) · @StudyFormat.Minutes(c.TotalSeconds)@(c.CompletedCount > 0 ? $" · {c.CompletedCount} visto{(c.CompletedCount == 1 ? "" : "s")}" : "")</text>
+                                }
+                            </span>
+                            <span class="progress-track"><span class="progress-fill" style="width: @(StudyFormat.Percent(c.CompletedCount, c.VideoCount))%"></span></span>
+                        </span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    private StudyOverviewDto? _overview;
+    private bool _notOpen;
+    private bool _error;
+    private int _videoCount;
+    private int _completed;
+    private int _totalSeconds;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // No qualification chosen yet — the home page is where that happens.
+            var selection = await LicensesApi.GetSelectedLicenseAsync();
+            if (selection.LicenseId is not long licenseId)
+            {
+                Navigation.NavigateTo("/");
+                return;
+            }
+
+            _overview = await StudyApi.GetOverviewAsync(licenseId);
+            _videoCount = _overview.Chapters.Sum(c => c.VideoCount);
+            _completed = _overview.Chapters.Sum(c => c.CompletedCount);
+            _totalSeconds = _overview.Chapters.Sum(c => c.TotalSeconds);
+        }
+        catch (Refit.ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            // Section not open to this account yet (Study:Public off, not an admin).
+            _notOpen = true;
+        }
+        catch (Exception)
+        {
+            _error = true;
+        }
+    }
+}

@@ -1,0 +1,83 @@
+{
+  "tema": "Tema 1 · Nomenclatura náutica",
+  "seccion": "1.6 Calado, asiento y desplazamiento",
+  "imagenes": "C:/NavigationES Documentation/Questions/Topics(teme)/1. Nomenclatura náutica - ok/images",
+  "slides": [
+    {
+      "tipo": "portada",
+      "titulo": "Calado, asiento y desplazamiento",
+      "sub": "Con un ejemplo de cálculo",
+      "narracion": "Seguimos con las dimensiones. Ahora le toca al calado, al asiento y al desplazamiento. Y vamos a hacer juntos el pequeño cálculo que suele caer en el examen."
+    },
+    {
+      "titulo": "El calado",
+      "img": "img/calado.webp",
+      "terminos": [
+        {"t": "Calado", "d": "Distancia vertical entre el **canto inferior de la quilla** y la **línea de flotación**."},
+        {"t": "Dicho de otra forma", "d": "La altura de la **obra viva**: lo que el barco tiene metido en el agua."}
+      ],
+      "narracion": "El calado es la distancia vertical medida entre el canto inferior de la quilla, o el punto más bajo del barco, y la línea de flotación. Es decir, la altura de la obra viva: cuánto barco hay metido en el agua. Es lo que nos dice si podemos pasar por una zona poco profunda."
+    },
+    {
+      "titulo": "Calado a proa, a popa y calado medio",
+      "svg": "svg/calados.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "Según dónde se mida", "d": "Calado **a proa** (Cpr), calado **a popa** (Cpp) y calado **en el medio**."},
+        {"t": "Calado medio (Cm)", "d": "La **semisuma**: (Cpr + Cpp) ÷ 2. No es lo mismo que el calado en el medio."}
+      ],
+      "narracion": "El calado cambia según dónde lo midamos, porque el barco no siempre flota recto. Así, tenemos el calado a proa, el calado a popa y el calado en el medio. No lo confundas con el calado medio, que es otra cosa: es la semisuma de los calados a proa y a popa, es decir, sumarlos y dividir entre dos."
+    },
+    {
+      "titulo": "Ejemplo: calado medio",
+      "puntos": [
+        "Calado a proa: **Cpr = 1,5 m** · calado a popa: **Cpp = 1,9 m**",
+        "Cm = (Cpr + Cpp) ÷ 2",
+        "Cm = (1,5 + 1,9) ÷ 2 = 3,4 ÷ 2",
+        "**Cm = 1,7 m**"
+      ],
+      "narracion": "Vamos con un ejemplo. Un barco tiene un calado a proa de uno coma cinco metros y un calado a popa de uno coma nueve metros. ¿Cuál es su calado medio? Sumamos los dos: uno coma cinco más uno coma nueve, tres coma cuatro. Y dividimos entre dos: uno coma siete metros. El calado medio es de uno coma siete metros."
+    },
+    {
+      "titulo": "El asiento",
+      "svg": "svg/asiento.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "Asiento (A)", "d": "Inclinación proa-popa: **A = Cpp − Cpr**, calado de popa menos calado de proa."},
+        {"t": "Positivo: apopado", "d": "Cala **más a popa** que a proa."},
+        {"t": "Negativo: aproado", "d": "Cala **más a proa** que a popa."}
+      ],
+      "narracion": "El asiento es la inclinación del barco en sentido proa-popa, y se calcula como la diferencia entre el calado de popa y el calado de proa: A igual a calado de popa menos calado de proa. Si el barco cala más a popa que a proa, el asiento es positivo, y se dice que el barco está apopado. Si cala más a proa que a popa, el asiento es negativo, y el barco está aproado. Siempre que se pueda, conviene ajustar el asiento al estado de la mar."
+    },
+    {
+      "titulo": "Ejemplo: asiento",
+      "puntos": [
+        "Mismo barco: **Cpp = 1,9 m** · **Cpr = 1,5 m**",
+        "A = Cpp − Cpr = 1,9 − 1,5",
+        "**A = + 0,4 m** → positivo: el barco está **apopado**",
+        "Y si A = − 0,20 m → el barco está **20 cm aproado**"
+      ],
+      "narracion": "Con el mismo barco: calado de popa, uno coma nueve; calado de proa, uno coma cinco. El asiento es uno coma nueve menos uno coma cinco: cero coma cuatro metros. Como sale positivo, el barco está apopado. Y al revés: si te dicen que el asiento es de menos cero coma veinte metros, el barco está veinte centímetros aproado."
+    },
+    {
+      "titulo": "Desplazamiento",
+      "terminos": [
+        {"t": "Desplazamiento", "d": "El **peso** de la embarcación en un momento dado."},
+        {"t": "Desplazamiento máximo", "d": "El peso con la **máxima carga** segura de tripulantes, equipaje y carga. Se expresa en **toneladas métricas**."}
+      ],
+      "nota": "Se llama así porque el barco pesa lo mismo que el agua que desplaza al flotar.",
+      "narracion": "Y por último, el desplazamiento, que es simplemente el peso de la embarcación. El desplazamiento máximo es el peso del barco con la máxima carga de tripulantes, equipajes y carga que le permita navegar con seguridad, es decir, completamente cargado y listo para salir de puerto con su calado máximo. Se expresa en toneladas métricas. Se llama desplazamiento porque un barco que flota pesa exactamente lo mismo que el agua que desplaza."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Calado = de la quilla a la flotación (altura de la obra viva).",
+        "Calado medio = semisuma: (Cpr + Cpp) ÷ 2.",
+        "Asiento = Cpp − Cpr.",
+        "Positivo = apopado · negativo = aproado.",
+        "Desplazamiento = peso; máximo = a plena carga, en toneladas métricas."
+      ],
+      "narracion": "Repasamos. El calado va de la quilla a la línea de flotación. El calado medio es la semisuma de los calados a proa y a popa. El asiento es el calado de popa menos el de proa: positivo, apopado; negativo, aproado. Y el desplazamiento es el peso del barco; el máximo, a plena carga, en toneladas métricas."
+    }
+  ]
+}

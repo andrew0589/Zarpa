@@ -1,0 +1,34 @@
+<svg viewBox="0 0 1480 640" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <path id="hp-pala" d="M0 0 C -105 -70, -80 -230, 0 -230 C 105 -220, 92 -70, 0 0 Z"/>
+  </defs>
+  <text x="350" y="50" text-anchor="middle" font-size="30" font-weight="700" fill="#24465E">vista de frente</text>
+  <text x="1030" y="50" text-anchor="middle" font-size="30" font-weight="700" fill="#24465E">vista de lado</text>
+  <!-- de frente -->
+  <g transform="translate(350 330)" fill="#D2AA52" stroke="#8A6A22" stroke-width="4">
+    <use href="#hp-pala"/><use href="#hp-pala" transform="rotate(120)"/><use href="#hp-pala" transform="rotate(240)"/>
+    <circle r="50" fill="#B08A36"/><circle r="16" fill="#3D4A54" stroke="none"/>
+  </g>
+  <!-- de lado -->
+  <rect x="740" y="314" width="270" height="32" rx="6" fill="#9AA6AF" stroke="#5B6770" stroke-width="3"/>
+  <ellipse cx="1050" cy="205" rx="26" ry="100" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" transform="rotate(14 1050 205)"/>
+  <ellipse cx="1050" cy="455" rx="26" ry="100" fill="#D2AA52" stroke="#8A6A22" stroke-width="4" transform="rotate(-14 1050 455)"/>
+  <rect x="1005" y="280" width="90" height="100" rx="12" fill="#B08A36" stroke="#8A6A22" stroke-width="4"/>
+  <path d="M1095 285 L1210 330 L1095 375 Z" fill="#9C7A2B" stroke="#6E5418" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="1135" y1="290" x2="1135" y2="370" stroke="#D62828" stroke-width="6" stroke-linecap="round"/>
+  <!-- rótulos -->
+  <g font-size="34" font-weight="800" fill="#0B3D5C">
+    <text x="560" y="150">PALAS</text>
+    <text x="80" y="600">NÚCLEO</text>
+    <text x="760" y="430">EJE</text>
+    <text x="1180" y="200">CAPACETE</text>
+  </g>
+  <text x="1180" y="480" font-size="24" fill="#B71C1C" font-weight="700">pasador de seguridad</text>
+  <g stroke="#12324A" stroke-width="2.5" stroke-dasharray="6 6">
+    <line x1="590" y1="160" x2="480" y2="220"/>
+    <line x1="200" y1="575" x2="330" y2="360"/>
+    <line x1="800" y1="400" x2="820" y2="350"/>
+    <line x1="1230" y1="210" x2="1170" y2="320"/>
+    <line x1="1240" y1="458" x2="1140" y2="368"/>
+  </g>
+</svg>

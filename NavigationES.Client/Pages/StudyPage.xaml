@@ -2,21 +2,114 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
              x:Class="NavigationES.Client.Pages.StudyPage"
              Title="{x:Static lang:AppResources.TabStudy}"
+             x:DataType="vm:StudyViewModel"
              BackgroundColor="#F2F4F8">
 
-    <VerticalStackLayout Spacing="10"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center">
-        <Label Text="{x:Static lang:AppResources.TabStudy}"
-               HorizontalOptions="Center"
-               FontSize="24"
-               TextColor="{StaticResource Primary}"
-               FontAttributes="Bold" />
-        <Label Text="{x:Static lang:AppResources.ComingSoon}"
-               HorizontalOptions="Center"
-               FontSize="16"
-               TextColor="{StaticResource Gray500}" />
-    </VerticalStackLayout>
+    <Grid>
+        <RefreshView Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     RefreshColor="{StaticResource Accent}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16,20,16,32" MaximumWidthRequest="600" Spacing="14">
+
+                    <Label Text="{x:Static lang:AppResources.StudyTagline}"
+                           TextColor="{StaticResource Gray600}"
+                           FontSize="14" />
+
+                    <Label Text="{Binding Message}"
+                           IsVisible="{Binding HasMessage}"
+                           TextColor="{StaticResource Gray600}"
+                           FontSize="15" />
+
+                    <!-- Continuar viendo -->
+                    <Border IsVisible="{Binding HasContinue}"
+                            BackgroundColor="{StaticResource Primary}"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 16"
+                            Padding="12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ContinueCommand}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="120,*" ColumnSpacing="12">
+                            <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    HeightRequest="68" BackgroundColor="#D5EEEC">
+                                <Grid>
+                                    <Image Source="{Binding ContinueImage}" Aspect="AspectFill" />
+                                    <Label Text="▶" TextColor="{StaticResource Primary}" FontSize="22"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <ProgressBar Progress="{Binding ContinueProgress}" ProgressColor="{StaticResource Accent}"
+                                                 VerticalOptions="End" HeightRequest="4" />
+                                </Grid>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="{x:Static lang:AppResources.StudyContinueTitle}"
+                                       TextColor="#8FD9D5" FontSize="12" FontAttributes="Bold" />
+                                <Label Text="{Binding ContinueTitle}" TextColor="White" FontSize="16"
+                                       FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding ContinueMeta}" TextColor="#CFE0EA" FontSize="13" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <Label Text="{Binding SyllabusTitle}"
+                           TextColor="{StaticResource OffBlack}"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           Margin="0,6,0,0" />
+
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Chapters}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:StudyChapterItem">
+                                <Border BackgroundColor="White"
+                                        Stroke="#D8DEE6"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 14"
+                                        Padding="10">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsEmpty}" Value="True">
+                                            <Setter Property="Opacity" Value="0.75" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding OpenChapterCommand, Source={RelativeSource AncestorType={x:Type vm:StudyViewModel}}}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="104,*,Auto" ColumnSpacing="12">
+                                        <!-- 16:9 cover; the tint shows until the administrator sets a photo -->
+                                        <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                                HeightRequest="58" BackgroundColor="#DBEAF2">
+                                            <Grid>
+                                                <Image Source="{Binding Image}" Aspect="AspectFill" />
+                                                <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent"
+                                                        StrokeShape="RoundRectangle 5" Padding="6,1" Margin="4"
+                                                        HorizontalOptions="Start" VerticalOptions="Start">
+                                                    <Label Text="{Binding Number}" TextColor="White" FontSize="11" FontAttributes="Bold" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                            <Label Text="{Binding Name}" TextColor="{StaticResource OffBlack}"
+                                                   FontSize="15" FontAttributes="Bold" LineBreakMode="WordWrap" MaxLines="2" />
+                                            <Label Text="{Binding Meta}" TextColor="{StaticResource Gray600}" FontSize="12" />
+                                            <ProgressBar Progress="{Binding Progress}" ProgressColor="{StaticResource Accent}" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="2" Text="›" FontSize="24" TextColor="{StaticResource Gray400}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{StaticResource Accent}" />
+    </Grid>
 </ContentPage>

@@ -1,0 +1,75 @@
+{
+  "tema": "Tema 1 · Nomenclatura náutica",
+  "seccion": "1.5 Tipos de hélice",
+  "imagenes": "C:/NavigationES Documentation/Questions/Topics(teme)/1. Nomenclatura náutica - ok/images",
+  "slides": [
+    {
+      "tipo": "portada",
+      "titulo": "Tipos de hélice",
+      "sub": "Paso variable, abatibles, de proa… y la bocina",
+      "narracion": "Seguimos con la hélice. Ahora vamos a ver los tipos de hélice que te pueden preguntar: de paso variable, de palas abatibles, de proa, de velocidad y de arrastre. Y terminamos con la bocina."
+    },
+    {
+      "titulo": "Hélices reversibles de paso variable",
+      "img": "helice_de_paso_multiple_o_variable.png",
+      "terminos": [
+        {"t": "Paso variable o múltiple", "d": "Se pueden **orientar las palas**: avante, atrás, sin propulsión o cambiar el paso…"},
+        {"t": "…sin cambiar el giro", "d": "La hélice gira **siempre en el mismo sentido**: el motor no necesita inversora."}
+      ],
+      "nota": "Lo habitual en recreo es la hélice de **paso fijo**. Las de paso variable se usan en grandes buques o en barcos que maniobran mucho.",
+      "narracion": "En la náutica de recreo, lo habitual todavía es la hélice de paso fijo. Pero cada vez se ven más las hélices reversibles de paso variable, o de paso múltiple, muy utilizadas en grandes buques y en embarcaciones que tienen que maniobrar con mucha frecuencia. Su truco es que pueden orientar las palas, cambiando su ángulo de ataque. Así, con la hélice girando siempre en el mismo sentido, el barco puede ir avante, dar atrás, quedarse sin propulsión o modificar el paso. Por eso los motores de estas embarcaciones no necesitan inversora de marcha."
+    },
+    {
+      "titulo": "Hélices de palas abatibles",
+      "svg": "svg/plegable.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "Plegables o «pico de pato»", "d": "Muy usadas en **veleros**, sobre todo de competición."},
+        {"t": "Cómo funcionan", "d": "A vela van **plegadas**; al arrancar el motor se **abren** por la fuerza centrífuga del eje."},
+        {"t": "Ventaja", "d": "Navegando a vela **disminuyen el rozamiento** y la resistencia al avance."}
+      ],
+      "narracion": "En los veleros, y sobre todo en los de competición, es muy frecuente montar hélices plegables, también llamadas de pico de pato. Cuando el velero navega a vela, las palas van plegadas hacia atrás, como un pico. Y cuando arrancamos el motor, el giro del eje las abre por la fuerza centrífuga. ¿La ventaja? Que navegando a vela la hélice apenas ofrece resistencia: disminuye el rozamiento y el barco avanza mejor."
+    },
+    {
+      "titulo": "Hélices de proa",
+      "svg": "svg/helice_proa.svg",
+      "terminos": [
+        {"t": "Hélice de proa", "d": "Hélice en un túnel transversal de la proa: la desplaza a **babor o a estribor**."},
+        {"t": "Para qué", "d": "Ayuda en los **últimos momentos del atraque**."},
+        {"t": "Dónde", "d": "Habitual en barcos de **más de 15 m**; cada vez más en los de más de 9 m."}
+      ],
+      "narracion": "Las hélices de proa van montadas en un túnel que atraviesa la proa de lado a lado. Empujan el agua hacia un costado o hacia el otro, y así desplazan la proa a babor o a estribor. Son de gran ayuda en los momentos finales de una maniobra de atraque. Son habituales en barcos de recreo de más de quince metros de eslora, y como cada vez hay menos espacio en los puertos, se están instalando ya en muchas embarcaciones de más de nueve metros."
+    },
+    {
+      "titulo": "De velocidad y de arrastre",
+      "svg": "svg/velocidad_arrastre.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "De velocidad", "d": "Para girar muy rápido: **mucho paso y poco diámetro**. Típicas de los fuerabordas."},
+        {"t": "De arrastre", "d": "**Poco paso y mucho diámetro**. Para barcos de gran desplazamiento."}
+      ],
+      "narracion": "Según su función, también hay hélices de velocidad y de arrastre. Las de velocidad están hechas para girar muy deprisa: tienen mucho paso y poco diámetro, y son las típicas de los motores fueraborda. Las de arrastre son al revés: poco paso y mucho diámetro, y se usan en barcos de gran desplazamiento, que necesitan mucha fuerza más que velocidad. Elegir bien la hélice según el barco es clave para sacar el mejor rendimiento al motor."
+    },
+    {
+      "titulo": "La bocina",
+      "img": "bocina.png",
+      "terminos": [
+        {"t": "Bocina", "d": "Revestimiento del **orificio por donde el eje de la hélice sale** del casco."},
+        {"t": "Cuidado", "d": "Hay que revisarla a menudo: si se daña, por un golpe de la hélice o una red enganchada, el barco puede **inundarse rápido**."}
+      ],
+      "nota": "En el tema de señales, «bocina» es también el aparato de señales fónicas. Aquí hablamos de la del eje.",
+      "narracion": "Y para terminar, la bocina. Es el revestimiento que protege por dentro el orificio por el que el eje de cola de la hélice sale del casco. En el examen te la pueden definir como el orificio del casco por donde sale el eje de la hélice. Es una pieza delicada: hay que inspeccionarla periódicamente, porque si se daña, por ejemplo por un golpe de la hélice o porque se enganche una red, el barco podría inundarse muy rápido. Y no la confundas con la otra bocina, la de las señales acústicas, que verás en otro tema."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Paso variable: orienta las palas; gira siempre igual y el motor no lleva inversora.",
+        "Abatibles (plegables, «pico de pato»): veleros; a vela, menos rozamiento.",
+        "Hélice de proa: mueve la proa a babor o estribor al atracar.",
+        "De velocidad: mucho paso, poco diámetro · de arrastre: poco paso, mucho diámetro.",
+        "Bocina: orificio por donde sale el eje de la hélice. Revisarla."
+      ],
+      "narracion": "Repasamos. La hélice de paso variable orienta sus palas y gira siempre en el mismo sentido, sin inversora. Las abatibles, plegables o de pico de pato, se usan en veleros y reducen el rozamiento a vela. La hélice de proa mueve la proa a babor o a estribor al atracar. Las de velocidad tienen mucho paso y poco diámetro, y las de arrastre, poco paso y mucho diámetro. Y la bocina es el orificio por donde sale el eje de la hélice, y hay que revisarla."
+    }
+  ]
+}

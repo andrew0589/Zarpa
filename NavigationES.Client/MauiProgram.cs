@@ -35,6 +35,8 @@ public static class MauiProgram
                 fonts.AddFontAwesomeIconFonts();
             })
             .UseMauiCommunityToolkit()
+            // Estudiar videos; no background playback, so no Android foreground service.
+            .UseMauiCommunityToolkitMediaElement(isAndroidForegroundServiceEnabled: false)
             .UseUraniumUI()
             .UseUraniumUIMaterial();
 
@@ -57,6 +59,9 @@ public static class MauiProgram
         builder.Services.AddTransient<HomeViewModel>();
         builder.Services.AddTransient<ExamsViewModel>();
         builder.Services.AddTransient<ExamSessionViewModel>();
+        builder.Services.AddTransient<StudyViewModel>();
+        builder.Services.AddTransient<StudyTopicViewModel>();
+        builder.Services.AddTransient<StudyVideoViewModel>();
 
         // Register Services
         builder.Services.AddSingleton<AuthService>();
@@ -77,6 +82,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ExplanationPage>();
         builder.Services.AddTransient<ExamsPage>();
         builder.Services.AddTransient<ExamSessionPage>();
+        builder.Services.AddTransient<StudyTopicPage>();
+        builder.Services.AddTransient<StudyVideoPage>();
 
         ConfigureRefit(builder.Services);
 
@@ -159,6 +166,10 @@ public static class MauiProgram
 
         // Status only: the app never shows prices or starts a purchase (store rules).
         services.AddRefitGeneratedClient<IBillingApi>(refitSettings)
+            .ConfigureHttpClient(SetHttpClient);
+
+        // Estudiar: administrators only until the API's Study:Public is on.
+        services.AddRefitGeneratedClient<IStudyApi>(refitSettings)
             .ConfigureHttpClient(SetHttpClient);
 
         void SetHttpClient(HttpClient httpClient) => httpClient.BaseAddress = new Uri(envService.ApiBaseUrl);

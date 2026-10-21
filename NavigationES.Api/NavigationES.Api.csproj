@@ -28,4 +28,8 @@
     <ProjectReference Include="..\NavigationES.Shared\NavigationES.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\videos\" />
+  </ItemGroup>
+
 </Project>

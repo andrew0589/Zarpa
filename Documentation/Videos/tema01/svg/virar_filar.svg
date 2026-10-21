@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1400 620" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <rect x="0" y="170" width="1400" height="450" fill="#D8ECF7"/>
+  <path d="M0 170 q50 -16 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <path d="M0 560 Q350 530 700 555 T1400 545 L1400 620 L0 620 Z" fill="#E3CDA0"/>
+  <!-- barco -->
+  <path d="M120 120 L470 120 L440 195 L160 195 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="5"/>
+  <rect x="230" y="78" width="150" height="44" rx="8" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="4"/>
+  <!-- cadena -->
+  <path d="M460 140 L1080 545" fill="none" stroke="#2E3A43" stroke-width="9" stroke-dasharray="16 6"/>
+  <g transform="translate(1100 540)" fill="none" stroke="#3D4A54" stroke-width="9" stroke-linecap="round">
+    <line x1="0" y1="-40" x2="0" y2="0"/><path d="M-30 -10 Q0 15 30 -10"/>
+  </g>
+  <!-- flechas -->
+  <g stroke-width="10" stroke-linecap="round">
+    <line x1="760" y1="250" x2="940" y2="368" stroke="#E07A1F"/>
+    <line x1="700" y1="420" x2="520" y2="302" stroke="#1F8E89"/>
+  </g>
+  <polygon points="975,391 920,385 948,343" fill="#E07A1F"/>
+  <polygon points="485,279 540,285 512,327" fill="#1F8E89"/>
+  <g font-size="44" font-weight="800">
+    <text x="900" y="250" fill="#B85A00">FILAR</text>
+    <text x="430" y="420" fill="#16706C">VIRAR</text>
+  </g>
+  <g font-size="26" fill="#12324A">
+    <text x="900" y="288">largar o arriar cadena</text>
+    <text x="430" y="458">cobrar cadena</text>
+  </g>
+</svg>

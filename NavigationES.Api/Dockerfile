@@ -25,6 +25,12 @@ RUN apt-get update \
 
 COPY --from=build /app/publish .
 
+# Estudiar videos, uploaded from the admin page into the `navigationes-videos`
+# volume mounted here (docker-compose.dokploy.yml). A new named volume copies this
+# directory's owner, so the non-root user below can write to it with no setup on
+# the server.
+RUN mkdir -p /app/wwwroot/videos && chown $APP_UID /app/wwwroot/videos
+
 # `app` is the non-root user the .NET base images already ship.
 USER $APP_UID
 

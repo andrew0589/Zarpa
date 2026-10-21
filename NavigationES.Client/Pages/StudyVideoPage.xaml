@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:lang="clr-namespace:NavigationES.Client.Resources.Languages"
+             xmlns:vm="clr-namespace:NavigationES.Client.ViewModels"
+             x:Class="NavigationES.Client.Pages.StudyVideoPage"
+             Title="{Binding Title}"
+             x:DataType="vm:StudyVideoViewModel"
+             BackgroundColor="White">
+    <ContentPage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Player, 16:9 of the page width (sized in code-behind) -->
+        <Grid x:Name="PlayerBox" Grid.Row="0" BackgroundColor="#0E1A24" HeightRequest="220">
+            <toolkit:MediaElement x:Name="Player"
+                                  IsVisible="{Binding CanPlay}"
+                                  Source="{Binding Source}"
+                                  ShouldShowPlaybackControls="True"
+                                  ShouldKeepScreenOn="True"
+                                  ShouldAutoPlay="False"
+                                  Aspect="AspectFit"
+                                  MetadataTitle="{Binding Title}"
+                                  MetadataArtworkUrl="{Binding Poster}"
+                                  MediaOpened="OnMediaOpened"
+                                  MediaEnded="OnMediaEnded"
+                                  PositionChanged="OnPositionChanged"
+                                  StateChanged="OnStateChanged" />
+
+            <!-- Locked or not uploaded: the poster under a message, no payment link (store rules) -->
+            <Grid IsVisible="{Binding CanPlay, Converter={StaticResource InvertedBoolConverter}}">
+                <Image Source="{Binding Poster}" Aspect="AspectFill" />
+                <BoxView Color="#C70B3D5C" />
+                <VerticalStackLayout Padding="24" Spacing="6" VerticalOptions="Center">
+                    <Label Text="{x:Static lang:AppResources.StudyLockedTitle}" IsVisible="{Binding IsLocked}"
+                           TextColor="White" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Text="{x:Static lang:AppResources.StudyLockedText}" IsVisible="{Binding IsLocked}"
+                           TextColor="White" FontSize="14" HorizontalTextAlignment="Center" />
+                    <Label Text="{x:Static lang:AppResources.StudyNoVideoFile}" IsVisible="{Binding NoFile}"
+                           TextColor="White" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,16,16,32" MaximumWidthRequest="600" Spacing="16">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding TopicText}" TextColor="{StaticResource Gray600}" FontSize="13" />
+                    <Label Text="{Binding Title}" TextColor="{StaticResource Primary}" FontSize="22" FontAttributes="Bold" />
+                    <Label Text="{Binding Subtitle}" IsVisible="{Binding HasSubtitle}"
+                           TextColor="{StaticResource Gray600}" FontSize="14" />
+                </VerticalStackLayout>
+
+                <Button Text="{Binding PracticeText}" Command="{Binding PracticeCommand}" IsVisible="{Binding IsLoaded}"
+                        BackgroundColor="{StaticResource Accent}" TextColor="#08302E" FontAttributes="Bold"
+                        CornerRadius="12" HeightRequest="50" />
+
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasKeyTerms}">
+                    <Label Text="{x:Static lang:AppResources.StudyKeyTerms}" TextColor="{StaticResource OffBlack}"
+                           FontSize="15" FontAttributes="Bold" />
+                    <FlexLayout Wrap="Wrap" Direction="Row" AlignItems="Start" AlignContent="Start" Margin="-3"
+                                BindableLayout.ItemsSource="{Binding KeyTerms}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border BackgroundColor="#EEF3F8" Stroke="Transparent" StrokeShape="RoundRectangle 14"
+                                        Padding="10,5" Margin="3">
+                                    <Label Text="{Binding .}" TextColor="{StaticResource Primary}" FontSize="13" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="2" IsVisible="{Binding HasChapters}">
+                    <Label Text="{x:Static lang:AppResources.StudyChapters}" TextColor="{StaticResource OffBlack}"
+                           FontSize="15" FontAttributes="Bold" Margin="0,0,0,6" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Chapters}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:StudyVideoChapterItem">
+                                <Grid ColumnDefinitions="56,*" MinimumHeightRequest="44" Padding="4,0">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SeekToChapterCommand, Source={RelativeSource AncestorType={x:Type vm:StudyVideoViewModel}}}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                    <Label Grid.Column="0" Text="{Binding TimeText}" TextColor="{StaticResource Gray600}"
+                                           FontSize="14" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding Title}" TextColor="{StaticResource OffBlack}"
+                                           FontSize="14" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasNext}">
+                    <Label Text="{x:Static lang:AppResources.StudyNext}" TextColor="{StaticResource OffBlack}"
+                           FontSize="15" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="112,*" ColumnSpacing="12">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenNextCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                HeightRequest="63" BackgroundColor="#E4E8EF">
+                            <Image Source="{Binding NextImage}" Aspect="AspectFill" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding NextTitle}" TextColor="{StaticResource OffBlack}" FontSize="15" FontAttributes="Bold" />
+                            <Label Text="{Binding NextMeta}" TextColor="{StaticResource Gray600}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ActivityIndicator Grid.RowSpan="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center" VerticalOptions="Center" Color="{StaticResource Accent}" />
+    </Grid>
+</ContentPage>

@@ -1,0 +1,27 @@
+<svg viewBox="0 0 1400 560" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <g id="as-barco">
+      <path d="M-260 -40 Q0 -25 260 -55 L225 20 Q190 45 120 50 L-200 50 Q-245 45 -250 20 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-90 -32 L-70 -88 L100 -90 L150 -44 Z" fill="#F7FAFC" stroke="#0B3D5C" stroke-width="3.5"/>
+      <rect x="-40" y="-72" width="110" height="16" rx="8" fill="#2E4A60"/>
+    </g>
+  </defs>
+  <line x1="700" y1="30" x2="700" y2="540" stroke="#C9D8E2" stroke-width="3" stroke-dasharray="10 10"/>
+  <use href="#as-barco" transform="translate(350 290) rotate(-7)"/>
+  <use href="#as-barco" transform="translate(1050 290) rotate(7)"/>
+  <rect x="0" y="300" width="1400" height="260" fill="#9FD0EA" opacity=".5"/>
+  <path d="M0 300 q50 -14 100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0 t100 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <g text-anchor="middle">
+    <text x="350" y="70" font-size="40" font-weight="800" fill="#0B3D5C">APOPADO</text>
+    <text x="350" y="110" font-size="28" fill="#1E7A30" font-weight="700">asiento positivo (+)</text>
+    <text x="350" y="480" font-size="26" fill="#12324A">cala más a popa que a proa</text>
+    <text x="1050" y="70" font-size="40" font-weight="800" fill="#0B3D5C">APROADO</text>
+    <text x="1050" y="110" font-size="28" fill="#B71C1C" font-weight="700">asiento negativo (−)</text>
+    <text x="1050" y="480" font-size="26" fill="#12324A">cala más a proa que a popa</text>
+    <text x="700" y="540" font-size="32" font-weight="800" fill="#0B3D5C">A = Cpp − Cpr</text>
+  </g>
+  <g font-size="22" fill="#24465E">
+    <text x="40" y="170">← popa</text><text x="610" y="170" text-anchor="end">proa →</text>
+    <text x="740" y="170">← popa</text><text x="1360" y="170" text-anchor="end">proa →</text>
+  </g>
+</svg>

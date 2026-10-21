@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1400 620" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <!-- silueta del casco (referencia) -->
+  <path d="M290 190 L1260 150 Q1200 470 1040 500 L310 500 Z" fill="#EEF3F7" stroke="#9FB4C4" stroke-width="3" stroke-dasharray="12 10"/>
+  <!-- cuadernas, tenues -->
+  <g stroke="#C9A27E" stroke-width="10" stroke-linecap="round" opacity=".55">
+    <line x1="420" y1="490" x2="420" y2="186"/><line x1="520" y1="490" x2="520" y2="182"/>
+    <line x1="620" y1="490" x2="620" y2="178"/><line x1="720" y1="490" x2="720" y2="174"/>
+    <line x1="820" y1="490" x2="820" y2="170"/><line x1="920" y1="490" x2="920" y2="166"/>
+    <line x1="1020" y1="490" x2="1020" y2="162"/><line x1="1110" y1="420" x2="1110" y2="158"/>
+  </g>
+  <!-- timón sujeto al codaste -->
+  <path d="M282 300 L190 300 L190 480 L282 480 Z" fill="#DCE3E8" stroke="#5B6770" stroke-width="4"/>
+  <!-- quilla, roda, codaste -->
+  <g stroke="#9C5A2B" stroke-linecap="round" fill="none">
+    <line x1="300" y1="490" x2="1050" y2="490" stroke-width="34"/>
+    <path d="M1040 490 Q1200 470 1262 150" stroke-width="30"/>
+    <line x1="300" y1="490" x2="288" y2="185" stroke-width="30"/>
+  </g>
+  <g font-weight="800" font-size="40">
+    <text x="680" y="570" text-anchor="middle" fill="#7A3F14">QUILLA</text>
+    <text x="1270" y="320" fill="#7A3F14">RODA</text>
+    <text x="270" y="150" text-anchor="middle" fill="#7A3F14">CODASTE</text>
+  </g>
+  <text x="680" y="605" text-anchor="middle" font-size="24" fill="#24465E">columna vertebral, de proa a popa</text>
+  <text x="235" y="400" text-anchor="middle" font-size="24" fill="#24465E">timón</text>
+  <text x="1300" y="560" font-size="30" font-weight="700" fill="#0B3D5C" text-anchor="end">PROA →</text>
+  <text x="40" y="560" font-size="30" font-weight="700" fill="#0B3D5C">← POPA</text>
+</svg>

@@ -1,0 +1,189 @@
+@page "/estudiar/video/{Id:long}"
+@attribute [Authorize]
+@inject IStudyApi StudyApi
+@inject ApiOptions Api
+@inject IJSRuntime JS
+@implements IDisposable
+
+<PageTitle>@(_video is null ? "Estudiar" : $"{_video.Code} {_video.Title}") — NavigationES</PageTitle>
+
+<div class="study-page">
+    @if (_video is not null)
+    {
+        <nav class="study-crumbs" aria-label="Ruta"><a href="estudiar">Estudiar</a> › <a href="estudiar/tema/@_video.TopicNumber">Tema @_video.TopicNumber</a> › @_video.Code</nav>
+    }
+
+    @if (_notFound)
+    {
+        <p class="tagline">Este vídeo no está disponible.</p>
+    }
+    else if (_error)
+    {
+        <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+    }
+    else if (_video is null)
+    {
+        <p class="page-loading">Cargando…</p>
+    }
+    else
+    {
+        <div class="study-player-layout">
+            <div class="study-player-main">
+                <div class="study-player">
+                    @if (_video.Locked)
+                    {
+                        <div class="study-player-locked">
+                            <StudyImage Url="@StudyFormat.Media(Api, _video.ImageUrl)" Label="@($"Foto {_video.Code}")" />
+                            <div class="study-locked-box">
+                                <strong>Disponible con tu suscripción</strong>
+                                <span>El primer vídeo de cada tema es gratis. Los demás forman parte de la suscripción.</span>
+                                <a class="btn-primary btn-link" href="suscripcion">Suscribirme</a>
+                            </div>
+                        </div>
+                    }
+                    else if (_video.VideoUrl is null)
+                    {
+                        <div class="study-player-locked">
+                            <StudyImage Url="@StudyFormat.Media(Api, _video.ImageUrl)" Label="@($"Foto {_video.Code}")" />
+                            <div class="study-locked-box"><strong>Vídeo todavía no subido</strong></div>
+                        </div>
+                    }
+                    else
+                    {
+                        @* key: a new video id builds a fresh element, so the JS listeners
+                           of the previous one go with it. *@
+                        @* crossorigin: subtitles from another origin (the API, a CDN) load only with CORS. *@
+                        <video @key="_video.Id" @ref="_player" controls playsinline preload="metadata" crossorigin="anonymous"
+                               poster="@StudyFormat.Media(Api, _video.ImageUrl)">
+                            <source src="@StudyFormat.Media(Api, _video.VideoUrl)" />
+                            @if (_video.SubtitlesUrl is not null)
+                            {
+                                <track kind="subtitles" srclang="es" label="Español" src="@StudyFormat.Media(Api, _video.SubtitlesUrl)" default />
+                            }
+                        </video>
+                    }
+                </div>
+
+                <div class="study-video-head">
+                    <div>
+                        <div class="study-muted">Tema @_video.TopicNumber · @_video.TopicName</div>
+                        <h1>@_video.Code @_video.Title</h1>
+                        @if (_video.Subtitle is not null)
+                        {
+                            <div class="study-muted">@_video.Subtitle</div>
+                        }
+                    </div>
+                    <a class="btn-accent btn-link" href="@($"temas/{_video.TopicNumber}?nombre={Uri.EscapeDataString(_video.TopicName)}")">Practicar el tema @_video.TopicNumber</a>
+                </div>
+
+                @if (_video.KeyTerms.Count > 0)
+                {
+                    <section class="retro-card study-panel" aria-labelledby="study-terms">
+                        <h2 id="study-terms">Términos clave del vídeo</h2>
+                        <div class="study-terms">
+                            @foreach (var t in _video.KeyTerms)
+                            {
+                                <span class="study-term">@t</span>
+                            }
+                        </div>
+                    </section>
+                }
+            </div>
+
+            <aside class="study-player-side" aria-label="En este vídeo">
+                @if (_video.Chapters.Count > 0)
+                {
+                    <section class="retro-card study-panel">
+                        <h2>Capítulos del vídeo</h2>
+                        <div class="study-chapters">
+                            @foreach (var ch in _video.Chapters)
+                            {
+                                <button type="button" class="study-chapter" disabled="@(_player is null)" @onclick="() => SeekAsync(ch.Start)">
+                                    <span class="study-chapter-time">@StudyFormat.Clock(ch.Start)</span>@ch.Title
+                                </button>
+                            }
+                        </div>
+                    </section>
+                }
+                @if (_video.Next is { } next)
+                {
+                    <section class="retro-card study-panel">
+                        <h2>Siguiente</h2>
+                        <a class="study-next" href="estudiar/video/@next.Id">
+                            <span class="study-thumb study-thumb-small">
+                                <StudyImage Url="@StudyFormat.Media(Api, next.ImageUrl)" Label="@($"Foto {next.Code}")" />
+                            </span>
+                            <span>
+                                <span class="study-row-name">@next.Code @next.Title</span>
+                                <span class="study-muted study-block">@StudyFormat.Clock(next.DurationSeconds)@(next.Locked ? " · con suscripción" : "")</span>
+                            </span>
+                        </a>
+                    </section>
+                }
+            </aside>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public long Id { get; set; }
+
+    private StudyVideoDto? _video;
+    private bool _notFound;
+    private bool _error;
+    private ElementReference? _player;
+    private long _attachedId;
+    private DotNetObjectReference<EstudiarVideo>? _self;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _video = null;
+        _player = null;
+        _notFound = _error = false;
+        try
+        {
+            _video = await StudyApi.GetVideoAsync(Id);
+        }
+        catch (Refit.ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            _notFound = true;
+        }
+        catch (Exception)
+        {
+            _error = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_video is null || _player is null || _attachedId == _video.Id)
+            return;
+
+        _attachedId = _video.Id;
+        _self ??= DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("studyPlayer.attach", _player, _self, _video.Completed ? 0 : _video.PositionSeconds);
+        StateHasChanged(); // enables the chapter buttons
+    }
+
+    [JSInvokable]
+    public async Task SaveProgress(int seconds, bool completed)
+    {
+        if (_video is null) return;
+        try
+        {
+            await StudyApi.SaveProgressAsync(_video.Id, new StudyProgressRequestDto(seconds, completed));
+        }
+        catch (Exception)
+        {
+            // Progress is best effort: the next tick retries with a newer position.
+        }
+    }
+
+    private async Task SeekAsync(int seconds)
+    {
+        if (_player is not null)
+            await JS.InvokeVoidAsync("studyPlayer.seek", _player, seconds);
+    }
+
+    public void Dispose() => _self?.Dispose();
+}

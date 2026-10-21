@@ -1,0 +1,139 @@
+@page "/estudiar/tema/{Number:int}"
+@attribute [Authorize]
+@inject IStudyApi StudyApi
+@inject ApiOptions Api
+
+<PageTitle>@(_topic is null ? "Estudiar" : $"Tema {_topic.Number} · {_topic.Name}") — NavigationES</PageTitle>
+
+<div class="study-page">
+    <nav class="study-crumbs" aria-label="Ruta"><a href="estudiar">Estudiar</a> › Tema @Number</nav>
+
+    @if (_notFound)
+    {
+        <p class="tagline">Este tema no está disponible.</p>
+    }
+    else if (_error)
+    {
+        <p class="error" role="alert">Ha ocurrido un error desconocido. Por favor, inténtalo de nuevo.</p>
+    }
+    else if (_topic is null)
+    {
+        <p class="page-loading">Cargando…</p>
+    }
+    else
+    {
+        var videos = _topic.Videos;
+        var completed = videos.Count(v => v.Completed);
+        var resume = videos.FirstOrDefault(v => !v.Completed && v.PositionSeconds > 0 && !v.Locked)
+                     ?? videos.FirstOrDefault(v => !v.Completed && !v.Locked);
+
+        <section class="study-hero">
+            <div class="study-hero-img">
+                <StudyImage Url="@StudyFormat.Media(Api, _topic.ImageUrl)" Label="Foto del capítulo · 1600×900" />
+            </div>
+            <div class="study-hero-text">
+                <div class="study-eyebrow">Tema @_topic.Number</div>
+                <h1>@_topic.Name</h1>
+                @if (_topic.Description is not null)
+                {
+                    <p class="study-muted study-desc">@_topic.Description</p>
+                }
+                <div class="study-facts">
+                    <span>@StudyFormat.Videos(videos.Count)</span>
+                    <span>@StudyFormat.Minutes(videos.Sum(v => v.DurationSeconds))</span>
+                    <span>@completed @(completed == 1 ? "visto" : "vistos")</span>
+                </div>
+                <span class="progress-track"><span class="progress-fill" style="width: @(StudyFormat.Percent(completed, videos.Count))%"></span></span>
+                <div class="study-actions">
+                    @if (resume is not null)
+                    {
+                        <a class="btn-primary btn-link" href="estudiar/video/@resume.Id">@(resume.PositionSeconds > 0 ? "Continuar" : "Empezar") · @resume.Code</a>
+                    }
+                    <a class="btn-outline-dark btn-link" href="@PracticeHref">Practicar el tema @_topic.Number</a>
+                </div>
+            </div>
+        </section>
+
+        <section aria-labelledby="study-videos">
+            <h2 id="study-videos" class="study-section-title">Apartados</h2>
+            @if (videos.Count == 0)
+            {
+                <p class="study-muted">Los vídeos de este tema están en preparación.</p>
+            }
+            <div class="study-list">
+                @foreach (var v in videos)
+                {
+                    <div class="study-row">
+                        <a class="study-thumb" href="estudiar/video/@v.Id" aria-label="Ver @v.Code @v.Title">
+                            <StudyImage Url="@StudyFormat.Media(Api, v.ImageUrl)" Label="@($"Foto {v.Code}")" />
+                            <span class="study-duration">@StudyFormat.Clock(v.DurationSeconds)</span>
+                            @if (v.Locked)
+                            {
+                                <span class="study-lock" aria-hidden="true">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                                </span>
+                            }
+                            <span class="study-thumb-progress" style="width: @(v.Completed ? 100 : StudyFormat.Percent(v.PositionSeconds, v.DurationSeconds))%"></span>
+                        </a>
+                        <div class="study-row-text">
+                            <div class="study-muted">@v.Code</div>
+                            <div class="study-row-name">@v.Title</div>
+                            @if (v.Subtitle is not null)
+                            {
+                                <div class="study-muted">@v.Subtitle</div>
+                            }
+                        </div>
+                        <div class="study-row-state">
+                            @if (!v.IsPublished)
+                            {
+                                <span class="status-chip warn">Borrador</span>
+                            }
+                            @if (v.IsFree)
+                            {
+                                <span class="status-chip study-chip-free">Gratis</span>
+                            }
+                            <span class="study-state @StateCss(v)">@StateLabel(v)</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public int Number { get; set; }
+
+    private StudyTopicDto? _topic;
+    private bool _notFound;
+    private bool _error;
+
+    private string PracticeHref => $"temas/{_topic!.Number}?nombre={Uri.EscapeDataString(_topic.Name)}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _topic = null;
+        _notFound = _error = false;
+        try
+        {
+            _topic = await StudyApi.GetTopicAsync(Number);
+        }
+        catch (Refit.ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            _notFound = true;
+        }
+        catch (Exception)
+        {
+            _error = true;
+        }
+    }
+
+    private static string StateLabel(StudyVideoSummaryDto v) =>
+        v.Locked ? "Con suscripción"
+        : v.Completed ? "Visto"
+        : v.PositionSeconds > 0 ? $"En curso · {StudyFormat.Percent(v.PositionSeconds, v.DurationSeconds)} %"
+        : "Sin ver";
+
+    private static string StateCss(StudyVideoSummaryDto v) =>
+        v.Locked ? string.Empty : v.Completed ? "is-done" : v.PositionSeconds > 0 ? "is-going" : string.Empty;
+}

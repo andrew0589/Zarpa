@@ -1,0 +1,92 @@
+{
+  "tema": "Tema 1 · Nomenclatura náutica",
+  "seccion": "1.2 La estructura",
+  "imagenes": "C:/NavigationES Documentation/Questions/Topics(teme)/1. Nomenclatura náutica - ok/images",
+  "slides": [
+    {
+      "tipo": "portada",
+      "titulo": "1.2 La estructura",
+      "sub": "El esqueleto del barco y lo que hay dentro",
+      "narracion": "Seguimos con el tema uno. Después del casco, vamos a ver la estructura: las piezas que forman el esqueleto del barco, como la quilla, la roda, el codaste, las cuadernas y los baos. Y también lo que hay en el interior: mamparos, plan, sentina, grifos de fondo y bombas de achique."
+    },
+    {
+      "titulo": "Quilla, roda y codaste",
+      "img": "img/quilla_roda_codaste.webp",
+      "terminos": [
+        {"t": "Quilla", "d": "Columna vertebral: pieza central e inferior, de proa a popa. Base de toda la construcción."},
+        {"t": "Roda", "d": "Pieza robusta empalmada a la quilla que remata el casco en la **proa**."},
+        {"t": "Codaste", "d": "Pieza unida a la quilla en su extremo de **popa**. En barcos pequeños, sujeta el timón."}
+      ],
+      "narracion": "La quilla es la columna vertebral de la embarcación. Es la pieza central y más baja del barco, colocada a lo largo, de proa a popa, y sobre ella se asienta toda la construcción: le da rigidez y resistencia. En su extremo de proa se empalma la roda, una pieza muy fuerte, de la misma sección que la quilla, que sube vertical o inclinada, recta o curva, y remata el casco por delante. Y en el extremo de popa está el codaste, unido a la quilla de forma vertical o casi vertical. Es donde termina la popa, y en las embarcaciones pequeñas, y en los antiguos veleros de madera, el timón va sujeto al codaste. Un truco: roda rima con proa."
+    },
+    {
+      "titulo": "Cuadernas y baos",
+      "img": "img/cuaderna_bao.webp",
+      "terminos": [
+        {"t": "Cuadernas", "d": "Piezas transversales y simétricas que salen de la quilla y suben por los costados: forman el armazón."},
+        {"t": "Baos", "d": "Piezas transversales, de banda a banda, que unen los extremos superiores de las cuadernas. Sobre ellos va la **cubierta**."}
+      ],
+      "nota": "Quilla + roda + codaste + cuadernas + baos = la **estructura** del barco.",
+      "narracion": "Si cortamos el barco de través, vemos las cuadernas: piezas transversales y simétricas que parten de la quilla, una a cada banda, y suben por los costados. Son como las costillas del barco y forman su armazón. Arriba, uniendo los extremos superiores de las cuadernas de banda a banda, están los baos, y sobre los baos se coloca la cubierta. En resumen: la quilla, junto con la roda, el codaste, las cuadernas y los baos, forman la estructura del barco."
+    },
+    {
+      "titulo": "Borda o regala",
+      "img": "img/borda_regala.webp",
+      "terminos": [
+        {"t": "Borda o regala", "d": "El **canto superior del costado**. La regala es la parte superior de la borda; se usan como sinónimos."},
+        {"t": "Tapa de regala", "d": "Tablón, de madera o del mismo material que el casco, que forma la parte superior de la borda."}
+      ],
+      "narracion": "La borda es el canto superior del costado, es decir, el borde de arriba del casco. La regala es la parte superior de la borda, pero en la práctica los dos términos se usan como sinónimos, y así te los puedes encontrar en el examen: regala, canto superior del costado. Y la pieza que remata ese borde, un tablón de madera o del mismo material que el casco, se llama tapa de regala."
+    },
+    {
+      "titulo": "Mamparos",
+      "img": "mamparo.png",
+      "terminos": [
+        {"t": "Mamparos", "d": "Separaciones verticales, transversales o longitudinales, en el interior del casco. Son las **paredes** del barco."}
+      ],
+      "nota": "Los mamparos estancos dividen el barco en compartimentos: si entra agua en uno, no pasa a los demás.",
+      "narracion": "Los mamparos son las separaciones verticales del interior del casco. Pueden ir de través, es decir, transversales, o a lo largo, longitudinales. Son el equivalente náutico de las paredes. Cuando son estancos, dividen el barco en compartimentos, de forma que si entra agua en uno, no se extiende a los demás."
+    },
+    {
+      "titulo": "Plan y sentina",
+      "img": "sentina.png",
+      "terminos": [
+        {"t": "Plan", "d": "Superficie horizontal, interior e inferior del casco. Es el **suelo** del barco."},
+        {"t": "Sentina", "d": "Fondo interior donde se acumulan el agua y los derrames, que se expulsan con las bombas de achique."}
+      ],
+      "narracion": "Si los mamparos son las paredes, el plan es el suelo: la superficie horizontal, interior e inferior del casco. Y por debajo del plan está la sentina, el fondo interior de la embarcación. Ahí se acumula el agua que pueda entrar en el barco y los derrames de líquidos, como combustible o aceite. Esa agua se saca fuera con las bombas de achique."
+    },
+    {
+      "titulo": "Grifos de fondo y pasacascos",
+      "img": "img/grifos_fondo.webp",
+      "terminos": [
+        {"t": "Grifos de fondo", "d": "Válvulas de mar **bajo la línea de flotación** que dan o cortan el paso del agua de mar: motor, aseos, cocina…"},
+        {"t": "Pasacascos", "d": "Piezas cilíndricas que atraviesan el casco; en ellas van roscados los grifos de fondo."}
+      ],
+      "nota": "Ábrelos solo cuando haga falta y mantenlos limpios de suciedad y caracolillo.",
+      "narracion": "Los grifos de fondo son válvulas de mar, colocadas por debajo de la línea de flotación, que dan o cortan el paso del agua de mar que usamos a bordo: para refrigerar el motor, para los aseos, la cocina u otros servicios. Van roscados a unas piezas cilíndricas que atraviesan el casco y que se llaman pasacascos. Como están por debajo de la flotación, solo deben abrirse cuando sea necesario, y hay que mantenerlos libres de suciedad y de caracolillo."
+    },
+    {
+      "titulo": "Bombas de achique",
+      "img": "img/bomba_achique.webp",
+      "terminos": [
+        {"t": "Bombas de achique", "d": "Máquinas que expulsan los líquidos acumulados dentro del barco para dejar **secas las sentinas**."},
+        {"t": "El recorrido del agua", "d": "Aspira en la **sentina** · la bomba manual se acciona desde la **bañera** · sale al mar **por encima de la flotación**."}
+      ],
+      "nota": "Además de las eléctricas, conviene llevar siempre una bomba **manual**.",
+      "narracion": "Las bombas de achique son las máquinas que expulsan los líquidos acumulados en el interior del barco, para dejar secas las sentinas. Sigue el recorrido del agua en la imagen: la manguera aspira abajo, en la sentina. La bomba, si es manual, se coloca de forma que se pueda accionar desde la bañera, como hace el tripulante. Y el agua sale por el costado, por encima de la línea de flotación. Abajo, en la sentina, ves también una pequeña bomba eléctrica. Un consejo importante: además de las bombas eléctricas, es muy recomendable llevar una bomba manual, que funciona aunque nos quedemos sin batería."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Quilla = columna vertebral, de proa a popa. Sobre ella van las cuadernas.",
+        "Roda remata la **proa**; codaste, la **popa** (y sujeta el timón).",
+        "Cuadernas = costillas. Baos = unen sus extremos y sostienen la cubierta.",
+        "Borda o regala = canto superior del costado.",
+        "Mamparos = paredes · plan = suelo · sentina = fondo donde se acumulan los líquidos.",
+        "Grifos de fondo: bajo la flotación, roscados a los pasacascos."
+      ],
+      "narracion": "Repasamos. La quilla es la columna vertebral, de proa a popa, y sobre ella se asientan las cuadernas. La roda remata la proa y el codaste la popa, y en barcos pequeños sujeta el timón. Las cuadernas son las costillas, y los baos unen sus extremos y sostienen la cubierta. La borda o regala es el canto superior del costado. Los mamparos son las paredes, el plan es el suelo y la sentina el fondo donde se acumulan los líquidos. Y los grifos de fondo están bajo la flotación, roscados a los pasacascos."
+    }
+  ]
+}

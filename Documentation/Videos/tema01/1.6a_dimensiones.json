@@ -1,0 +1,64 @@
+{
+  "tema": "Tema 1 · Nomenclatura náutica",
+  "seccion": "1.6 Dimensiones",
+  "imagenes": "C:/NavigationES Documentation/Questions/Topics(teme)/1. Nomenclatura náutica - ok/images",
+  "slides": [
+    {
+      "tipo": "portada",
+      "titulo": "1.6 Dimensiones",
+      "sub": "Eslora, manga, puntal y francobordo",
+      "narracion": "Ahora vamos a medir el barco. En este vídeo veremos la eslora, la manga, el puntal y el francobordo. En el siguiente, el calado, el asiento y el desplazamiento."
+    },
+    {
+      "titulo": "Eslora máxima",
+      "svg": "svg/eslora.svg",
+      "layout": "col",
+      "terminos": [
+        {"t": "Eslora", "d": "La **longitud** del barco."},
+        {"t": "Eslora máxima", "d": "Distancia, paralela a la flotación, entre dos planos perpendiculares a la crujía: el punto más saliente de **popa** y el de **proa**."},
+        {"t": "Qué cuenta", "d": "Partes estructurales y uniones casco-cubierta. **No** cuentan el púlpito ni lo desmontable."}
+      ],
+      "narracion": "La eslora es la longitud del barco. La eslora máxima se mide paralelamente a la línea de agua de diseño, entre dos planos perpendiculares a la línea de crujía. Uno pasa por la parte más saliente de la popa, y el otro por la parte más saliente de la proa. Se incluyen las partes integrales o estructurales y las uniones del casco con la cubierta. Pero se excluye el púlpito de proa: en ese caso, el plano de proa pasa por el punto donde la cubierta se cruza con la roda. Ojo, con la roda, no con el codaste: esa es una trampa típica del examen. Y también se excluyen todas las partes desmontables que no afecten a la integridad estructural; según la normativa, ninguna de ellas cuenta."
+    },
+    {
+      "titulo": "Eslora: documentos y amarre",
+      "terminos": [
+        {"t": "En los documentos", "d": "La eslora máxima es la que figura en **todos los documentos oficiales** del barco."},
+        {"t": "Para el amarre", "d": "En un muelle, se entiende por eslora máxima la **mayor longitud ocupacional**: lo que de verdad ocupa el barco."}
+      ],
+      "nota": "Trampa típica: en proa el plano pasa por la intersección de la cubierta con la **roda**, nunca con el codaste.",
+      "narracion": "Dos detalles más sobre la eslora. La eslora máxima es la que aparece en todos los documentos oficiales de la embarcación. Sin embargo, cuando se trata de amarrar en un muelle, se toma como eslora máxima la mayor longitud ocupacional, es decir, lo que de verdad ocupa el barco, incluyendo lo que sobresalga."
+    },
+    {
+      "titulo": "Manga máxima",
+      "img": "manga_maxima.png",
+      "terminos": [
+        {"t": "Manga", "d": "El **ancho** del barco, medido por la cara exterior de los forros."},
+        {"t": "Manga máxima", "d": "La anchura máxima, en la **parte más ancha**, con las estructuras fijas."}
+      ],
+      "narracion": "La manga es el ancho de la embarcación, medido desde la cara exterior de los forros, que son las tablas de madera o las planchas que forran la estructura. Y la manga máxima es la anchura máxima del barco, con sus estructuras fijas: es decir, la distancia transversal medida en la parte más ancha."
+    },
+    {
+      "titulo": "Puntal y francobordo",
+      "img": "img/puntal_francobordo.webp",
+      "terminos": [
+        {"t": "Puntal", "d": "Máxima altura, medida en la **mitad de la eslora**, desde la cubierta hasta la quilla."},
+        {"t": "Francobordo", "d": "Distancia vertical, sobre el costado, desde la **flotación** hasta la cubierta estanca más alta, a plena carga."}
+      ],
+      "nota": "El francobordo es, en general, la altura de la **obra muerta**. Si el calado aumenta, el francobordo disminuye.",
+      "narracion": "Ahora, las alturas. El puntal es la máxima dimensión vertical del barco, medida en la mitad de la eslora, desde la línea de cubierta hasta la quilla. El francobordo es la distancia vertical, medida sobre el costado, desde la línea de flotación hasta la cubierta estanca más alta, con el barco en su máxima carga. Dicho de forma sencilla, es la altura de la obra muerta. Y de ahí una pregunta de examen: si el calado aumenta, porque cargamos más el barco, el francobordo disminuye."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Eslora = longitud · manga = anchura · puntal = altura.",
+        "Eslora máxima: de lo más saliente de popa a lo más saliente de proa.",
+        "Sin púlpito: en proa, el plano pasa por cubierta y **roda**.",
+        "Lo desmontable no cuenta. La eslora máxima va en los documentos.",
+        "Manga máxima: en la parte más ancha.",
+        "Francobordo = altura de la obra muerta. Más calado, menos francobordo."
+      ],
+      "narracion": "Repasamos. Eslora es la longitud, manga la anchura y puntal la altura. La eslora máxima va de lo más saliente de la popa a lo más saliente de la proa, sin contar el púlpito, así que en proa el plano pasa por la cubierta y la roda. Lo desmontable no cuenta, y la eslora máxima es la de los documentos. La manga máxima se mide en la parte más ancha. Y el francobordo es la altura de la obra muerta: cuanto más calado, menos francobordo."
+    }
+  ]
+}

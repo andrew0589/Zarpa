@@ -77,6 +77,10 @@ static void ConfigureRefit(IServiceCollection services, string apiBaseUrl)
         .ConfigureHttpClient(SetHttpClient)
         .AddHttpMessageHandler<AuthHeaderHandler>();
 
+    services.AddRefitGeneratedClient<IStudyApi>(refitSettings)
+        .ConfigureHttpClient(SetHttpClient)
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
     // Anonymous (the /prueba mini test): no bearer handler.
     services.AddRefitGeneratedClient<IDemoApi>(refitSettings)
         .ConfigureHttpClient(SetHttpClient);

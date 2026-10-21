@@ -1,0 +1,27 @@
+<svg viewBox="0 0 1000 660" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <marker id="hpr-flecha" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#E07A1F"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="660" fill="#D8ECF7"/>
+  <!-- proa vista desde arriba -->
+  <path d="M500 60 C 640 160, 690 320, 690 640 L310 640 C 310 320, 360 160, 500 60 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="6"/>
+  <!-- túnel con la hélice -->
+  <rect x="356" y="250" width="288" height="56" fill="#EEF3F7" stroke="#5B6770" stroke-width="4" stroke-dasharray="12 8"/>
+  <g fill="#D2AA52" stroke="#8A6A22" stroke-width="3">
+    <ellipse cx="500" cy="262" rx="12" ry="26"/><ellipse cx="500" cy="294" rx="12" ry="26"/>
+  </g>
+  <circle cx="500" cy="278" r="10" fill="#B08A36"/>
+  <!-- movimiento de la proa -->
+  <g fill="none" stroke="#E07A1F" stroke-width="12" stroke-linecap="round">
+    <path d="M330 150 L170 150" marker-end="url(#hpr-flecha)"/>
+    <path d="M670 150 L830 150" marker-end="url(#hpr-flecha)"/>
+  </g>
+  <g text-anchor="middle" font-weight="800">
+    <text x="200" y="110" font-size="32" fill="#C62828">a babor</text>
+    <text x="800" y="110" font-size="32" fill="#1E7A30">a estribor</text>
+    <text x="500" y="40" font-size="30" fill="#0B3D5C">PROA</text>
+  </g>
+  <text x="500" y="370" text-anchor="middle" font-size="26" fill="#24465E">túnel transversal con la hélice</text>
+</svg>

@@ -644,6 +644,99 @@ namespace NavigationES.Api.Migrations
                     b.ToTable("SessionQuestions");
                 });
 
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.StudyVideoEntity", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<string>("ChaptersJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DurationSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsFree")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("KeyTermsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subtitle")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("SubtitlesUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<long>("TopicID")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VideoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TopicID", "Code")
+                        .IsUnique();
+
+                    b.ToTable("StudyVideos");
+                });
+
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.StudyVideoProgressEntity", b =>
+                {
+                    b.Property<long>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("VideoID")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PositionSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserID", "VideoID");
+
+                    b.HasIndex("VideoID");
+
+                    b.ToTable("StudyVideoProgress");
+                });
+
             modelBuilder.Entity("NavigationES.Api.Data.Entities.SubscriptionEntity", b =>
                 {
                     b.Property<long>("ID")
@@ -751,6 +844,14 @@ namespace NavigationES.Api.Migrations
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
+
+                    b.Property<string>("StudyDescription")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("StudyImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("ID");
 
@@ -1158,6 +1259,36 @@ namespace NavigationES.Api.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.StudyVideoEntity", b =>
+                {
+                    b.HasOne("NavigationES.Api.Data.Entities.TopicEntity", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("NavigationES.Api.Data.Entities.StudyVideoProgressEntity", b =>
+                {
+                    b.HasOne("NavigationES.Api.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NavigationES.Api.Data.Entities.StudyVideoEntity", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("NavigationES.Api.Data.Entities.SubscriptionEntity", b =>

@@ -78,4 +78,14 @@ public static class ErrorCodes
     // The user's exam date is outside the accepted range (past year .. 3 years ahead).
     public const string ExamDateNotValidError = "ExamDateNotValidError";
     #endregion
+
+    #region Estudiar (video lessons)
+    // The topic number or video id matches nothing the caller may see.
+    public const string StudyTopicNotFoundError = "StudyTopicNotFoundError";
+    public const string StudyVideoNotFoundError = "StudyVideoNotFoundError";
+    // A title, code or URL is missing, too long or not a valid URL.
+    public const string StudyVideoNotValidError = "StudyVideoNotValidError";
+    // An upload that is not a .mp4/.vtt with a plain file name, or is empty.
+    public const string StudyFileNotValidError = "StudyFileNotValidError";
+    #endregion
 }

@@ -35,5 +35,28 @@ namespace NavigationES.ApiClient
         // Saves the hand-kept fields (site, next date, done) of one comunidad.
         [Put("/api/admin/comunidades/{id}")]
         Task<ResultDto> UpdateComunidadAsync(long id, [Body] AdminComunidadUpdateDto request);
+
+        // The Vídeos tab: every topic with all its videos, drafts included.
+        [Get("/api/admin/study")]
+        Task<List<AdminStudyTopicDto>> GetStudyAsync();
+
+        // Chapter cover and blurb.
+        [Put("/api/admin/study/topics/{number}")]
+        Task<ResultDto> UpdateStudyTopicAsync(int number, [Body] AdminStudyTopicUpdateDto request);
+
+        [Put("/api/admin/study/videos/{id}")]
+        Task<ResultDto> UpdateStudyVideoAsync(long id, [Body] AdminStudyVideoUpdateDto request);
+
+        [Delete("/api/admin/study/videos/{id}")]
+        Task<ResultDto> DeleteStudyVideoAsync(long id);
+
+        // The catalogue file written by Documentation/Videos/exporta_catalogo.py.
+        [Post("/api/admin/study/import")]
+        Task<StudyImportResultDto> ImportStudyAsync([Body] List<StudyVideoImportDto> rows);
+
+        // One .mp4 or .vtt into the API's videos folder; SuccessMessage = its relative URL.
+        [Multipart]
+        [Post("/api/admin/study/files")]
+        Task<ResultDto> UploadStudyFileAsync([AliasAs("file")] StreamPart file);
     }
 }

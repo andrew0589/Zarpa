@@ -12,3 +12,6 @@ obj/
 # OS files
 Thumbs.db
 .DS_Store
+
+# Estudiar videos copied for local testing (exporta_catalogo.py --copia-api); production streams them from a CDN
+NavigationES.Api/wwwroot/videos/

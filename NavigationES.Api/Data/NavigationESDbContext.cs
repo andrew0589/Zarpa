@@ -25,6 +25,8 @@ namespace NavigationES.Api.Data
         public DbSet<ExamQuestionEntity> ExamQuestions { get; set; }
         public DbSet<ExamSessionAnswerEntity> ExamSessionAnswers { get; set; }
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
+        public DbSet<StudyVideoEntity> StudyVideos { get; set; }
+        public DbSet<StudyVideoProgressEntity> StudyVideoProgress { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -239,6 +241,33 @@ namespace NavigationES.Api.Data
 
                 sa.HasIndex(x => new { x.SessionID, x.QuestionID })
                   .IsUnique();
+            });
+
+            modelBuilder.Entity<StudyVideoEntity>(v =>
+            {
+                // Topics are permanent reference data (same rule as QuestionEntity).
+                v.HasOne(x => x.Topic)
+                 .WithMany()
+                 .HasForeignKey(x => x.TopicID)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                v.HasIndex(x => new { x.TopicID, x.Code })
+                 .IsUnique();
+            });
+
+            modelBuilder.Entity<StudyVideoProgressEntity>(p =>
+            {
+                p.HasKey(x => new { x.UserID, x.VideoID });
+
+                p.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                p.HasOne(x => x.Video)
+                 .WithMany()
+                 .HasForeignKey(x => x.VideoID)
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             SeedReferenceData(modelBuilder);

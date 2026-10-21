@@ -1,0 +1,26 @@
+<svg viewBox="0 0 1000 640" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <rect x="0" y="390" width="1000" height="250" fill="#D8ECF7"/>
+  <path d="M150 150 L850 150 L800 420 Q500 570 200 420 Z" fill="#FFFFFF" stroke="#0B3D5C" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M0 390 q42 -14 84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0 t84 0" fill="none" stroke="#3C8DBC" stroke-width="5"/>
+  <!-- bañera -->
+  <path d="M330 150 L330 300 L670 300 L670 150" fill="#F2E2C6" stroke="#0B3D5C" stroke-width="5"/>
+  <rect x="336" y="278" width="328" height="18" fill="#5FA8D3" opacity=".8"/>
+  <!-- imbornales -->
+  <g stroke="#0B3D5C" stroke-width="12" stroke-linecap="round" fill="none">
+    <path d="M360 300 L360 330 L188 344"/>
+    <path d="M640 300 L640 330 L812 344"/>
+  </g>
+  <g fill="#3C8DBC">
+    <path d="M170 350 q-14 18 0 28 q14 -10 0 -28 Z"/><path d="M140 362 q-14 18 0 28 q14 -10 0 -28 Z"/>
+    <path d="M830 350 q14 18 0 28 q-14 -10 0 -28 Z"/><path d="M860 362 q14 18 0 28 q-14 -10 0 -28 Z"/>
+  </g>
+  <text x="500" y="230" text-anchor="middle" font-size="40" font-weight="800" fill="#0B3D5C">BAÑERA</text>
+  <text x="500" y="268" text-anchor="middle" font-size="24" fill="#24465E">caña o rueda del timón</text>
+  <text x="250" y="100" text-anchor="middle" font-size="34" font-weight="800" fill="#0B3D5C">Imbornales</text>
+  <text x="750" y="100" text-anchor="middle" font-size="34" font-weight="800" fill="#0B3D5C">Imbornales</text>
+  <g stroke="#12324A" stroke-width="2.5" stroke-dasharray="6 6">
+    <line x1="250" y1="112" x2="275" y2="330"/><line x1="750" y1="112" x2="725" y2="330"/>
+  </g>
+  <text x="980" y="430" text-anchor="end" font-size="26" fill="#1E5F86" font-weight="700">línea de flotación</text>
+  <text x="500" y="610" text-anchor="middle" font-size="27" fill="#12324A">El suelo de la bañera queda por encima de la flotación: el agua sale sola</text>
+</svg>

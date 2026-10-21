@@ -33,13 +33,15 @@
             <ShellContent ContentTemplate="{DataTemplate pages:TestsPage}"
                           Route="TestsPage" />
         </Tab>
-        <!--<Tab Title="{x:Static lang:AppResources.TabStudy}">
+        <!-- Hidden until /api/study/access says yes (AppShell.xaml.cs): administrators
+             only while the API's Study:Public is off. -->
+        <Tab x:Name="StudyTab" Title="{x:Static lang:AppResources.TabStudy}" IsVisible="False">
             <Tab.Icon>
                 <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.BookOpen}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate pages:StudyPage}"
                           Route="StudyPage" />
-        </Tab>-->
+        </Tab>
         <Tab Title="{x:Static lang:AppResources.TabProfile}">
             <Tab.Icon>
                 <FontImageSource FontFamily="FASolid" Glyph="{x:Static fa:Solid.User}" />

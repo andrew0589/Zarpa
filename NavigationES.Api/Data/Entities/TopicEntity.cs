@@ -14,5 +14,12 @@ namespace NavigationES.Api.Data.Entities
 
         [Required, MaxLength(150)]
         public string Name { get; set; }
+
+        // The Estudiar section's chapter cover (16:9) and blurb; set from the admin page.
+        [MaxLength(500)]
+        public string? StudyImageUrl { get; set; }
+
+        [MaxLength(1000)]
+        public string? StudyDescription { get; set; }
     }
 }
