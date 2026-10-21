@@ -10,7 +10,7 @@ namespace NavigationES.Api.Services
 {
     // Behind the web's Vídeos tab: every topic with all its videos (drafts too), the
     // chapter cover and blurb, per-video edits and the catalogue import written by
-    // Documentation/Videos/exporta_catalogo.py.
+    // NavigationES Documentation/Videos/exporta_catalogo.py.
     public partial class AdminStudyService(NavigationESDbContext context, IWebHostEnvironment environment)
     {
         public const int UrlMaxLength = 500;

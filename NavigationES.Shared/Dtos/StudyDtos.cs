@@ -55,7 +55,7 @@ namespace NavigationES.Shared.Dtos
         string Title, string? Subtitle, string? ImageUrl, string? VideoUrl, string? SubtitlesUrl,
         int DurationSeconds, int SortOrder, bool IsFree, bool IsPublished);
 
-    // One row of the catalogue file written by Documentation/Videos/exporta_catalogo.py.
+    // One row of the catalogue file written by NavigationES Documentation/Videos/exporta_catalogo.py.
     // Upserted by (TopicNumber, Code). On an existing video a null ImageUrl, VideoUrl,
     // SubtitlesUrl, IsFree or IsPublished keeps what the administrator set; a new
     // video starts unpublished and not free unless the file says otherwise.

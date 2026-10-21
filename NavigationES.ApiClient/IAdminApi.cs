@@ -50,7 +50,7 @@ namespace NavigationES.ApiClient
         [Delete("/api/admin/study/videos/{id}")]
         Task<ResultDto> DeleteStudyVideoAsync(long id);
 
-        // The catalogue file written by Documentation/Videos/exporta_catalogo.py.
+        // The catalogue file written by NavigationES Documentation/Videos/exporta_catalogo.py.
         [Post("/api/admin/study/import")]
         Task<StudyImportResultDto> ImportStudyAsync([Body] List<StudyVideoImportDto> rows);
 

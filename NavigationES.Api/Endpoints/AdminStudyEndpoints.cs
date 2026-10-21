@@ -30,7 +30,7 @@ namespace NavigationES.Api.Endpoints
             study.MapDelete("/videos/{id:long}", async (long id, AdminStudyService service) =>
                 TypedResults.Ok(await service.DeleteVideoAsync(id)));
 
-            // The catalogue file of Documentation/Videos/exporta_catalogo.py.
+            // The catalogue file of NavigationES Documentation/Videos/exporta_catalogo.py.
             study.MapPost("/import", async (List<StudyVideoImportDto> rows, AdminStudyService service) =>
                 TypedResults.Ok(await service.ImportAsync(rows)));
 

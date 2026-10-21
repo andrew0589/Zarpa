@@ -24,7 +24,7 @@
         <p class="admin-hint">
             La sección <strong>Estudiar</strong> solo la ven los administradores mientras <code>Study__Public</code> esté
             en <code>false</code> en la API. Cada tema es un capítulo: PNB ve los temas 1–6, PER 1–11, PY 12–15 y CY 16–19.
-            <strong>Subir vídeos y catálogo</strong>: selecciona de <code>Documentation\Videos\out</code> los <code>.mp4</code>,
+            <strong>Subir vídeos y catálogo</strong>: selecciona de <code>NavigationES Documentation\Videos\out</code> los <code>.mp4</code>,
             los <code>.vtt</code> y el <code>catalogo.json</code> de <code>exporta_catalogo.py</code>, todos a la vez. Los vídeos se
             guardan en el servidor (un vídeo rehecho sustituye al anterior, sin deploy) y el catálogo crea o actualiza por
             tema + código, sin pisar las fotos ni los check que ya hayas puesto. Las rutas relativas
@@ -234,7 +234,7 @@
         }
     }
 
-    // One selection from Documentation\Videos\out: every .mp4/.vtt goes to the
+    // One selection from NavigationES Documentation\Videos\out: every .mp4/.vtt goes to the
     // server one by one (a failure stops nothing else), then catalogo.json, if picked,
     // is imported — after the files, so the videos it points to already exist.
     private async Task UploadAsync(InputFileChangeEventArgs e)
