@@ -34,7 +34,7 @@
                         <DataTemplate x:DataType="vm:StudyVideoRowItem">
                             <!-- Green once watched to the end, red until then (as on the web). -->
                             <Border BackgroundColor="{Binding RowBackground}" Stroke="{Binding RowBorder}"
-                                    StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="8">
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 12" Padding="8">
                             <Grid ColumnDefinitions="120,*" ColumnSpacing="12">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpenVideoCommand, Source={RelativeSource AncestorType={x:Type vm:StudyTopicViewModel}}}"
@@ -70,6 +70,8 @@
                                             <Label Text="{x:Static lang:AppResources.StudyDraft}" TextColor="#7A5300"
                                                    FontSize="11" FontAttributes="Bold" />
                                         </Border>
+                                        <Label Text="{x:Static fa:Solid.CircleCheck}" FontFamily="FASolid" TextColor="#1E9E5A"
+                                               FontSize="15" VerticalOptions="Center" IsVisible="{Binding ShowCheck}" />
                                         <Label Text="{Binding StateText}" TextColor="{Binding StateColor}"
                                                FontSize="12" FontAttributes="Bold" VerticalOptions="Center" />
                                     </HorizontalStackLayout>

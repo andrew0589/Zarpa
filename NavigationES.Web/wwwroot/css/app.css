@@ -3674,8 +3674,8 @@ body:has(.admin-card-bleed) {
 }
 
     .study-row.is-watched {
-        background: #E8F6EE;
-        border-color: #A9DBBE;
+        background: #D3EFDD;
+        border: 1.5px solid #5DBB86;
     }
 
     .study-row.is-unwatched {
@@ -3710,8 +3710,17 @@ body:has(.admin-card-bleed) {
 }
 
     .study-state.is-done {
-        color: #1E7F7B;
+        color: #157347;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
     }
+
+.study-check {
+    flex: none;
+    color: #1E9E5A;
+}
 
     .study-state.is-going {
         color: var(--primary);

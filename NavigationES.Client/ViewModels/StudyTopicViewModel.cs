@@ -127,6 +127,7 @@ namespace NavigationES.Client.ViewModels
         // Row tint, as on the web: green once watched to the end, red until then.
         public Color RowBackground { get; }
         public Color RowBorder { get; }
+        public bool ShowCheck { get; }
 
         public StudyVideoRowItem(StudyVideoSummaryDto dto, IEnvironmentService environment)
         {
@@ -141,13 +142,14 @@ namespace NavigationES.Client.ViewModels
             IsFree = dto.IsFree;
             IsDraft = !dto.IsPublished;
             IsLocked = dto.Locked;
+            ShowCheck = dto.Completed && !dto.Locked;
             (RowBackground, RowBorder) = dto.Completed
-                ? (Color.FromArgb("#E8F6EE"), Color.FromArgb("#A9DBBE"))
+                ? (Color.FromArgb("#D3EFDD"), Color.FromArgb("#5DBB86"))
                 : (Color.FromArgb("#FDEEEE"), Color.FromArgb("#F0BDBD"));
 
             (StateText, StateColor) =
                 dto.Locked ? (AppResources.StudyStateLocked, Color.FromArgb("#5E5E5E"))
-                : dto.Completed ? (AppResources.StudyStateWatched, Color.FromArgb("#1E7F7B"))
+                : dto.Completed ? (AppResources.StudyStateWatched, Color.FromArgb("#157347"))
                 : dto.PositionSeconds > 0 ? ($"{AppResources.StudyStateInProgress} · {(int)Math.Round(Progress * 100)} %", Color.FromArgb("#0B3D5C"))
                 : (AppResources.StudyStateNotWatched, Color.FromArgb("#5E5E5E"));
         }
