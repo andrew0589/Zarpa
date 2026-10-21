@@ -1,0 +1,62 @@
+{
+  "tema": "Tema 2 · Amarre y fondeo",
+  "seccion": "2.1 Los cabos",
+  "slides": [
+    {
+      "tipo": "portada",
+      "tema": "Tema 2 · Elementos de amarre y fondeo",
+      "titulo": "Los cabos",
+      "sub": "Partes, gaza, boza y términos de faena",
+      "narracion": "Seguimos con el tema dos. Ahora toca hablar de los cabos, que es como llamamos a bordo a todas las cuerdas. Veremos sus partes, qué son la gaza y la boza, y los verbos que usamos para trabajar con ellos: cobrar, templar, lascar, arriar y largar."
+    },
+    {
+      "titulo": "Partes de un cabo",
+      "img": "img/partes_cabo.webp",
+      "terminos": [
+        {"t": "Chicote", "d": "El **extremo** de un cabo."},
+        {"t": "Firme", "d": "La parte **más larga** o principal del cabo."},
+        {"t": "Seno", "d": "La **curvatura** que forma el cabo entre los extremos que lo sujetan."}
+      ],
+      "narracion": "A bordo, todas las cuerdas se llaman cabos. Un cabo tiene tres partes. El chicote es el extremo del cabo. El firme es la parte más larga o principal. Y el seno es la curvatura que forma el cabo entre los extremos que lo sujetan. En el examen, el seno puede aparecer definido para cualquier cabo, cable o cadena: es siempre esa curva entre los dos puntos de sujeción."
+    },
+    {
+      "titulo": "Gaza",
+      "img": "img/gaza.webp",
+      "terminos": [
+        {"t": "Gaza", "d": "Curva cerrada o **lazo** en un cabo."},
+        {"t": "Cómo se hace", "d": "Con el nudo **as de guía**, o **trenzando** los cordones del chicote en los del firme."}
+      ],
+      "narracion": "La gaza es una curva cerrada, un lazo, en un cabo. Se puede hacer de dos maneras: con un nudo, el as de guía, que veremos en el siguiente vídeo, o trenzando los cordones del chicote en los del firme, lo que se llama una gaza trenzada o costura. En el examen: con el as de guía formamos una gaza fija."
+    },
+    {
+      "titulo": "Boza",
+      "svg": "svg/boza.svg",
+      "terminos": [
+        {"t": "Boza", "d": "Trozo o ramal de cabo que **sujeta** una cadena o un cabo que está **bajo tensión**, para poder manipularlo."}
+      ],
+      "narracion": "La boza es un trozo, o ramal, de cabo que sirve para sujetar una cadena o un cabo que está bajo tensión, y así poder manipularlo. Mira el dibujo: la amarra está tensa hacia el muelle. Le damos varias vueltas con la boza y la hacemos firme en una cornamusa. Ahora es la boza la que aguanta la carga, y podemos soltar la amarra del winche y trabajar con ella tranquilamente."
+    },
+    {
+      "titulo": "Términos de faena con los cabos",
+      "img": "img/terminos_faena.webp",
+      "terminos": [
+        {"t": "Cobrar · templar", "d": "Cobrar: tirar del cabo para recoger el seno o tensarlo. Templar: ponerlo en tensión."},
+        {"t": "Lascar", "d": "Aflojar **un poco** un cabo que estaba tenso."},
+        {"t": "Arriar · en banda", "d": "Arriar: aflojar un cabo, con idea de movimiento **hacia abajo**. En banda: soltarlo sin retención."},
+        {"t": "Largar", "d": "Soltar y dejar **libre del todo** el cabo."}
+      ],
+      "narracion": "Y ahora, los verbos. Cobrar es tirar de un cabo para recoger el seno o para tensarlo, y templar es ponerlo en tensión. Lascar es aflojar un poco un cabo que estaba tenso. Arriar es aflojar un cabo, y lleva implícito un movimiento vertical hacia abajo: se arrían las velas y se arrían los botes. Arriar en banda es soltar un cabo sin ninguna retención. Y largar es soltar el cabo y dejarlo libre del todo, desconectándose de él. Fíjate en la diferencia: lascar es un poco, arriar es aflojar, y largar es soltar del todo."
+    },
+    {
+      "titulo": "Recuerda para el examen",
+      "puntos": [
+        "Chicote = extremo · firme = parte larga · seno = la curva entre los extremos.",
+        "Gaza = lazo cerrado; con el **as de guía**, gaza fija.",
+        "Boza = ramal que sujeta un cabo o cadena en tensión.",
+        "Cobrar = tirar · templar = tensar.",
+        "Lascar = aflojar un poco · arriar = aflojar (hacia abajo) · largar = soltar del todo."
+      ],
+      "narracion": "Repasamos. Chicote es el extremo, firme la parte larga y seno la curva entre los extremos. La gaza es un lazo cerrado; con el as de guía es una gaza fija. La boza sujeta un cabo o una cadena en tensión. Cobrar es tirar y templar es tensar. Y para aflojar: lascar es un poco, arriar es aflojar hacia abajo, y largar es soltar del todo."
+    }
+  ]
+}

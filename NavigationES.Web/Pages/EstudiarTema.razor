@@ -63,7 +63,8 @@
             <div class="study-list">
                 @foreach (var v in videos)
                 {
-                    <div class="study-row">
+                    @* Green once watched to the end, red until then (in progress included). *@
+                    <div class="study-row @(v.Completed ? "is-watched" : "is-unwatched")">
                         <a class="study-thumb" href="estudiar/video/@v.Id" aria-label="Ver @v.Code @v.Title">
                             <StudyImage Url="@StudyFormat.Media(Api, v.ImageUrl)" Label="@($"Foto {v.Code}")" />
                             <span class="study-duration">@StudyFormat.Clock(v.DurationSeconds)</span>

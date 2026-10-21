@@ -29,10 +29,13 @@
                            TextColor="{StaticResource Gray600}" FontSize="14" Margin="0,8,0,0" />
                 </VerticalStackLayout>
 
-                <VerticalStackLayout Padding="16,0,16,16" BindableLayout.ItemsSource="{Binding Videos}">
+                <VerticalStackLayout Padding="16,0,16,16" Spacing="8" BindableLayout.ItemsSource="{Binding Videos}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="vm:StudyVideoRowItem">
-                            <Grid ColumnDefinitions="120,*" ColumnSpacing="12" Padding="0,10">
+                            <!-- Green once watched to the end, red until then (as on the web). -->
+                            <Border BackgroundColor="{Binding RowBackground}" Stroke="{Binding RowBorder}"
+                                    StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="8">
+                            <Grid ColumnDefinitions="120,*" ColumnSpacing="12">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpenVideoCommand, Source={RelativeSource AncestorType={x:Type vm:StudyTopicViewModel}}}"
                                                           CommandParameter="{Binding .}" />
@@ -72,6 +75,7 @@
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </Grid>
+                            </Border>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>

@@ -3673,6 +3673,16 @@ body:has(.admin-card-bleed) {
     gap: 1.1rem;
 }
 
+    .study-row.is-watched {
+        background: #E8F6EE;
+        border-color: #A9DBBE;
+    }
+
+    .study-row.is-unwatched {
+        background: #FDEEEE;
+        border-color: #F0BDBD;
+    }
+
 .study-row-text {
     flex: 1 1 240px;
     display: flex;

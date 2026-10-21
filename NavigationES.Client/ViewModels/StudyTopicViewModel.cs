@@ -124,6 +124,9 @@ namespace NavigationES.Client.ViewModels
         public bool IsFree { get; }
         public bool IsDraft { get; }
         public bool IsLocked { get; }
+        // Row tint, as on the web: green once watched to the end, red until then.
+        public Color RowBackground { get; }
+        public Color RowBorder { get; }
 
         public StudyVideoRowItem(StudyVideoSummaryDto dto, IEnvironmentService environment)
         {
@@ -138,6 +141,9 @@ namespace NavigationES.Client.ViewModels
             IsFree = dto.IsFree;
             IsDraft = !dto.IsPublished;
             IsLocked = dto.Locked;
+            (RowBackground, RowBorder) = dto.Completed
+                ? (Color.FromArgb("#E8F6EE"), Color.FromArgb("#A9DBBE"))
+                : (Color.FromArgb("#FDEEEE"), Color.FromArgb("#F0BDBD"));
 
             (StateText, StateColor) =
                 dto.Locked ? (AppResources.StudyStateLocked, Color.FromArgb("#5E5E5E"))
