@@ -3437,7 +3437,11 @@ body:has(.admin-card-bleed) {
     }
 
 /* 16:9 photo or placeholder, filling its box. */
+/* Pinned inside its 16:9 box: a photo of any size or shape is cropped to the box
+   instead of stretching it (a taller picture used to make its card taller). */
 .study-img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -3570,6 +3574,7 @@ body:has(.admin-card-bleed) {
     position: relative;
     display: block;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
 }
 
 .study-badge {
@@ -3619,8 +3624,10 @@ body:has(.admin-card-bleed) {
 }
 
 .study-hero-img {
+    position: relative;
     flex: 1 1 440px;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
 }
 
 .study-hero-text {
@@ -3918,6 +3925,7 @@ body:has(.admin-card-bleed) {
 }
 
 .study-admin-cover-img {
+    position: relative;
     flex: 0 0 200px;
     aspect-ratio: 16 / 9;
     border-radius: 10px;
