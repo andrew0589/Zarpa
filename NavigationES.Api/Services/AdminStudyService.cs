@@ -174,6 +174,7 @@ namespace NavigationES.Api.Services
                 }
 
                 var row = existing.FirstOrDefault(v => v.TopicID == topicId && v.Code == code);
+                var isNew = row is null;
                 if (row is null)
                 {
                     row = new StudyVideoEntity { TopicID = topicId, Code = code };
@@ -189,7 +190,9 @@ namespace NavigationES.Api.Services
                 row.Title = title;
                 row.Subtitle = Blank(r.Subtitle);
                 row.SortOrder = r.SortOrder;
-                row.DurationSeconds = r.DurationSeconds;
+                // 0 = unknown (no mp4 at hand when the catalogue was written): keep it.
+                if (r.DurationSeconds > 0 || isNew)
+                    row.DurationSeconds = r.DurationSeconds;
                 row.ImageUrl = image ?? row.ImageUrl;
                 row.VideoUrl = video ?? row.VideoUrl;
                 row.SubtitlesUrl = vtt ?? row.SubtitlesUrl;
